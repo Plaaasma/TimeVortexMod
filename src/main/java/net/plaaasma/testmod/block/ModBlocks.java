@@ -14,6 +14,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.plaaasma.testmod.TestMod;
 import net.plaaasma.testmod.block.custom.TPBlock;
+import net.plaaasma.testmod.block.custom.TeleportationStationBlock;
 import net.plaaasma.testmod.item.ModItems;
 
 import java.util.function.Supplier;
@@ -32,6 +33,9 @@ public class ModBlocks {
     public static final RegistryObject<Block> CHEESE_ORE = registerBlock("cheese_ore",
             () -> new DropExperienceBlock(BlockBehaviour.Properties.copy(Blocks.STONE)
                     .strength(2f).requiresCorrectToolForDrops(), UniformInt.of(3, 6)));
+
+    public static final RegistryObject<Block> TELEPORTATION_STATION = registerBlock("tp_station",
+            () -> new TeleportationStationBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);

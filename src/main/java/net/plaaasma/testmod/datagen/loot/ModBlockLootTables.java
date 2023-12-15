@@ -21,6 +21,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(ModBlocks.TP_BLOCK.get());
         this.dropSelf(ModBlocks.DIRTIER_BLOCK.get());
         this.dropSelf(ModBlocks.CHEESE_BLOCK.get());
+        this.dropSelf(ModBlocks.TELEPORTATION_STATION.get());
         this.add(ModBlocks.CHEESE_ORE.get(),
                 block -> createOreDrop(ModBlocks.CHEESE_ORE.get(), ModItems.RAW_CHEESE.get()));
     }

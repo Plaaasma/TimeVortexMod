@@ -9,6 +9,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import net.plaaasma.testmod.TestMod;
 import net.plaaasma.testmod.block.ModBlocks;
+import net.plaaasma.testmod.block.entity.ModBlockEntities;
 
 public class ModCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
@@ -25,6 +26,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.TP_BLOCK.get());
                         pOutput.accept(ModBlocks.CHEESE_ORE.get());
                         pOutput.accept(ModItems.TELEPORTER.get());
+                        pOutput.accept(ModBlocks.TELEPORTATION_STATION.get());
                     })
                     .build());
 
