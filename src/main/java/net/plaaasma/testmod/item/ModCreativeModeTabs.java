@@ -23,6 +23,8 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.CHEESE_BLOCK.get());
                         pOutput.accept(ModBlocks.DIRTIER_BLOCK.get());
                         pOutput.accept(ModBlocks.TP_BLOCK.get());
+                        pOutput.accept(ModBlocks.CHEESE_ORE.get());
+                        pOutput.accept(ModItems.TELEPORTER.get());
                     })
                     .build());
 
