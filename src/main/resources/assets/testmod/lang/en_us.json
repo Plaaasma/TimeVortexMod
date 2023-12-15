@@ -1,0 +1,10 @@
+{
+  "item.testmod.cheese": "Cheese",
+  "item.testmod.raw_cheese": "Raw Cheese",
+
+  "block.testmod.cheese_block": "Block of Cheese",
+  "block.testmod.dirtier_block": "Dirtier Block",
+  "block.testmod.tp_block": "TP Block",
+
+  "creativetab.test_tab": "Cheese Tab"
+}
