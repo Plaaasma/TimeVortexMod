@@ -20,7 +20,10 @@ import net.plaaasma.testmod.item.ModCreativeModeTabs;
 import net.plaaasma.testmod.item.ModItems;
 import net.plaaasma.testmod.screen.ModMenuTypes;
 import net.plaaasma.testmod.screen.TpStationScreen;
+import net.plaaasma.testmod.worldgen.biome.ModTerrablender;
+import net.plaaasma.testmod.worldgen.biome.surface.ModSurfaceRules;
 import org.slf4j.Logger;
+import terrablender.api.SurfaceRuleManager;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(TestMod.MODID)
@@ -43,6 +46,8 @@ public class TestMod {
 
         ModMenuTypes.register(modEventBus);
 
+        ModTerrablender.registerBiomes();
+
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
@@ -51,7 +56,7 @@ public class TestMod {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-
+        SurfaceRuleManager.addSurfaceRules(SurfaceRuleManager.RuleCategory.OVERWORLD, MODID, ModSurfaceRules.makeRules());
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
