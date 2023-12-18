@@ -25,7 +25,7 @@ public record ModNoiseGenerator(NoiseSettings noiseSettings, BlockState defaultB
         pContext.register(CAVES, dummy(pContext));
     }
 
-    static final NoiseSettings OVERWORLD_NOISE_SETTINGS = create(-64, 384, 1, 2);
+    static final NoiseSettings OVERWORLD_NOISE_SETTINGS = create(-256, 1600, 4, 2);
 
     private static DataResult<NoiseSettings> guardY(NoiseSettings p_158721_) {
         if (p_158721_.minY() + p_158721_.height() > DimensionType.MAX_Y + 1) {
@@ -86,7 +86,7 @@ public record ModNoiseGenerator(NoiseSettings noiseSettings, BlockState defaultB
 
     public static NoiseGeneratorSettings dummy(BootstapContext<?> pContext) {
         return new NoiseGeneratorSettings(OVERWORLD_NOISE_SETTINGS, Blocks.SEA_LANTERN.defaultBlockState(), Blocks.AIR.defaultBlockState(),
-                noNewCaves(pContext.lookup(Registries.DENSITY_FUNCTION), pContext.lookup(Registries.NOISE), slideNetherLike(pContext.lookup(Registries.DENSITY_FUNCTION), -256, 256)), ModSurfaceRules.makeRules(), List.of(), 32, false, false, false, false);
+                noNewCaves(pContext.lookup(Registries.DENSITY_FUNCTION), pContext.lookup(Registries.NOISE), slideNetherLike(pContext.lookup(Registries.DENSITY_FUNCTION), -256, 256)), ModSurfaceRules.makeRules(), List.of(), -256, false, false, false, false);
         /*return new NoiseGeneratorSettings(OVERWORLD_NOISE_SETTINGS, Blocks.SEA_LANTERN.defaultBlockState(), Blocks.AIR.defaultBlockState(),
                 noNewCaves(pContext.lookup(Registries.DENSITY_FUNCTION), pContext.lookup(Registries.NOISE), slideNetherLike(pContext.lookup(Registries.DENSITY_FUNCTION), -64, 256)), SurfaceRuleData.air(), List.of(), 63, true, false, false, false);*/
     }
