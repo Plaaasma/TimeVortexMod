@@ -2,6 +2,7 @@ package net.plaaasma.vortexmod.worldgen.portal;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.ITeleporter;
@@ -24,5 +25,10 @@ public class ModTeleporter implements ITeleporter {
         entity.teleportTo(thisPos.getX(), thisPos.getY(), thisPos.getZ());
 
         return entity;
+    }
+
+    @Override
+    public boolean playTeleportSound(ServerPlayer player, ServerLevel sourceWorld, ServerLevel destWorld) {
+        return false;
     }
 }

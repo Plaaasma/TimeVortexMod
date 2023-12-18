@@ -14,6 +14,7 @@ import net.plaaasma.vortexmod.block.custom.*;
 import net.plaaasma.vortexmod.item.ModItems;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class ModBlocks {
@@ -42,6 +43,7 @@ public class ModBlocks {
     }
 
     public static HashMap<String, String> needsUpdating = new HashMap<>();
+    public static List<String> needsLoading;
 
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
