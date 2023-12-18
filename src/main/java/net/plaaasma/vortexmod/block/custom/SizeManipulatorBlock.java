@@ -7,6 +7,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -21,6 +24,8 @@ import net.minecraftforge.network.NetworkHooks;
 import net.plaaasma.vortexmod.block.entity.ModBlockEntities;
 import net.plaaasma.vortexmod.block.entity.SizeManipulatorBlockEntity;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class SizeManipulatorBlock extends BaseEntityBlock {
 
@@ -74,5 +79,11 @@ public class SizeManipulatorBlock extends BaseEntityBlock {
 
         return createTickerHelper(pBlockEntityType, ModBlockEntities.SIZE_MANIPULATOR_BE.get(),
                 ((pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1)));
+    }
+
+    @Override
+    public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+        pTooltip.add(Component.translatable("tooltip.vortexmod.size_manipulator_block.tooltip"));
+        super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
     }
 }

@@ -8,5 +8,13 @@
   "block.vortexmod.keypad_block": "Coordinate Keypad Module",
   "block.vortexmod.size_manipulator_block": "Vortex Entry Size Manipulator Module",
 
+  "tooltip.vortexmod.cheese.tooltip": "The holy cheese.",
+  "tooltip.vortexmod.size_upgrade.tooltip": "Increases the radius that is considered the TARDIS by 1 when input in a size manipulator module.",
+  "tooltip.vortexmod.throttle_block.tooltip": "Starts/Stops the flight sequence when right clicked.",
+  "tooltip.vortexmod.interface_block.tooltip": "Main block of the TARDIS, considered the center and needed for any TARDIS.",
+  "tooltip.vortexmod.coordinate_block.tooltip": "Control the target location using basic sliders.",
+  "tooltip.vortexmod.keypad_block.tooltip": "Allows you to type the target coordinates in chat (Right click for tutorial). ",
+  "tooltip.vortexmod.size_manipulator_block.tooltip": "Module that allows you to input size upgrades. Must be touching the interface block.",
+
   "creativetab.vortex_tab": "Time Vortex"
 }

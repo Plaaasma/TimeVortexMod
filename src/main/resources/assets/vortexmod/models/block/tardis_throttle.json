@@ -3,8 +3,8 @@
 	"ambientocclusion": false,
 	"texture_size": [64, 64],
 	"textures": {
-		"0": "block/throttle_texture",
-		"particle": "block/throttle_texture"
+		"0": "vortexmod:block/throttle_texture",
+		"particle": "vortexmod:block/throttle_texture"
 	},
 	"elements": [
 		{
