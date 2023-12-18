@@ -18,13 +18,21 @@ public class ModSurfaceRules {
 
         return SurfaceRules.sequence(
                 SurfaceRules.sequence(
-                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.VORTEX_BIOME),  SEA_LANTERN),
-                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.ON_FLOOR, SEA_LANTERN)),
-                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.ON_CEILING, SEA_LANTERN)),
-                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.DEEP_UNDER_FLOOR, SEA_LANTERN)),
-                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.VERY_DEEP_UNDER_FLOOR, SEA_LANTERN)),
-                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.UNDER_CEILING, SEA_LANTERN)),
-                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, SEA_LANTERN))
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.BLUE_VORTEX_BIOME),  SEA_LANTERN),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.BLUE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.ON_FLOOR, SEA_LANTERN)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.BLUE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.ON_CEILING, SEA_LANTERN)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.BLUE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.DEEP_UNDER_FLOOR, SEA_LANTERN)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.BLUE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.VERY_DEEP_UNDER_FLOOR, SEA_LANTERN)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.BLUE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.UNDER_CEILING, SEA_LANTERN)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.BLUE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, SEA_LANTERN)),
+
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.ORANGE_VORTEX_BIOME),  GLOWSTONE),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.ORANGE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.ON_FLOOR, GLOWSTONE)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.ORANGE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.ON_CEILING, GLOWSTONE)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.ORANGE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.DEEP_UNDER_FLOOR, GLOWSTONE)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.ORANGE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.VERY_DEEP_UNDER_FLOOR, GLOWSTONE)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.ORANGE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.UNDER_CEILING, GLOWSTONE)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.ORANGE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, GLOWSTONE))
                 ),
 
 

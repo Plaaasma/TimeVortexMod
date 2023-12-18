@@ -19,6 +19,7 @@ import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.*;
 import net.minecraft.world.level.material.Fluids;
 import net.plaaasma.vortexmod.VortexMod;
+import net.plaaasma.vortexmod.worldgen.ModNoiseGenerator;
 import net.plaaasma.vortexmod.worldgen.biome.ModBiomes;
 
 import java.util.List;
@@ -42,7 +43,7 @@ public class ModDimensions {
                 10.0, // coordinateScale
                 false, // bedWorks
                 false, // respawnAnchorWorks
-                48, // minY
+                -256, // minY
                 256, // height
                 256, // logicalHeight
                 BlockTags.INFINIBURN_OVERWORLD, // infiniburn
@@ -56,11 +57,15 @@ public class ModDimensions {
         HolderGetter<DimensionType> dimTypes = context.lookup(Registries.DIMENSION_TYPE);
         HolderGetter<NoiseGeneratorSettings> noiseGenSettings = context.lookup(Registries.NOISE_SETTINGS);
 
-        NoiseBasedChunkGenerator wrappedChunkGenerator = new NoiseBasedChunkGenerator(
-                new FixedBiomeSource(biomeRegistry.getOrThrow(ModBiomes.VORTEX_BIOME)),
-                noiseGenSettings.getOrThrow(NoiseGeneratorSettings.CAVES));
+       NoiseBasedChunkGenerator noiseBasedChunkGenerator = new NoiseBasedChunkGenerator(
+               MultiNoiseBiomeSource.createFromList(
+                        new Climate.ParameterList<>(List.of(
+                                Pair.of(Climate.parameters(1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F), biomeRegistry.getOrThrow(ModBiomes.BLUE_VORTEX_BIOME)),
+                                Pair.of(Climate.parameters(0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F), biomeRegistry.getOrThrow(ModBiomes.ORANGE_VORTEX_BIOME))
+                       ))),
+                noiseGenSettings.getOrThrow(ModNoiseGenerator.CAVES));
 
-        LevelStem stem = new LevelStem(dimTypes.getOrThrow(ModDimensions.vortex_DIM_TYPE), wrappedChunkGenerator);
+        LevelStem stem = new LevelStem(dimTypes.getOrThrow(ModDimensions.vortex_DIM_TYPE), noiseBasedChunkGenerator);
 
         context.register(vortexDIM_KEY, stem);
     }

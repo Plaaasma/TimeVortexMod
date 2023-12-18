@@ -19,11 +19,12 @@ import net.plaaasma.vortexmod.worldgen.ModConfiguredFeatures;
 import net.plaaasma.vortexmod.worldgen.ModPlacedFeatures;
 
 public class ModBiomes {
-    public static final ResourceKey<Biome> VORTEX_BIOME = ResourceKey.create(Registries.BIOME,
-            new ResourceLocation(VortexMod.MODID, "vortex_biome"));
+    public static final ResourceKey<Biome> BLUE_VORTEX_BIOME = ResourceKey.create(Registries.BIOME, new ResourceLocation(VortexMod.MODID, "blue_vortex_biome"));
+    public static final ResourceKey<Biome> ORANGE_VORTEX_BIOME = ResourceKey.create(Registries.BIOME, new ResourceLocation(VortexMod.MODID, "orange_vortex_biome"));
 
     public static void bootstrap(BootstapContext<Biome> context) {
-        context.register(VORTEX_BIOME, vortexBiome(context));
+        context.register(BLUE_VORTEX_BIOME, vortexBiome(context));
+        context.register(ORANGE_VORTEX_BIOME, vortexBiome(context));
     }
 
     public static Biome vortexBiome(BootstapContext<Biome> context) {
@@ -32,7 +33,7 @@ public class ModBiomes {
         BiomeGenerationSettings.Builder biomeBuilder =
                 new BiomeGenerationSettings.Builder(context.lookup(Registries.PLACED_FEATURE), context.lookup(Registries.CONFIGURED_CARVER));
 
-        biomeBuilder.addFeature(GenerationStep.Decoration.RAW_GENERATION, ModPlacedFeatures.SEA_LANTERN_PLACED_KEY);
+        //biomeBuilder.addFeature(GenerationStep.Decoration.RAW_GENERATION, ModPlacedFeatures.SEA_LANTERN_PLACED_KEY);
 
         return new Biome.BiomeBuilder()
                 .hasPrecipitation(false)

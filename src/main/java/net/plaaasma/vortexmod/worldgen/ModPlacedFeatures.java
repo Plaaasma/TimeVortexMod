@@ -8,6 +8,7 @@ import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.data.worldgen.placement.VegetationPlacements;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.*;
@@ -22,9 +23,13 @@ public class ModPlacedFeatures {
     public static void bootstrap(BootstapContext<PlacedFeature> context) {
         HolderGetter<ConfiguredFeature<?, ?>> configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
 
+        //PlacementUtils.register(context, SEA_LANTERN_PLACED_KEY, holder18, CountPlacement.of(UniformInt.of(250, 500)), InSquarePlacement.spread(), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT, BiomeFilter.biome());
+        //PlacementUtils.register(context, SEA_LANTERN_PLACED_KEY, holder18, CountPlacement.of(256), InSquarePlacement.spread(), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT, BiomeFilter.biome());
         register(context, SEA_LANTERN_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.SEA_LANTERN_KEY),
+                ModOrePlacement.orePlacement(CountPlacement.of(256), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT));
+        /*register(context, SEA_LANTERN_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.SEA_LANTERN_KEY),
                 ModOrePlacement.commonOrePlacement(64,
-                        HeightRangePlacement.uniform(VerticalAnchor.absolute(-604), VerticalAnchor.absolute(800))));
+                        HeightRangePlacement.uniform(VerticalAnchor.absolute(-604), VerticalAnchor.absolute(800))));*/
     }
 
 

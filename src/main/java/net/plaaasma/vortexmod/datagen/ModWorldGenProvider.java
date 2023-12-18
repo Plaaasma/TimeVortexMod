@@ -8,6 +8,7 @@ import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.worldgen.ModConfiguredFeatures;
+import net.plaaasma.vortexmod.worldgen.ModNoiseGenerator;
 import net.plaaasma.vortexmod.worldgen.ModPlacedFeatures;
 import net.plaaasma.vortexmod.worldgen.biome.ModBiomes;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
@@ -21,6 +22,7 @@ public class ModWorldGenProvider extends DatapackBuiltinEntriesProvider {
             .add(Registries.CONFIGURED_FEATURE, ModConfiguredFeatures::bootstrap)
             .add(Registries.PLACED_FEATURE, ModPlacedFeatures::bootstrap)
             .add(Registries.BIOME, ModBiomes::bootstrap)
+            .add(Registries.NOISE_SETTINGS, ModNoiseGenerator::bootstrap)
             .add(Registries.LEVEL_STEM, ModDimensions::bootstrapStem);
 
     public ModWorldGenProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {

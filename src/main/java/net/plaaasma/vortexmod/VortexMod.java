@@ -68,7 +68,10 @@ public class VortexMod {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
 
+            SurfaceRuleManager.addSurfaceRules(SurfaceRuleManager.RuleCategory.OVERWORLD, MODID, ModSurfaceRules.makeRules());
+        });
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
