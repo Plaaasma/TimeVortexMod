@@ -179,7 +179,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         }
 
         if (throttle_on == 1 && pLevel != vortexDimension) {
-            BlockPos vortexTargetPos = new BlockPos(pPos.getX(), 75, pPos.getZ());
+            BlockPos vortexTargetPos = new BlockPos(pPos.getX(), -80, pPos.getZ());
             BlockPos currentIterPos;
 
             int radius = 50; // 100x100 area, radius of 50
@@ -196,7 +196,6 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 for (int i__z = -size; i__z <= size; i__z++) {
                                     // Calculate the position of the current block relative to currentPos
                                     BlockPos pos = currentIterPos.offset(i__x, i__y, i__z);
-
                                     // Check if the current block and the blocks directly above and below are air
                                     if (!(vortexDimension.getBlockState(pos).getBlock() == Blocks.AIR &&
                                             vortexDimension.getBlockState(pos.above()).getBlock() == Blocks.AIR &&
