@@ -15,10 +15,11 @@ public class ModCreativeModeTabs {
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, VortexMod.MODID);
 
     public static final RegistryObject<CreativeModeTab> VORTEX_TAB = CREATIVE_MODE_TABS.register("vortex_tab",
-            () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModItems.CHEESE.get()))
+            () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModBlocks.INTERFACE_BLOCK.get()))
                     .title(Component.translatable("creativetab.vortex_tab"))
                     .displayItems((pParameters, pOutput) -> {
                         pOutput.accept(ModItems.CHEESE.get());
+                        pOutput.accept(ModItems.SIZE_UPGRADE.get());
                         pOutput.accept(ModBlocks.THROTTLE_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.INTERFACE_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.COORDINATE_BLOCK.get().asItem());
