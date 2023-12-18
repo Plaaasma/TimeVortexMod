@@ -219,6 +219,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 radius += 50;
             }
 
+            if (ModBlocks.needsLoading != null) {
+                ModBlocks.needsLoading.add(vortexTargetPos.getX() + " " + vortexTargetPos.getY() + " " + vortexTargetPos.getZ());
+            }
             handleVortexTeleports(size, pLevel, pPos, vortexTargetPos);
             localBlockEntity.data.set(0, 0);
         }
