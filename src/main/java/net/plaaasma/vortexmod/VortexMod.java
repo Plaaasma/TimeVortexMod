@@ -27,8 +27,10 @@ import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.block.entity.*;
 import net.plaaasma.vortexmod.item.ModCreativeModeTabs;
 import net.plaaasma.vortexmod.item.ModItems;
+import net.plaaasma.vortexmod.worldgen.biome.surface.ModSurfaceRules;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 import org.slf4j.Logger;
+import terrablender.api.SurfaceRuleManager;
 
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -64,7 +66,9 @@ public class VortexMod {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-
+        event.enqueueWork(() -> {
+            SurfaceRuleManager.addSurfaceRules(SurfaceRuleManager.RuleCategory.OVERWORLD, MODID, ModSurfaceRules.makeRules());
+        });
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
