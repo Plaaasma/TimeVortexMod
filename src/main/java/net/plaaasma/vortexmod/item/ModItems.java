@@ -11,7 +11,10 @@ public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, VortexMod.MODID);
 
     public static final RegistryObject<Item> CHEESE = ITEMS.register("cheese",
-            () -> new Item(new Item.Properties().food(ModFoods.CHEESE)));
+            () -> new Cheese(new Item.Properties().food(ModFoods.CHEESE)));
+
+    public static final RegistryObject<Item> SIZE_UPGRADE = ITEMS.register("size_upgrade",
+            () -> new SizeUpgrade(new Item.Properties()));
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);

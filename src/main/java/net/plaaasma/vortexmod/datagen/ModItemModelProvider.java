@@ -19,6 +19,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     @Override
     protected void registerModels() {
         simpleItem(ModItems.CHEESE);
+        simpleItem(ModItems.SIZE_UPGRADE);
     }
 
     private ItemModelBuilder simpleItem(RegistryObject<Item> item) {

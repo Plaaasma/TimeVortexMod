@@ -24,12 +24,14 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
                 .add(ModBlocks.THROTTLE_BLOCK.get())
                 .add(ModBlocks.COORDINATE_BLOCK.get())
                 .add(ModBlocks.INTERFACE_BLOCK.get())
-                .add(ModBlocks.KEYPAD_BLOCK.get());
+                .add(ModBlocks.KEYPAD_BLOCK.get())
+                .add(ModBlocks.SIZE_MANIPULATOR_BLOCK.get());
 
         this.tag(BlockTags.NEEDS_DIAMOND_TOOL)
                 .add(ModBlocks.THROTTLE_BLOCK.get())
                 .add(ModBlocks.COORDINATE_BLOCK.get())
                 .add(ModBlocks.INTERFACE_BLOCK.get())
-                .add(ModBlocks.KEYPAD_BLOCK.get());
+                .add(ModBlocks.KEYPAD_BLOCK.get())
+                .add(ModBlocks.SIZE_MANIPULATOR_BLOCK.get());
     }
 }

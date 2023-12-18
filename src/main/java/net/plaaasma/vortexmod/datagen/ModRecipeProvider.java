@@ -24,6 +24,17 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
 
     @Override
     protected void buildRecipes(Consumer<FinishedRecipe> pWriter) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.THROTTLE_BLOCK.get())
+                .pattern("LIL")
+                .pattern("ISI")
+                .pattern("BBB")
+                .define('L', Items.LEATHER)
+                .define('S', Items.STICK)
+                .define('I', Items.IRON_INGOT)
+                .define('B', Blocks.IRON_BLOCK)
+                .unlockedBy(getHasName(Items.IRON_INGOT), has(Items.IRON_INGOT))
+                .save(pWriter);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.INTERFACE_BLOCK.get())
                 .pattern("OEO")
                 .pattern("EIE")
@@ -32,6 +43,47 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('E', Items.ENDER_EYE)
                 .define('I', Blocks.IRON_BLOCK)
                 .unlockedBy(getHasName(Items.ENDER_EYE), has(Items.ENDER_EYE))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.COORDINATE_BLOCK.get())
+                .pattern("LLL")
+                .pattern("ICI")
+                .pattern("RRR")
+                .define('L', Items.LEVER)
+                .define('I', Items.IRON_INGOT)
+                .define('C', Items.COMPASS)
+                .define('R', Blocks.IRON_BLOCK)
+                .unlockedBy(getHasName(Items.IRON_INGOT), has(Items.IRON_INGOT))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.KEYPAD_BLOCK.get())
+                .pattern("LCL")
+                .pattern("LML")
+                .pattern("III")
+                .define('L', Items.LEVER)
+                .define('C', Items.COMPASS)
+                .define('M', Items.FILLED_MAP)
+                .define('I', Blocks.IRON_BLOCK)
+                .unlockedBy(getHasName(Items.FILLED_MAP), has(Items.FILLED_MAP))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.SIZE_MANIPULATOR_BLOCK.get())
+                .pattern("IEI")
+                .pattern("EPE")
+                .pattern("IEI")
+                .define('E', Items.ENDER_EYE)
+                .define('P', Items.ENDER_PEARL)
+                .define('I', Blocks.IRON_BLOCK)
+                .unlockedBy(getHasName(Items.ENDER_EYE), has(Items.ENDER_EYE))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.SIZE_UPGRADE.get())
+                .pattern("RRR")
+                .pattern("RIR")
+                .pattern("RRR")
+                .define('R', Blocks.REDSTONE_BLOCK)
+                .define('I', Blocks.IRON_BLOCK)
+                .unlockedBy(getHasName(Items.REDSTONE), has(Items.REDSTONE))
                 .save(pWriter);
     }
 
