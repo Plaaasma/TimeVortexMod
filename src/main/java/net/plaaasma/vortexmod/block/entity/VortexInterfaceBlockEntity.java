@@ -22,8 +22,7 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
@@ -269,14 +268,25 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             }
         }
 
+        List<BlockPos> toBeRemoved = new ArrayList<>();
+
         for (int x = -size; x <= size; x++) {
             for (int y = -1; y <= y_size + (y_size - 1); y++) {
                 for (int z = -size; z <= size; z++) {
                     BlockPos currentPos = pPos.offset(x, y, z);
 
-                    handleBlockRemoval(pLevel, currentPos);
+                    if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock) {
+                        handleBlockRemoval(pLevel, currentPos);
+                    }
+                    else {
+                        toBeRemoved.add(currentPos);
+                    }
                 }
             }
+        }
+
+        for (BlockPos positionToBeRemoved : toBeRemoved) {
+            handleBlockRemoval(pLevel, positionToBeRemoved);
         }
     }
 
@@ -304,14 +314,25 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             }
         }
 
+        List<BlockPos> toBeRemoved = new ArrayList<>();
+
         for (int x = -size; x <= size; x++) {
             for (int y = -1; y <= y_size + (y_size - 1); y++) {
                 for (int z = -size; z <= size; z++) {
                     BlockPos currentPos = pPos.offset(x, y, z);
 
-                    handleBlockRemoval(pLevel, currentPos);
+                    if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock) {
+                        handleBlockRemoval(pLevel, currentPos);
+                    }
+                    else {
+                        toBeRemoved.add(currentPos);
+                    }
                 }
             }
+        }
+
+        for (BlockPos positionToBeRemoved : toBeRemoved) {
+            handleBlockRemoval(pLevel, positionToBeRemoved);
         }
 
         for (int __x = -size; __x <= size; __x++) {
