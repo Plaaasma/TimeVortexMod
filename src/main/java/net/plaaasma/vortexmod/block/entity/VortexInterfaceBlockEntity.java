@@ -103,7 +103,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
         VortexInterfaceBlockEntity localBlockEntity = (VortexInterfaceBlockEntity) pLevel.getBlockEntity(pPos);
 
-        int size = 3; // Diameter = size * 2 + 1
+        int size = 1; // Diameter = size * 2 + 1
         int targetX = 0;
         int targetY = 0;
         int targetZ = 0;
@@ -119,7 +119,34 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         }
 
         for (int x = -size; x <= size; x++) {
-            for (int y = -1; y <= size + (size - 1); y++) {
+            for (int y = -1; y <= size; y++) {
+                for (int z = -size; z <= size; z++) {
+                    BlockPos currentPos = pPos.offset(x, y, z);
+                    if (currentPos == pPos) {
+                        continue;
+                    }
+
+                    var blockEntity = pLevel.getBlockEntity(currentPos);
+
+                    if (blockEntity instanceof SizeManipulatorBlockEntity sizeManipulatorBlockEntity) {
+                        size += sizeManipulatorBlockEntity.data.get(0);
+                    }
+                }
+            }
+        }
+
+        if (size <= 0) {
+            size = 1;
+        }
+
+        int y_size = 5;
+
+        if (size < 5) {
+            y_size = size;
+        }
+
+        for (int x = -size; x <= size; x++) {
+            for (int y = -1; y <= y_size + (y_size - 1); y++) {
                 for (int z = -size; z <= size; z++) {
                     BlockPos currentPos = pPos.offset(x, y, z);
                     if (currentPos == pPos) {
@@ -159,14 +186,14 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             int radius = 50; // 100x100 area, radius of 50
             boolean foundSpot = false;
 
-            while (!foundSpot) {
-                for (int i_x = -radius; i_x <= radius && !foundSpot; i_x++) {
-                    for (int i_z = -radius; i_z <= radius && !foundSpot; i_z++) {
-                        currentIterPos = vortexTargetPos.offset(i_x, 0, i_z);
+            while (!foundSpot) {  for (int i_x = -radius; i_x <= radius && !foundSpot; i_x++) {
+                for (int i_z = -radius; i_z <= radius && !foundSpot; i_z++) {
+                    currentIterPos = vortexTargetPos.offset(i_x, 0, i_z);
+
 
                         boolean foundSolid = false;
                         for (int i__x = -size; i__x <= size; i__x++) {
-                            for (int i__y = -1; i__y <= size + (size - 1); i__y++) {
+                            for (int i__y = -1; i__y <= y_size + (y_size - 1); i__y++) {
                                 for (int i__z = -size; i__z <= size; i__z++) {
                                     // Calculate the position of the current block relative to currentPos
                                     BlockPos pos = currentIterPos.offset(i__x, i__y, i__z);
@@ -202,7 +229,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             handleTeleports(size, vortexDimension, overworldDimension, pPos, flight_target);
             localBlockEntity.data.set(0, 0);
             for (int x = -size; x <= size; x++) {
-                for (int y = -1; y <= size + (size - 1); y++) {
+                for (int y = -1; y <= y_size + (y_size - 1); y++) {
                     for (int z = -size; z <= size; z++) {
                         BlockPos currentPos = pPos.offset(x, y, z);
                         var blockEntity = pLevel.getBlockEntity(currentPos);
@@ -219,8 +246,14 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     }
 
     private void handleVortexTeleports(int size, Level pLevel, BlockPos pPos, BlockPos vortexTargetPos) {
+        int y_size = 5;
+
+        if (size < 5) {
+            y_size = size;
+        }
+
         for (int x = -size; x <= size; x++) {
-            for (int y = -1; y <= size + (size - 1); y++) {
+            for (int y = -1; y <= y_size + (y_size - 1); y++) {
                 for (int z = -size; z <= size; z++) {
                     BlockPos currentPos = pPos.offset(x, y, z);
                     if (currentPos == pPos) {
@@ -237,7 +270,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         }
 
         for (int x = -size; x <= size; x++) {
-            for (int y = -1; y <= size + (size - 1); y++) {
+            for (int y = -1; y <= y_size + (y_size - 1); y++) {
                 for (int z = -size; z <= size; z++) {
                     BlockPos currentPos = pPos.offset(x, y, z);
 
@@ -248,8 +281,14 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     }
 
     private void handleTeleports(int size, Level pLevel, Level overworldDimension, BlockPos pPos, BlockPos targetPos) {
+        int y_size = 5;
+
+        if (size < 5) {
+            y_size = size;
+        }
+
         for (int x = -size; x <= size; x++) {
-            for (int y = -1; y <= size + (size - 1); y++) {
+            for (int y = -1; y <= y_size + (y_size - 1); y++) {
                 for (int z = -size; z <= size; z++) {
                     BlockPos currentPos = pPos.offset(x, y, z);
                     if (currentPos == pPos) {
@@ -266,7 +305,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         }
 
         for (int x = -size; x <= size; x++) {
-            for (int y = -1; y <= size + (size - 1); y++) {
+            for (int y = -1; y <= y_size + (y_size - 1); y++) {
                 for (int z = -size; z <= size; z++) {
                     BlockPos currentPos = pPos.offset(x, y, z);
 
@@ -276,7 +315,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         }
 
         for (int __x = -size; __x <= size; __x++) {
-            for (int __y = -1; __y <= size + (size - 1); __y++) {
+            for (int __y = -1; __y <= y_size + (y_size - 1); __y++) {
                 for (int __z = -size; __z <= size; __z++) {
                     BlockPos updatedCurrentPos = targetPos.offset(__x, __y, __z);
 
@@ -300,6 +339,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 BlockPos augmentedPos = targetPos.offset(x, y, z);
 
                 BlockEntity blockEntity = pLevel.getBlockEntity(currentPos);
+
                 CompoundTag nbtData = null;
                 if (blockEntity != null) {
                     nbtData = blockEntity.saveWithFullMetadata();

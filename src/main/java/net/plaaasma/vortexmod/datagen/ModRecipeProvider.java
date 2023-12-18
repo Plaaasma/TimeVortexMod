@@ -76,6 +76,15 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('I', Blocks.IRON_BLOCK)
                 .unlockedBy(getHasName(Items.ENDER_EYE), has(Items.ENDER_EYE))
                 .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.SIZE_UPGRADE.get())
+                .pattern("RRR")
+                .pattern("RIR")
+                .pattern("RRR")
+                .define('R', Blocks.REDSTONE_BLOCK)
+                .define('I', Blocks.IRON_BLOCK)
+                .unlockedBy(getHasName(Items.REDSTONE), has(Items.REDSTONE))
+                .save(pWriter);
     }
 
     protected static void oreSmelting(Consumer<FinishedRecipe> pFinishedRecipeConsumer, List<ItemLike> pIngredients, RecipeCategory pCategory, ItemLike pResult, float pExperience, int pCookingTime, String pGroup) {

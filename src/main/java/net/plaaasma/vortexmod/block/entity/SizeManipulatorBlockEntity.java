@@ -13,6 +13,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
@@ -21,13 +23,13 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.plaaasma.vortexmod.VortexMod;
+import net.plaaasma.vortexmod.item.ModItems;
 import net.plaaasma.vortexmod.screen.SizeManipulatorMenu;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SizeManipulatorBlockEntity extends BlockEntity implements MenuProvider {
     private final ItemStackHandler itemHandler = new ItemStackHandler(1);
-
     private static final int INPUT_SLOT = 0;
 
     private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
@@ -104,7 +106,7 @@ public class SizeManipulatorBlockEntity extends BlockEntity implements MenuProvi
     @Override
     public void load(CompoundTag pTag) {
         super.load(pTag);
-
+        itemHandler.deserializeNBT(pTag.getCompound("inventory"));
         CompoundTag vortexModData = pTag.getCompound(VortexMod.MODID);
 
         this.field_size = vortexModData.getInt("field_size");
@@ -113,6 +115,8 @@ public class SizeManipulatorBlockEntity extends BlockEntity implements MenuProvi
     @Override
     protected void saveAdditional(CompoundTag pTag) {
         super.saveAdditional(pTag);
+
+        pTag.put("inventory", itemHandler.serializeNBT());
 
         CompoundTag vortexModData = new CompoundTag();
 
@@ -126,6 +130,14 @@ public class SizeManipulatorBlockEntity extends BlockEntity implements MenuProvi
             return;
         }
 
-        setChanged(pLevel, pPos, pState);
+        ItemStack currentStack = itemHandler.getStackInSlot(0);
+
+        if (currentStack.is(ModItems.SIZE_UPGRADE.get())) {
+            if (currentStack.getCount() > 32) {
+                itemHandler.setStackInSlot(0, new ItemStack(ModItems.SIZE_UPGRADE.get(), 32));
+            }
+            this.field_size = currentStack.getCount();
+            setChanged(pLevel, pPos, pState);
+        }
     }
 }
