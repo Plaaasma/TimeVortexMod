@@ -25,7 +25,7 @@ public record ModNoiseGenerator(NoiseSettings noiseSettings, BlockState defaultB
         pContext.register(CAVES, dummy(pContext));
     }
 
-    static final NoiseSettings OVERWORLD_NOISE_SETTINGS = create(-256, 1600, 4, 2);
+    static final NoiseSettings OVERWORLD_NOISE_SETTINGS = create(-256, 1600, 1, 2);
 
     private static DataResult<NoiseSettings> guardY(NoiseSettings p_158721_) {
         if (p_158721_.minY() + p_158721_.height() > DimensionType.MAX_Y + 1) {
