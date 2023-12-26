@@ -11,6 +11,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -19,6 +20,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.plaaasma.vortexmod.block.entity.CoordinateDesignatorBlockEntity;
 import net.plaaasma.vortexmod.block.entity.ModBlockEntities;
 import org.jetbrains.annotations.Nullable;
@@ -26,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class CoordinateDesignatorBlock extends BaseEntityBlock {
+    public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 3, 16);
 
     public CoordinateDesignatorBlock(Properties pProperties) {
         super(pProperties);
@@ -33,6 +37,11 @@ public class CoordinateDesignatorBlock extends BaseEntityBlock {
 
     public double distanceBetween(Vec3 p1, Vec3 p2) {
         return Math.sqrt(Math.pow(p2.x - p1.x, 2)) + Math.pow(p2.y - p1.y, 2) + Math.pow(p2.z - p1.z, 2);
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+        return SHAPE;
     }
 
     @Override

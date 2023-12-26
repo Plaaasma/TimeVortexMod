@@ -42,7 +42,6 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
 
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-
         return InteractionResult.sidedSuccess(pLevel.isClientSide());
     }
 

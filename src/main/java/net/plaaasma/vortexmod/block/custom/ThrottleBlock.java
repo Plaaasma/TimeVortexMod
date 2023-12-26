@@ -2,7 +2,10 @@ package net.plaaasma.vortexmod.block.custom;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -38,9 +41,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class ThrottleBlock extends BaseEntityBlock {
+    public static final VoxelShape SHAPE = Block.box(5, 0, 3, 11, 6, 10);
 
     public ThrottleBlock(Properties pProperties) {
         super(pProperties);
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+        return SHAPE;
     }
 
     @Override
@@ -58,6 +67,7 @@ public class ThrottleBlock extends BaseEntityBlock {
             }
             else {
                 throttleBlockEntity.data.set(0, 0);
+                pPlayer.displayClientMessage(Component.literal("Throttle Disabled"), true);
             }
         }
         return InteractionResult.SUCCESS;
