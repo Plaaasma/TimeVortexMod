@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "E": {
+      "item": "minecraft:ender_eye"
+    },
+    "I": {
+      "item": "minecraft:iron_block"
+    },
+    "P": {
+      "item": "minecraft:ender_pearl"
+    }
+  },
+  "pattern": [
+    "IEI",
+    "EPE",
+    "IEI"
+  ],
+  "result": {
+    "item": "vortexmod:size_manipulator_block"
+  },
+  "show_notification": true
+}
