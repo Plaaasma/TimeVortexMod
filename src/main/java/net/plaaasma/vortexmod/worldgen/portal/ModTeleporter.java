@@ -11,9 +11,9 @@ import net.plaaasma.vortexmod.block.ModBlocks;
 import java.util.function.Function;
 
 public class ModTeleporter implements ITeleporter {
-    public static BlockPos thisPos = BlockPos.ZERO;
+    public static Vec3 thisPos = Vec3.ZERO;
 
-    public ModTeleporter(BlockPos pos) {
+    public ModTeleporter(Vec3 pos) {
         thisPos = pos;
     }
 
@@ -22,7 +22,7 @@ public class ModTeleporter implements ITeleporter {
                               float yaw, Function<Boolean, Entity> repositionEntity) {
         entity = repositionEntity.apply(false);
 
-        entity.teleportTo(thisPos.getX(), thisPos.getY(), thisPos.getZ());
+        entity.teleportTo(thisPos.x(), thisPos.y(), thisPos.z());
 
         return entity;
     }

@@ -60,8 +60,10 @@ public class ModDimensions {
        NoiseBasedChunkGenerator noiseBasedChunkGenerator = new NoiseBasedChunkGenerator(
                MultiNoiseBiomeSource.createFromList(
                         new Climate.ParameterList<>(List.of(
-                                Pair.of(Climate.parameters(0.1F, 0.0F, 0.0F, 0.5F, 0.0F, 0.1F, 0.0F), biomeRegistry.getOrThrow(ModBiomes.BLUE_VORTEX_BIOME)),
-                                Pair.of(Climate.parameters(0.0F, 0.1F, 0.0F, 0.0F, 0.0F, 0.5F, 0.0F), biomeRegistry.getOrThrow(ModBiomes.ORANGE_VORTEX_BIOME))
+                                Pair.of(Climate.parameters(0.9F, 0.0F, 0.8F, 0.0F, 0.0F, 0.0F, 0.0F), biomeRegistry.getOrThrow(ModBiomes.BLUE_VORTEX_BIOME)),
+                                Pair.of(Climate.parameters(0.0F, 0.9F, 0.8F, 0.0F, 0.0F, 0.0F, 0.0F), biomeRegistry.getOrThrow(ModBiomes.ORANGE_VORTEX_BIOME)),
+                                Pair.of(Climate.parameters(0.0F, 0.0F, 0.0F, 1.0F, 0.7F, 0.0F, 0.0F), biomeRegistry.getOrThrow(ModBiomes.PURPLE_VORTEX_BIOME)),
+                                Pair.of(Climate.parameters(0.5F, 0.5F, 0.8F, 0.0F, 0.0F, 0.0F, 0.0F), biomeRegistry.getOrThrow(ModBiomes.BLACK_VORTEX_BIOME))
                        ))),
                 noiseGenSettings.getOrThrow(ModNoiseGenerator.CAVES));
 

@@ -10,6 +10,8 @@ public class ModSurfaceRules {
     private static final SurfaceRules.RuleSource GRASS_BLOCK = makeStateRule(Blocks.GRASS_BLOCK);
     private static final SurfaceRules.RuleSource SEA_LANTERN = makeStateRule(Blocks.SEA_LANTERN);
     private static final SurfaceRules.RuleSource GLOWSTONE = makeStateRule(Blocks.GLOWSTONE);
+    private static final SurfaceRules.RuleSource P_CONCRETE = makeStateRule(Blocks.PURPLE_CONCRETE);
+    private static final SurfaceRules.RuleSource OBSIDIAN = makeStateRule(Blocks.OBSIDIAN);
 
     public static SurfaceRules.RuleSource makeRules() {
         SurfaceRules.ConditionSource isAtOrAboveWaterLevel = SurfaceRules.waterBlockCheck(-1, 0);
@@ -32,7 +34,23 @@ public class ModSurfaceRules {
                         SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.ORANGE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.DEEP_UNDER_FLOOR, GLOWSTONE)),
                         SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.ORANGE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.VERY_DEEP_UNDER_FLOOR, GLOWSTONE)),
                         SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.ORANGE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.UNDER_CEILING, GLOWSTONE)),
-                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.ORANGE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, GLOWSTONE))
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.ORANGE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, GLOWSTONE)),
+
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.PURPLE_VORTEX_BIOME),  P_CONCRETE),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.PURPLE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.ON_FLOOR, P_CONCRETE)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.PURPLE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.ON_CEILING, P_CONCRETE)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.PURPLE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.DEEP_UNDER_FLOOR, P_CONCRETE)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.PURPLE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.VERY_DEEP_UNDER_FLOOR, P_CONCRETE)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.PURPLE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.UNDER_CEILING, P_CONCRETE)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.PURPLE_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, P_CONCRETE)),
+
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.BLACK_VORTEX_BIOME),  OBSIDIAN),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.BLACK_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.ON_FLOOR, OBSIDIAN)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.BLACK_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.ON_CEILING, OBSIDIAN)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.BLACK_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.DEEP_UNDER_FLOOR, OBSIDIAN)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.BLACK_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.VERY_DEEP_UNDER_FLOOR, OBSIDIAN)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.BLACK_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.UNDER_CEILING, OBSIDIAN)),
+                        SurfaceRules.ifTrue(SurfaceRules.isBiome(ModBiomes.BLACK_VORTEX_BIOME), SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, OBSIDIAN))
                 ),
 
 

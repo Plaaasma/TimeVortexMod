@@ -133,11 +133,11 @@ public class SizeManipulatorBlockEntity extends BlockEntity implements MenuProvi
         ItemStack currentStack = itemHandler.getStackInSlot(0);
 
         if (currentStack.is(ModItems.SIZE_UPGRADE.get())) {
-            if (currentStack.getCount() > 32) {
-                itemHandler.setStackInSlot(0, new ItemStack(ModItems.SIZE_UPGRADE.get(), 32));
-            }
             this.field_size = currentStack.getCount();
-            setChanged(pLevel, pPos, pState);
         }
+        else {
+            this.field_size = 0;
+        }
+        setChanged(pLevel, pPos, pState);
     }
 }

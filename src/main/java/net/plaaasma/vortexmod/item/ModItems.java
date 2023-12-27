@@ -14,7 +14,7 @@ public class ModItems {
             () -> new Cheese(new Item.Properties().food(ModFoods.CHEESE)));
 
     public static final RegistryObject<Item> SIZE_UPGRADE = ITEMS.register("size_upgrade",
-            () -> new SizeUpgrade(new Item.Properties()));
+            () -> new SizeUpgrade(new Item.Properties().stacksTo(16)));
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
