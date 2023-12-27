@@ -80,60 +80,6 @@ public class VortexMod {
 
     }
 
-    @SubscribeEvent
-    public void onChatMessage(ServerChatEvent event) {
-        Player ePlayer = event.getPlayer();
-        Level pLevel = ePlayer.level();
-        String raw_message = event.getRawText();
-        Matcher matcher = pattern.matcher(raw_message);
-        BlockPos ePlayerPos = ePlayer.blockPosition();
-
-        if (matcher.matches()) {
-            String[] parts = raw_message.substring(4).trim().split("\\s+");
-            int x = (int) Float.parseFloat(parts[0]);
-            int y = (int) Float.parseFloat(parts[1]);
-            int z = (int) Float.parseFloat(parts[2]);
-
-            boolean core_found = false;
-
-            BlockPos corePos = ePlayerPos;
-
-            for (int _x = -5; _x <= 5 && !core_found; _x++) {
-                for (int _y = -5; _y <= 5 && !core_found; _y++) {
-                    for (int _z = -5; _z <= 5 && !core_found; _z++) {
-                        BlockPos currentPos = ePlayerPos.offset(_x, _y, _z);
-
-                        BlockState blockState = pLevel.getBlockState(currentPos);
-                        if (blockState.getBlock() == ModBlocks.INTERFACE_BLOCK.get()) {
-                            core_found = true;
-                            corePos = currentPos;
-                        }
-                    }
-                }
-            }
-
-            boolean has_keypad = false;
-
-            for (int _x = -3; _x <= 3 && !has_keypad; _x++) {
-                for (int _y = -3; _y <= 3 && !has_keypad; _y++) {
-                    for (int _z = -3; _z <= 3 && !has_keypad; _z++) {
-                        BlockPos currentPos = ePlayerPos.offset(_x, _y, _z);
-
-                        BlockState blockState = pLevel.getBlockState(currentPos);
-                        if (blockState.getBlock() == ModBlocks.KEYPAD_BLOCK.get()) {
-                            has_keypad = true;
-                        }
-                    }
-                }
-            }
-            if (core_found && has_keypad) {
-                ModBlocks.needsUpdating.put(corePos.getX() + " " + corePos.getY() + " " + corePos.getZ(), x + " " + y + " " + z);
-                ePlayer.displayClientMessage(Component.literal("Updating designator coordinates to: " + x + " " + y + " " + z), true);
-            }
-            event.setCanceled(true);
-        }
-    }
-
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
