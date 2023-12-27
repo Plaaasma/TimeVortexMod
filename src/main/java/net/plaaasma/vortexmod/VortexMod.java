@@ -90,9 +90,9 @@ public class VortexMod {
 
         if (matcher.matches()) {
             String[] parts = raw_message.substring(4).trim().split("\\s+");
-            int x = Integer.parseInt(parts[0]);
-            int y = Integer.parseInt(parts[1]);
-            int z = Integer.parseInt(parts[2]);
+            int x = (int) Float.parseFloat(parts[0]);
+            int y = (int) Float.parseFloat(parts[1]);
+            int z = (int) Float.parseFloat(parts[2]);
 
             boolean core_found = false;
 
