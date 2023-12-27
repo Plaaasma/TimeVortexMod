@@ -38,6 +38,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.capabilities.Capability;
@@ -672,6 +673,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         continue;
                     }
                     Entity player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 2, false);
+                    //List<LivingEntity> list = pLevel.getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT, player, AABB.ofSize(pPos.getCenter(), x, y, z));
                     if (player != null) {
                         TeleportationDetails details = new TeleportationDetails(player, targetPos, player.blockPosition().getX() - pPos.getX(), player.blockPosition().getY() - pPos.getY(), player.blockPosition().getZ() - pPos.getZ());
                         toBeTeleported.add(details);
