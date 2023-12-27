@@ -3,6 +3,7 @@ package net.plaaasma.vortexmod.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -73,7 +74,7 @@ public class SetCoordinateCommand {
         }
         if (core_found && has_keypad) {
             ModBlocks.needsUpdating.put(corePos.getX() + " " + corePos.getY() + " " + corePos.getZ(), x + " " + y + " " + z);
-            source.sendSuccess(() -> Component.literal("Updating designator coordinates to: " + x + " " + y + " " + z), true);
+            source.sendSuccess(() -> Component.literal("Updating designator coordinates to: ").append(Component.literal(x + " " + y + " " + z).withStyle(ChatFormatting.GOLD)), true);
         }
         else {
             source.sendSuccess(() -> Component.literal("Either the core is not in range or you do not have a keypad."), true);

@@ -1,5 +1,6 @@
 package net.plaaasma.vortexmod.block.custom;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -50,7 +51,7 @@ public class KeypadBlock extends BaseEntityBlock {
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (!pLevel.isClientSide()) {
-            pPlayer.displayClientMessage(Component.literal("Type the coordinates in chat in the following format: \nTC: -1526 100 218\nYou will receive a message above your hotbar if you do it correctly. You must be in range of the TARDIS core in order for it to \"hear you\""), false);
+            pPlayer.displayClientMessage(Component.literal("Use the '/tardis set coords (x) (y) (z)' to set the target coordinates").withStyle(ChatFormatting.AQUA), false);
         }
 
         return InteractionResult.SUCCESS;

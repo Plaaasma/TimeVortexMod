@@ -535,7 +535,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         dirZ /= magnitude;
 
         double min_distance = size * 10;
-        double max_distance = 25000;
+        double max_distance = 100000;
         double total_distance = Math.sqrt(pPos.distToCenterSqr(currentTarget.getX(), pPos.getY(), currentTarget.getZ()));
         double distance = 0.5 * total_distance;
 
