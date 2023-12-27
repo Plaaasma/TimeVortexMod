@@ -31,6 +31,8 @@ public class ModBlocks {
             () -> new KeypadBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
     public static final RegistryObject<Block> SIZE_MANIPULATOR_BLOCK = registerBlock("size_manipulator_block",
             () -> new SizeManipulatorBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
+    public static final RegistryObject<Block> EQUALIZER_BLOCK = registerBlock("equalizer_block",
+            () -> new EqualizerBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);

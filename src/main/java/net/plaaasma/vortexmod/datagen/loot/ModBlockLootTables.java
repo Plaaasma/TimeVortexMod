@@ -21,6 +21,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(ModBlocks.COORDINATE_BLOCK.get());
         this.dropSelf(ModBlocks.KEYPAD_BLOCK.get());
         this.dropSelf(ModBlocks.SIZE_MANIPULATOR_BLOCK.get());
+        this.dropSelf(ModBlocks.EQUALIZER_BLOCK.get());
     }
 
     @Override

@@ -28,6 +28,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 new ModelFile.UncheckedModelFile(modLoc("block/tardis_keypad")));
         simpleBlockWithItem(ModBlocks.SIZE_MANIPULATOR_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/size_manipulator")));
+        simpleBlockWithItem(ModBlocks.EQUALIZER_BLOCK.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/equalizer")));
     }
 
     private void blockWithItem(RegistryObject<Block> blockRegistryObject) {

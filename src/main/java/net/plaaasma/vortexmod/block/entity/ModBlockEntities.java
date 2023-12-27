@@ -34,6 +34,11 @@ public class ModBlockEntities {
                     BlockEntityType.Builder.of(SizeManipulatorBlockEntity::new,
                             ModBlocks.SIZE_MANIPULATOR_BLOCK.get()).build(null));
 
+    public static final RegistryObject<BlockEntityType<EqualizerBlockEntity>> EQUALIZER_BE =
+            BLOCK_ENTITIES.register("equalizer_be", () ->
+                    BlockEntityType.Builder.of(EqualizerBlockEntity::new,
+                            ModBlocks.EQUALIZER_BLOCK.get()).build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }

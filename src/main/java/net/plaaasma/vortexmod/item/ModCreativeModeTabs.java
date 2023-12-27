@@ -25,6 +25,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.COORDINATE_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.KEYPAD_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.SIZE_MANIPULATOR_BLOCK.get().asItem());
+                        pOutput.accept(ModBlocks.EQUALIZER_BLOCK.get().asItem());
                     })
                     .build());
 

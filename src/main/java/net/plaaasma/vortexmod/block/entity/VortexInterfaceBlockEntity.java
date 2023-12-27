@@ -14,6 +14,7 @@ import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ChunkLevel;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
@@ -25,6 +26,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -36,14 +38,18 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -293,30 +299,47 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         Random random = new Random();
 
         double dx = targetPosition.getX() - center.getX();
-        double dy = 0;
+        double dy = targetPosition.getY() - center.getY();
         double dz = targetPosition.getZ() - center.getZ();
 
         // Normalize the direction vector
         double magnitude = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        double dirX = dx / magnitude;
-        double dirY = dy / magnitude;
-        double dirZ = dz / magnitude;
+        dx /= magnitude;
+        dy /= magnitude;
+        dz /= magnitude;
+
+        // Up vector (can be any orthogonal vector to direction vector, here we choose Y-axis)
+        double upX = 0, upY = 1, upZ = 0;
+
+        // Calculate right vector using cross product (direction x up)
+        double rightX = dy * upZ - dz * upY;
+        double rightY = dz * upX - dx * upZ;
+        double rightZ = dx * upY - dy * upX;
+
+        // Recalculate up vector as (right x direction)
+        upX = rightY * dz - rightZ * dy;
+        upY = rightZ * dx - rightX * dz;
+        upZ = rightX * dy - rightY * dx;
 
         for (int i = 0; i < particleCount; i++) {
-            // Generate a random angle for the particles around the radius
-            double angle = random.nextDouble() * 2 * Math.PI;
-
-            // Generate a random position along the length of the cylinder
+            // Random angle for particles around the radius and position along the length
+            double angleAroundRadius = random.nextDouble() * 2 * Math.PI;
             double normalizedLength = random.nextDouble() - 0.5;
 
-            // Calculate positions based on the cylinder geometry
-            double x = radius * Math.cos(angle);
-            double y = radius * Math.sin(angle);
+            // Initial positions based on the cylinder geometry
+            double x = radius * Math.cos(angleAroundRadius);
+            double y = radius * Math.sin(angleAroundRadius);
             double z = length * normalizedLength;
 
-            double rotatedX = dirX * z + x;
-            double rotatedY = dirY * z + y;
-            double rotatedZ = dirZ * z + z;
+            // Apply look-at rotation
+            double rotatedX = rightX * x + upX * y + dx * z;
+            double rotatedY = rightY * x + upY * y + dy * z;
+            double rotatedZ = rightZ * x + upZ * y + dz * z;
+
+            // Translate to the center position
+            rotatedX += center.getX();
+            rotatedY += center.getY();
+            rotatedZ += center.getZ();
 
             float randomFloat = random.nextFloat();
 
@@ -330,15 +353,15 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
             // Set velocity to create a spiral effect
             double spiralSpeed = 1; // Adjust this value to control the speed of the spiral
-            float xVel = (float) (-spiralSpeed * Math.sin(angle));
-            float yVel = (float) (spiralSpeed * Math.cos(angle));
-            float zVel = -1F; // Negative value to move particles down the length of the cylinder
+            float xVel = (float) (-spiralSpeed * Math.sin(angleAroundRadius));
+            float yVel = (float) (spiralSpeed * Math.cos(angleAroundRadius));
+            float zVel = -1;
 
             ClientboundLevelParticlesPacket particlesPacket = new ClientboundLevelParticlesPacket(
                     particle, false,
-                    center.getX() + rotatedX,
-                    center.getY() + rotatedY,
-                    center.getZ() + rotatedZ,
+                    rotatedX,
+                    rotatedY,
+                    rotatedZ,
                     xVel, yVel, zVel, 0.025F, 1
             );
             pConnection.send(particlesPacket);
@@ -351,7 +374,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         }
 
         MinecraftServer minecraftserver = pLevel.getServer();
-        Level vortexDimension = minecraftserver.getLevel(ModDimensions.vortexDIM_LEVEL_KEY);
+        ServerLevel vortexDimension = minecraftserver.getLevel(ModDimensions.vortexDIM_LEVEL_KEY);
         ServerLevel overworldDimension = minecraftserver.getLevel(Level.OVERWORLD);
 
         VortexInterfaceBlockEntity localBlockEntity = (VortexInterfaceBlockEntity) pLevel.getBlockEntity(pPos);
@@ -362,8 +385,8 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         int targetX = 0;
         int targetY = 0;
         int targetZ = 0;
-
         int throttle_on = 0;
+        boolean has_equalizer = false;
 
         String newCoordinateString = "";
 
@@ -426,6 +449,10 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     if (blockEntity instanceof ThrottleBlockEntity throttleBlockEntity) {
                         throttle_on = throttleBlockEntity.data.get(0);
                     }
+
+                    if (blockEntity instanceof EqualizerBlockEntity equalizerBlockEntity) {
+                        has_equalizer = true;
+                    }
                 }
             }
         }
@@ -438,6 +465,16 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             ModBlocks.needsUpdating.remove(pPos.getX() + " " + pPos.getY() + " " + pPos.getZ());
         }
 
+        Entity closestPlayer = overworldDimension.getNearestPlayer(pPos.getX(), pPos.getY(), pPos.getZ(), size, false);
+        if (closestPlayer == null) {
+            closestPlayer = vortexDimension.getNearestPlayer(pPos.getX(), pPos.getY(), pPos.getZ(), size, false);
+        }
+        if (closestPlayer != null) {
+            if (closestPlayer.position().y() < pPos.getY() - 1) {
+                closestPlayer = null;
+            }
+        }
+
         if (throttle_on == 1 && localBlockEntity.data.get(0) > localBlockEntity.data.get(1) + 60 && pLevel != vortexDimension) {
             BlockPos vortexTargetPos = findNewVortexPosition(pPos, new BlockPos(targetX, targetY, targetZ), size);
             vortexTargetPos = new BlockPos(vortexTargetPos.getX(), -100, vortexTargetPos.getZ());
@@ -446,9 +483,14 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 ModBlocks.needsLoading.add(vortexTargetPos.getX() + " " + vortexTargetPos.getY() + " " + vortexTargetPos.getZ());
             }
             localBlockEntity.data.set(1, localBlockEntity.data.get(0));
-            handleVortexTeleports(size, pLevel, pPos, vortexTargetPos);
+            if (closestPlayer != null) {
+                handleVortexTeleports(size, pLevel, pPos, vortexTargetPos);
+            }
+            else {
+                handleTeleports(size, pLevel, overworldDimension, pPos, new BlockPos(targetX, targetY, targetZ));
+            }
         }
-        else if (throttle_on == 1 && pLevel == vortexDimension && pPos.distToCenterSqr(targetX, pPos.getY(), targetZ) <= 5000) {
+        else if (throttle_on == 1 && pLevel == vortexDimension && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 250 && closestPlayer != null) {
             BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
             localBlockEntity.data.set(1, localBlockEntity.data.get(0));
             handleTeleports(size, vortexDimension, overworldDimension, pPos, flight_target);
@@ -469,10 +511,12 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             handleDematParticles(size, pLevel, pPos);
         }
         if (throttle_on == 1 && pLevel == vortexDimension) {
-            if (localBlockEntity.data.get(0) % 50 == 0 && localBlockEntity.data.get(0) > localBlockEntity.data.get(1) + 50 && pPos.distToCenterSqr(targetX, pPos.getY(), targetZ) > 5000) {
+            if (localBlockEntity.data.get(0) % 100 == 0 && localBlockEntity.data.get(0) > localBlockEntity.data.get(1) + 100 && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) > 250 && closestPlayer != null) {
                 BlockPos newTarget = findNewVortexPosition(pPos, new BlockPos(targetX, targetY, targetZ), size);
                 handleVortex2VortexTeleports(size, pLevel, pPos, newTarget);
-                handleLightningStrikes(overworldDimension, new BlockPos(targetX, targetY, targetZ));
+                if (!has_equalizer) {
+                    handleLightningStrikes(overworldDimension, new BlockPos(targetX, targetY, targetZ));
+                }
             }
             handleRematParticles(size, overworldDimension, new BlockPos(targetX, targetY, targetZ));
             handleVortexParticles(size, vortexDimension, pPos, new BlockPos(targetX, targetY, targetZ));
@@ -490,10 +534,10 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         dirX /= magnitude;
         dirZ /= magnitude;
 
-        double min_distance = size * 10; // Adjust the 100 to change the range
-        double max_distance = 2500;
-        double total_distance = pPos.distToCenterSqr(currentTarget.getX(), pPos.getY(), currentTarget.getZ()) / 100;
-        double distance = 0.1 * total_distance;
+        double min_distance = size * 10;
+        double max_distance = 25000;
+        double total_distance = Math.sqrt(pPos.distToCenterSqr(currentTarget.getX(), pPos.getY(), currentTarget.getZ()));
+        double distance = 0.5 * total_distance;
 
         if (distance < min_distance) {
             distance = min_distance;
@@ -505,6 +549,13 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         // Calculate the new position
         int newX = pPos.getX() + (int)(dirX * distance);
         int newZ = pPos.getZ() + (int)(dirZ * distance);
+
+        if ((dirX > 0 && newX > currentTarget.getX()) || (dirX < 0 && newX < currentTarget.getX())) {
+            newX = currentTarget.getX();
+        }
+        if ((dirZ > 0 && newZ > currentTarget.getZ()) || (dirZ < 0 && newZ < currentTarget.getZ())) {
+            newZ = currentTarget.getZ();
+        }
 
         return new BlockPos(newX, pPos.getY(), newZ);
     }
@@ -555,11 +606,21 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         handleBlockTeleportVortex2Vortex(pLevel, currentPos, vortexTargetPos, x, y, z);
                         continue;
                     }
-                    Entity player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 2, false);
+                    Entity player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
                     if (player != null) {
                         TeleportationDetails details = new TeleportationDetails(player, vortexTargetPos, player.position().x() - pPos.getX(), player.position().y() - pPos.getY(), player.position().z() - pPos.getZ());
                         toBeTeleported.add(details);
                     }
+
+                    AABB searchBB = new AABB(currentPos.getX() - 1, currentPos.getY() - 1, currentPos.getZ() - 1, currentPos.getX() + 1, currentPos.getY() + 1, currentPos.getZ() + 1);
+
+                    List<Entity> nearbyEntities = pLevel.getEntitiesOfClass(Entity.class, searchBB, entity -> !(entity instanceof Player));
+
+                    for (Entity nearbyEntity : nearbyEntities) {
+                        TeleportationDetails details = new TeleportationDetails(nearbyEntity, vortexTargetPos, nearbyEntity.position().x() - pPos.getX(), nearbyEntity.position().y() - pPos.getY(), nearbyEntity.position().z() - pPos.getZ());
+                        toBeTeleported.add(details);
+                    }
+
                     handleBlockTeleportVortex2Vortex(pLevel, currentPos, vortexTargetPos, x, y, z);
                 }
             }
@@ -612,11 +673,21 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         handleBlockTeleportVortex(pLevel, currentPos, vortexTargetPos, x, y, z);
                         continue;
                     }
-                    Entity player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 2, false);
+                    Entity player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
                     if (player != null) {
-                        TeleportationDetails details = new TeleportationDetails(player, vortexTargetPos, player.blockPosition().getX() - pPos.getX(), player.blockPosition().getY() - pPos.getY(), player.blockPosition().getZ() - pPos.getZ());
+                        TeleportationDetails details = new TeleportationDetails(player, vortexTargetPos, player.position().x() - pPos.getX(), player.position().y() - pPos.getY(), player.position().z() - pPos.getZ());
                         toBeTeleported.add(details);
                     }
+
+                    AABB searchBB = new AABB(currentPos.getX() - 1, currentPos.getY() - 1, currentPos.getZ() - 1, currentPos.getX() + 1, currentPos.getY() + 1, currentPos.getZ() + 1);
+
+                    List<Entity> nearbyEntities = pLevel.getEntitiesOfClass(Entity.class, searchBB, entity -> !(entity instanceof Player));
+
+                    for (Entity nearbyEntity : nearbyEntities) {
+                        TeleportationDetails details = new TeleportationDetails(nearbyEntity, vortexTargetPos, nearbyEntity.position().x() - pPos.getX(), nearbyEntity.position().y() - pPos.getY(), nearbyEntity.position().z() - pPos.getZ());
+                        toBeTeleported.add(details);
+                    }
+
                     handleBlockTeleportVortex(pLevel, currentPos, vortexTargetPos, x, y, z);
                 }
             }
@@ -661,8 +732,6 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
         List<TeleportationDetails> toBeTeleported = new ArrayList<>();
 
-        List<LivingEntity> entityList = new ArrayList<>();
-
         for (int x = -size; x <= size; x++) {
             for (int y = -1; y <= y_size + (y_size - 1); y++) {
                 for (int z = -size; z <= size; z++) {
@@ -671,12 +740,21 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         handleBlockTeleport(pLevel, currentPos, targetPos, x, y, z);
                         continue;
                     }
-                    Entity player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 2, false);
+                    Entity player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
                     if (player != null) {
-                        TeleportationDetails details = new TeleportationDetails(player, targetPos, player.blockPosition().getX() - pPos.getX(), player.blockPosition().getY() - pPos.getY(), player.blockPosition().getZ() - pPos.getZ());
+                        TeleportationDetails details = new TeleportationDetails(player, targetPos, player.position().x() - pPos.getX(), player.position().y() - pPos.getY(), player.position().z() - pPos.getZ());
                         toBeTeleported.add(details);
                     }
-                    // PENIS MUSIC
+
+                    AABB searchBB = new AABB(currentPos.getX() - 1, currentPos.getY() - 1, currentPos.getZ() - 1, currentPos.getX() + 1, currentPos.getY() + 1, currentPos.getZ() + 1);
+
+                    List<Entity> nearbyEntities = pLevel.getEntitiesOfClass(Entity.class, searchBB, entity -> !(entity instanceof Player));
+
+                    for (Entity nearbyEntity : nearbyEntities) {
+                        TeleportationDetails details = new TeleportationDetails(nearbyEntity, targetPos, nearbyEntity.position().x() - pPos.getX(), nearbyEntity.position().y() - pPos.getY(), nearbyEntity.position().z() - pPos.getZ());
+                        toBeTeleported.add(details);
+                    }
+
                     handleBlockTeleport(pLevel, currentPos, targetPos, x, y, z);
                 }
             }
