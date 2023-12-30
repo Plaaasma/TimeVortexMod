@@ -1,50 +1,52 @@
 package net.plaaasma.vortexmod.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.ChatFormatting;
-import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.coordinates.Coordinates;
-import net.minecraft.commands.arguments.coordinates.Vec3Argument;
+import net.minecraft.commands.arguments.DimensionArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.block.entity.CoordinateDesignatorBlockEntity;
 import net.plaaasma.vortexmod.block.entity.VortexInterfaceBlockEntity;
-import org.codehaus.plexus.util.cli.Commandline;
+import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 
-public class SetCoordinateCommand {
-    public SetCoordinateCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
+public class SetDimensionCommand {
+
+    public SetDimensionCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("tardis")
         .then(Commands.literal("set")
-        .then(Commands.literal("coords")
-        .then(Commands.argument("target", Vec3Argument.vec3())
+        .then(Commands.literal("dim")
+        .then(Commands.argument("dimension", DimensionArgument.dimension())
             .executes((command) -> {
-                return setCoords(command.getSource(), Vec3Argument.getCoordinates(command, "target"));
+                return setDim(command.getSource(), DimensionArgument.getDimension(command, "dimension"));
             }))
         )));
     }
 
-    private int setCoords(CommandSourceStack source, Coordinates targetCoords) throws CommandSyntaxException {
+    private int setDim(CommandSourceStack source, ServerLevel targetDim) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayer();
         BlockPos ePlayerPos = player.blockPosition();
-        BlockPos targetVec = targetCoords.getBlockPos(source);
         ServerLevel pLevel = source.getPlayer().serverLevel();
 
-        int x = targetVec.getX();
-        int y = targetVec.getY();
-        int z = targetVec.getZ();
+        MinecraftServer minecraftserver = pLevel.getServer();
+        ServerLevel tardisDimension = minecraftserver.getLevel(ModDimensions.tardisDIM_LEVEL_KEY);
+
+        if (targetDim == tardisDimension) {
+            return 1;
+        }
 
         boolean core_found = false;
 
         BlockPos corePos = ePlayerPos;
+
+        VortexInterfaceBlockEntity interfaceEntity = null;
 
         for (int _x = -16; _x <= 16 && !core_found; _x++) {
             for (int _y = -16; _y <= 16 && !core_found; _y++) {
@@ -55,6 +57,7 @@ public class SetCoordinateCommand {
                     if (blockState.getBlock() == ModBlocks.INTERFACE_BLOCK.get()) {
                         core_found = true;
                         corePos = currentPos;
+                        interfaceEntity = (VortexInterfaceBlockEntity) pLevel.getBlockEntity(corePos);
                     }
                 }
             }
@@ -66,9 +69,9 @@ public class SetCoordinateCommand {
 
         CoordinateDesignatorBlockEntity designatorEntity = null;
 
-        for (int _x = -16; _x <= 16 && !has_components; _x++) {
-            for (int _y = -16; _y <= 16 && !has_components; _y++) {
-                for (int _z = -16; _z <= 16 && !has_components; _z++) {
+        for (int _x = -16; _x <= 16; _x++) {
+            for (int _y = -16; _y <= 16; _y++) {
+                for (int _z = -16; _z <= 16; _z++) {
                     BlockPos currentPos = corePos.offset(_x, _y, _z);
 
                     BlockState blockState = pLevel.getBlockState(currentPos);
@@ -86,10 +89,8 @@ public class SetCoordinateCommand {
             }
         }
         if (core_found && has_components && designatorEntity != null) {
-            designatorEntity.data.set(0, x);
-            designatorEntity.data.set(1, y);
-            designatorEntity.data.set(2, z);
-            source.sendSuccess(() -> Component.literal("Updating designator coordinates to: ").append(Component.literal(x + " " + y + " " + z).withStyle(ChatFormatting.GOLD)), false);
+            interfaceEntity.data.set(10, targetDim.dimension().location().getPath().hashCode());
+            source.sendSuccess(() -> Component.literal("Updating target dimension").withStyle(ChatFormatting.GOLD), false);
         }
         else {
             if (!core_found) {

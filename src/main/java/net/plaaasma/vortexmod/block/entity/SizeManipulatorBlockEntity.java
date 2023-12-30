@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SizeManipulatorBlockEntity extends BlockEntity implements MenuProvider {
-    private final ItemStackHandler itemHandler = new ItemStackHandler(1);
+    public final ItemStackHandler itemHandler = new ItemStackHandler(1);
     private static final int INPUT_SLOT = 0;
 
     private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
@@ -130,7 +130,7 @@ public class SizeManipulatorBlockEntity extends BlockEntity implements MenuProvi
             return;
         }
 
-        ItemStack currentStack = itemHandler.getStackInSlot(0);
+        ItemStack currentStack = itemHandler.getStackInSlot(INPUT_SLOT);
 
         if (currentStack.is(ModItems.SIZE_UPGRADE.get())) {
             this.field_size = currentStack.getCount();

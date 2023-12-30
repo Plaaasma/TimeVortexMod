@@ -39,6 +39,16 @@ public class ModBlockEntities {
                     BlockEntityType.Builder.of(EqualizerBlockEntity::new,
                             ModBlocks.EQUALIZER_BLOCK.get()).build(null));
 
+    public static final RegistryObject<BlockEntityType<TardisBlockEntity>> TARDIS_BE =
+            BLOCK_ENTITIES.register("tardis_be", () ->
+                    BlockEntityType.Builder.of(TardisBlockEntity::new,
+                            ModBlocks.TARDIS_BLOCK.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<ScannerBlockEntity>> SCANNER_BE =
+            BLOCK_ENTITIES.register("scanner_be", () ->
+                    BlockEntityType.Builder.of(ScannerBlockEntity::new,
+                            ModBlocks.SCANNER_BLOCK.get()).build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }

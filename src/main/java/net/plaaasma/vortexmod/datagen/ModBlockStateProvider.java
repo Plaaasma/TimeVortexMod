@@ -30,6 +30,14 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 new ModelFile.UncheckedModelFile(modLoc("block/size_manipulator")));
         simpleBlockWithItem(ModBlocks.EQUALIZER_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/equalizer")));
+        simpleBlockWithItem(ModBlocks.TARDIS_BLOCK.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/tardis")));
+        simpleBlockWithItem(ModBlocks.DOOR_BLOCK.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/door_block")));
+        simpleBlockWithItem(ModBlocks.SCANNER_BLOCK.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/exterior_scanner")));
+        simpleBlockWithItem(ModBlocks.GROUNDING_BLOCK.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/grounding_block")));
     }
 
     private void blockWithItem(RegistryObject<Block> blockRegistryObject) {

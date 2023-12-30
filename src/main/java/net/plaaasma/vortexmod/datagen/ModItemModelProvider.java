@@ -20,6 +20,8 @@ public class ModItemModelProvider extends ItemModelProvider {
     protected void registerModels() {
         simpleItem(ModItems.CHEESE);
         simpleItem(ModItems.SIZE_UPGRADE);
+        simpleItem(ModItems.EUCLIDEAN_UPGRADE);
+        simpleItem(ModItems.WRENCH);
     }
 
     private ItemModelBuilder simpleItem(RegistryObject<Item> item) {

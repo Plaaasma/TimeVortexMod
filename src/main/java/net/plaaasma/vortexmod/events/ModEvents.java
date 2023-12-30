@@ -7,6 +7,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.server.command.ConfigCommand;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.commands.SetCoordinateCommand;
+import net.plaaasma.vortexmod.commands.SetDimensionCommand;
 
 @Mod.EventBusSubscriber(modid = VortexMod.MODID)
 public class ModEvents {
@@ -14,6 +15,7 @@ public class ModEvents {
     @SubscribeEvent
     public static void onCommandsRegister(RegisterCommandsEvent event) {
         new SetCoordinateCommand(event.getDispatcher());
+        new SetDimensionCommand(event.getDispatcher());
 
         ConfigCommand.register(event.getDispatcher());
     }
@@ -23,6 +25,8 @@ public class ModEvents {
         if (event.getOriginal().level().isClientSide()) {
             event.getEntity().getPersistentData().putIntArray(VortexMod.MODID + "targetpos",
                     event.getOriginal().getPersistentData().getIntArray(VortexMod.MODID + "targetpos"));
+            event.getEntity().getPersistentData().putIntArray(VortexMod.MODID + "targetdim",
+                    event.getOriginal().getPersistentData().getIntArray(VortexMod.MODID + "targetdim"));
         }
     }
 }

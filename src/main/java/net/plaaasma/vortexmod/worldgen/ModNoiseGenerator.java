@@ -21,8 +21,10 @@ import java.util.List;
 public record ModNoiseGenerator(NoiseSettings noiseSettings, BlockState defaultBlock, BlockState defaultFluid, NoiseRouter noiseRouter, SurfaceRules.RuleSource surfaceRule, List<Climate.ParameterPoint> spawnTarget, int seaLevel, boolean disableMobGeneration, boolean aquifersEnabled, boolean oreVeinsEnabled, boolean useLegacyRandomSource) {
 
     public static final ResourceKey<NoiseGeneratorSettings> CAVES = ResourceKey.create(Registries.NOISE_SETTINGS, new ResourceLocation(VortexMod.MODID,"vortex_caves"));
+    public static final ResourceKey<NoiseGeneratorSettings> VOID = ResourceKey.create(Registries.NOISE_SETTINGS, new ResourceLocation(VortexMod.MODID,"tardis_void"));
     public static void bootstrap(BootstapContext<NoiseGeneratorSettings> pContext) {
         pContext.register(CAVES, dummy(pContext));
+        pContext.register(VOID, void_dummy(pContext));
     }
 
     static final NoiseSettings OVERWORLD_NOISE_SETTINGS = create(-256, 1600, 1, 2);
@@ -87,7 +89,10 @@ public record ModNoiseGenerator(NoiseSettings noiseSettings, BlockState defaultB
     public static NoiseGeneratorSettings dummy(BootstapContext<?> pContext) {
         return new NoiseGeneratorSettings(OVERWORLD_NOISE_SETTINGS, Blocks.SEA_LANTERN.defaultBlockState(), Blocks.AIR.defaultBlockState(),
                 noNewCaves(pContext.lookup(Registries.DENSITY_FUNCTION), pContext.lookup(Registries.NOISE), slideNetherLike(pContext.lookup(Registries.DENSITY_FUNCTION), -256, 256)), ModSurfaceRules.makeRules(), List.of(), -256, false, false, false, false);
-        /*return new NoiseGeneratorSettings(OVERWORLD_NOISE_SETTINGS, Blocks.SEA_LANTERN.defaultBlockState(), Blocks.AIR.defaultBlockState(),
-                noNewCaves(pContext.lookup(Registries.DENSITY_FUNCTION), pContext.lookup(Registries.NOISE), slideNetherLike(pContext.lookup(Registries.DENSITY_FUNCTION), -64, 256)), SurfaceRuleData.air(), List.of(), 63, true, false, false, false);*/
+    }
+
+    public static NoiseGeneratorSettings void_dummy(BootstapContext<?> pContext) {
+        return new NoiseGeneratorSettings(OVERWORLD_NOISE_SETTINGS, Blocks.AIR.defaultBlockState(), Blocks.AIR.defaultBlockState(),
+                noNewCaves(pContext.lookup(Registries.DENSITY_FUNCTION), pContext.lookup(Registries.NOISE), slideNetherLike(pContext.lookup(Registries.DENSITY_FUNCTION), -256, 256)), ModSurfaceRules.makeRules(), List.of(), -256, false, false, false, false);
     }
 }

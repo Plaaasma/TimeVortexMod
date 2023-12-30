@@ -23,12 +23,14 @@ public class ModBiomes {
     public static final ResourceKey<Biome> ORANGE_VORTEX_BIOME = ResourceKey.create(Registries.BIOME, new ResourceLocation(VortexMod.MODID, "orange_vortex_biome"));
     public static final ResourceKey<Biome> PURPLE_VORTEX_BIOME = ResourceKey.create(Registries.BIOME, new ResourceLocation(VortexMod.MODID, "purple_vortex_biome"));
     public static final ResourceKey<Biome> BLACK_VORTEX_BIOME = ResourceKey.create(Registries.BIOME, new ResourceLocation(VortexMod.MODID, "black_vortex_biome"));
+    public static final ResourceKey<Biome> TARDIS_BIOME = ResourceKey.create(Registries.BIOME, new ResourceLocation(VortexMod.MODID, "tardis_biome"));
 
     public static void bootstrap(BootstapContext<Biome> context) {
         context.register(BLUE_VORTEX_BIOME, vortexBiome(context));
         context.register(ORANGE_VORTEX_BIOME, vortexBiome(context));
         context.register(PURPLE_VORTEX_BIOME, vortexBiome(context));
         context.register(BLACK_VORTEX_BIOME, vortexBiome(context));
+        context.register(TARDIS_BIOME, tardisBiome(context));
     }
 
     public static Biome vortexBiome(BootstapContext<Biome> context) {
@@ -52,6 +54,29 @@ public class ModBiomes {
                         .grassColorOverride(0xa88b32)
                         .foliageColorOverride(0xa88b32)
                         .fogColor(0x7f4dff)
+                        .ambientMoodSound(AmbientMoodSettings.LEGACY_CAVE_SETTINGS).build())
+                .build();
+    }
+
+    public static Biome tardisBiome(BootstapContext<Biome> context) {
+        MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
+
+        BiomeGenerationSettings.Builder biomeBuilder =
+                new BiomeGenerationSettings.Builder(context.lookup(Registries.PLACED_FEATURE), context.lookup(Registries.CONFIGURED_CARVER));
+
+        return new Biome.BiomeBuilder()
+                .hasPrecipitation(false)
+                .downfall(0.8f)
+                .temperature(0.1f)
+                .generationSettings(biomeBuilder.build())
+                .mobSpawnSettings(spawnBuilder.build())
+                .specialEffects((new BiomeSpecialEffects.Builder())
+                        .waterColor(0xffffff)
+                        .waterFogColor(0xffffff)
+                        .skyColor(0xffffff)
+                        .grassColorOverride(0xffffff)
+                        .foliageColorOverride(0xffffff)
+                        .fogColor(0xffffff)
                         .ambientMoodSound(AmbientMoodSettings.LEGACY_CAVE_SETTINGS).build())
                 .build();
     }

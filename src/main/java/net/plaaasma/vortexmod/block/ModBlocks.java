@@ -13,8 +13,6 @@ import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.block.custom.*;
 import net.plaaasma.vortexmod.item.ModItems;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.function.Supplier;
 
 public class ModBlocks {
@@ -24,7 +22,7 @@ public class ModBlocks {
     public static final RegistryObject<Block> THROTTLE_BLOCK = registerBlock("throttle_block",
             () -> new ThrottleBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
     public static final RegistryObject<Block> INTERFACE_BLOCK = registerBlock("interface_block",
-            () -> new VortexInterfaceBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
+            () -> new VortexInterfaceBlock(BlockBehaviour.Properties.copy(Blocks.BEDROCK).noOcclusion()));
     public static final RegistryObject<Block> COORDINATE_BLOCK = registerBlock("coordinate_block",
             () -> new CoordinateDesignatorBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
     public static final RegistryObject<Block> KEYPAD_BLOCK = registerBlock("keypad_block",
@@ -33,6 +31,14 @@ public class ModBlocks {
             () -> new SizeManipulatorBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
     public static final RegistryObject<Block> EQUALIZER_BLOCK = registerBlock("equalizer_block",
             () -> new EqualizerBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
+    public static final RegistryObject<Block> TARDIS_BLOCK = registerBlock("tardis_block",
+            () -> new TardisBlock(BlockBehaviour.Properties.copy(Blocks.BEDROCK).noOcclusion()));
+    public static final RegistryObject<Block> DOOR_BLOCK = registerBlock("door_block",
+            () -> new DoorBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
+    public static final RegistryObject<Block> SCANNER_BLOCK = registerBlock("scanner_block",
+            () -> new ScannerBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
+    public static final RegistryObject<Block> GROUNDING_BLOCK = registerBlock("grounding_block",
+            () -> new GroundingBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
@@ -41,11 +47,12 @@ public class ModBlocks {
     }
 
     private static <T extends Block>RegistryObject<Item> registerBlockItem(String name, RegistryObject<T> block) {
-        return ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+        if (name.equals("door_block")) {
+            return ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+        } else {
+            return ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties().stacksTo(1)));
+        }
     }
-
-    public static HashMap<String, String> needsUpdating = new HashMap<>();
-    public static List<String> needsLoading;
 
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);

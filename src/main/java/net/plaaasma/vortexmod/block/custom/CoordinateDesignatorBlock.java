@@ -3,6 +3,7 @@ package net.plaaasma.vortexmod.block.custom;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -56,9 +57,7 @@ public class CoordinateDesignatorBlock extends BaseEntityBlock {
         }
         var blockEntity = pLevel.getBlockEntity(pPos);
         if (blockEntity instanceof CoordinateDesignatorBlockEntity coordinateDesignatorBlockEntity) {
-            HitResult hitResult = Minecraft.getInstance().hitResult;
-
-            Vec3 positionClicked = hitResult.getLocation();
+            Vec3 positionClicked = pHit.getLocation();
 
             Vec3 x_button_location = new Vec3(pPos.getX() + 0.2515682981366041, pPos.getY() + 1.0, pPos.getZ() + 0.7634949789690628);
             Vec3 y_button_location = new Vec3(pPos.getX() + 0.5014798645557761, pPos.getY() + 1.0, pPos.getZ() + 0.7546238460661203);
@@ -123,6 +122,13 @@ public class CoordinateDesignatorBlock extends BaseEntityBlock {
         }
 
         return InteractionResult.sidedSuccess(pLevel.isClientSide());
+    }
+
+    @Override
+    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
+        if (pLevel instanceof ServerLevel serverLevel) {
+            serverLevel.removeBlockEntity(pPos);
+        }
     }
 
     @Nullable

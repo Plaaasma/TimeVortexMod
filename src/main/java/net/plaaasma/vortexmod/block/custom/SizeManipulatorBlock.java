@@ -3,6 +3,7 @@ package net.plaaasma.vortexmod.block.custom;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -45,6 +46,10 @@ public class SizeManipulatorBlock extends BaseEntityBlock {
             if (blockEntity instanceof SizeManipulatorBlockEntity) {
                 ((SizeManipulatorBlockEntity) blockEntity).drops();
             }
+        }
+
+        if (pLevel instanceof ServerLevel serverLevel) {
+            serverLevel.removeBlockEntity(pPos);
         }
 
         super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);

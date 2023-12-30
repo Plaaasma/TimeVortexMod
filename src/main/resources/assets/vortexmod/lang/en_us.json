@@ -1,6 +1,8 @@
 {
   "item.vortexmod.cheese": "Cheese",
   "item.vortexmod.size_upgrade": "Size Upgrade",
+  "item.vortexmod.euclidean_upgrade": "Euclidean Upgrade",
+  "item.vortexmod.wrench": "Space Time Wrench",
 
   "block.vortexmod.throttle_block": "Throttle Module",
   "block.vortexmod.interface_block": "Time Vortex Interface Module",
@@ -8,15 +10,24 @@
   "block.vortexmod.keypad_block": "Coordinate Keypad Module",
   "block.vortexmod.size_manipulator_block": "Vortex Entry Size Manipulator Module",
   "block.vortexmod.equalizer_block": "Artron Equalizer",
+  "block.vortexmod.tardis_block": "TARDIS",
+  "block.vortexmod.door_block": "TARDIS Interior Door",
+  "block.vortexmod.scanner_block": "Exterior Scanner",
+  "block.vortexmod.grounding_block": "Auto Grounding Module",
 
   "tooltip.vortexmod.cheese.tooltip": "The holy cheese.",
   "tooltip.vortexmod.size_upgrade.tooltip": "Increases the radius that is considered the TARDIS by 1 when input in a size manipulator module.",
+  "tooltip.vortexmod.euclidean_upgrade.tooltip": "Right clicking on the interface with this will make your TARDIS bigger on the inside! All modules must be within 16 blocks of the interface in the TARDIS dimension. If you have more than 1 euclidean TARDIS at a time the interiors will blend together, using the wrench you can move the interface and have multiple interfaces that point to different exteriors.",
+  "tooltip.vortexmod.wrench.tooltip": "Right clicking on the interface with this will drop the interface.",
   "tooltip.vortexmod.throttle_block.tooltip": "Starts/Stops the flight sequence when right clicked.",
-  "tooltip.vortexmod.interface_block.tooltip": "Main block of the TARDIS, considered the center and needed for any TARDIS.",
+  "tooltip.vortexmod.interface_block.tooltip": "Use the wrench to pick me up. Main block of the TARDIS, considered the center and needed for any TARDIS.",
   "tooltip.vortexmod.coordinate_block.tooltip": "Control the target location using basic sliders.",
-  "tooltip.vortexmod.keypad_block.tooltip": "Allows you to set the coordinates with a command (Right click for tutorial). ",
+  "tooltip.vortexmod.keypad_block.tooltip": "Allows you to set the coordinates with a command. Also adds dimensional functionality to the TARDIS. (Right click for tutorial). ",
   "tooltip.vortexmod.size_manipulator_block.tooltip": "Module that allows you to input size upgrades. Must be touching the interface block.",
   "tooltip.vortexmod.equalizer_block.tooltip": "Module that prevents the lightning from striking your landing zone.",
+  "tooltip.vortexmod.door_block.tooltip": "Meant for the interior of a euclidean TARDIS, leads to the outside world, you can place as many doors as you want inside the TARDIS dimension within 100 blocks of the interface. When entering the TARDIS, you will always end up at the closest door to the original entry position.",
+  "tooltip.vortexmod.scanner_block.tooltip": "Meant of the interior of a euclidean TARDIS, gives information about the outside world such as if there's ground below the exit point.",
+  "tooltip.vortexmod.grounding_block.tooltip": "Will ensure that you land on the ground if you were set to be in the air.",
 
   "creativetab.vortex_tab": "Time Vortex"
 }

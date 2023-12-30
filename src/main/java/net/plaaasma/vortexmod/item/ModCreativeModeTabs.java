@@ -20,12 +20,17 @@ public class ModCreativeModeTabs {
                     .displayItems((pParameters, pOutput) -> {
                         pOutput.accept(ModItems.CHEESE.get());
                         pOutput.accept(ModItems.SIZE_UPGRADE.get());
-                        pOutput.accept(ModBlocks.THROTTLE_BLOCK.get().asItem());
+                        pOutput.accept(ModItems.EUCLIDEAN_UPGRADE.get());
+                        pOutput.accept(ModItems.WRENCH.get());
                         pOutput.accept(ModBlocks.INTERFACE_BLOCK.get().asItem());
+                        pOutput.accept(ModBlocks.THROTTLE_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.COORDINATE_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.KEYPAD_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.SIZE_MANIPULATOR_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.EQUALIZER_BLOCK.get().asItem());
+                        pOutput.accept(ModBlocks.SCANNER_BLOCK.get().asItem());
+                        pOutput.accept(ModBlocks.GROUNDING_BLOCK.get().asItem());
+                        pOutput.accept(ModBlocks.DOOR_BLOCK.get().asItem());
                     })
                     .build());
 

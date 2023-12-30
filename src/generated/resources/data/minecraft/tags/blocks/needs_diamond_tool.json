@@ -1,9 +1,0 @@
-{
-  "values": [
-    "vortexmod:throttle_block",
-    "vortexmod:coordinate_block",
-    "vortexmod:interface_block",
-    "vortexmod:keypad_block",
-    "vortexmod:size_manipulator_block"
-  ]
-}

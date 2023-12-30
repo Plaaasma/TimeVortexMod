@@ -2,12 +2,14 @@ package net.plaaasma.vortexmod.datagen;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.block.ModBlocks;
@@ -94,6 +96,54 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('D', Items.DIAMOND)
                 .define('I', Blocks.IRON_BLOCK)
                 .unlockedBy(getHasName(Items.REDSTONE), has(Items.REDSTONE))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.EUCLIDEAN_UPGRADE.get())
+                .pattern("RDR")
+                .pattern("DED")
+                .pattern("RDR")
+                .define('E', Items.ENDER_EYE)
+                .define('D', Items.DIAMOND)
+                .define('R', Items.REDSTONE)
+                .unlockedBy(getHasName(ModBlocks.INTERFACE_BLOCK.get()), has(ModBlocks.INTERFACE_BLOCK.get()))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.DOOR_BLOCK.get())
+                .pattern("III")
+                .pattern("IDI")
+                .pattern("III")
+                .define('D', Tags.Items.FENCE_GATES)
+                .define('I', Items.IRON_INGOT)
+                .unlockedBy(getHasName(ModItems.EUCLIDEAN_UPGRADE.get()), has(ModItems.EUCLIDEAN_UPGRADE.get()))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.SCANNER_BLOCK.get())
+                .pattern("ERE")
+                .pattern("RCR")
+                .pattern("ERE")
+                .define('C', Items.COMPASS)
+                .define('R', Items.REDSTONE)
+                .define('E', Items.ENDER_EYE)
+                .unlockedBy(getHasName(ModItems.EUCLIDEAN_UPGRADE.get()), has(ModItems.EUCLIDEAN_UPGRADE.get()))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.GROUNDING_BLOCK.get())
+                .pattern("NRN")
+                .pattern("RCR")
+                .pattern("NRN")
+                .define('C', Items.COMPASS)
+                .define('R', Items.REDSTONE)
+                .define('N', Items.QUARTZ)
+                .unlockedBy(getHasName(ModBlocks.INTERFACE_BLOCK.get()), has(ModBlocks.INTERFACE_BLOCK.get()))
+                .save(pWriter);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.WRENCH.get())
+                .pattern("  R")
+                .pattern(" I ")
+                .pattern("I  ")
+                .define('I', Items.IRON_INGOT)
+                .define('R', Items.REDSTONE)
+                .unlockedBy(getHasName(ModBlocks.INTERFACE_BLOCK.get()), has(ModBlocks.INTERFACE_BLOCK.get()))
                 .save(pWriter);
     }
 
