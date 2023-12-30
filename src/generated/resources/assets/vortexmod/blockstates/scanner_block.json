@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "vortexmod:block/exterior_scanner"
+    }
+  }
+}
