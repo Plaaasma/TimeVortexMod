@@ -242,9 +242,21 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
     }
 
     @Override
+    public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pMovedByPiston) {
+        if (pLevel instanceof ServerLevel serverLevel) {
+            ChunkPos chunkPos = serverLevel.getChunkAt(pPos).getPos();
+            ForgeChunkManager.forceChunk(serverLevel, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, true, true);
+        }
+
+        super.onPlace(pState, pLevel, pPos, pOldState, pMovedByPiston);
+    }
+
+    @Override
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
         if (pLevel instanceof ServerLevel serverLevel) {
             serverLevel.removeBlockEntity(pPos);
+            ChunkPos chunkPos = serverLevel.getChunkAt(pPos).getPos();
+            ForgeChunkManager.forceChunk(serverLevel, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, false, true);
         }
 
         super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);

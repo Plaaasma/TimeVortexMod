@@ -464,18 +464,30 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
                     this.data.set(1, this.data.get(0));
                     if (closestPlayer != null) {
+                        ChunkPos chunkPos = vortexDimension.getChunkAt(vortexTargetPos).getPos();
+                        ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, vortexTargetPos, chunkPos.x, chunkPos.z, true, true);
                         handleVortexTeleports(size, pLevel, pPos, vortexTargetPos);
+                        chunkPos = currentDimension.getChunkAt(pPos).getPos();
+                        ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, false, true);
                         vortexDimension.playSeededSound(null, vortexTargetPos.getX(), vortexTargetPos.getY(), vortexTargetPos.getZ(), ModSounds.FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
                     }
                     else {
+                        ChunkPos chunkPos = targetDimension.getChunkAt(new BlockPos(targetX, targetY, targetZ)).getPos();
+                        ForgeChunkManager.forceChunk(targetDimension, VortexMod.MODID, new BlockPos(targetX, targetY, targetZ), chunkPos.x, chunkPos.z, true, true);
                         handleTeleports(size, pLevel, targetDimension, pPos, new BlockPos(targetX, targetY, targetZ));
+                        chunkPos = currentDimension.getChunkAt(pPos).getPos();
+                        ForgeChunkManager.forceChunk(currentDimension, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, false, true);
                     }
                 }
                 else if (throttle_on == 1 && pLevel == vortexDimension && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 0.05 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ)) && closestPlayer != null) {
                     BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
                     this.data.set(1, this.data.get(0));
                     this.data.set(11, 0);
+                    ChunkPos chunkPos = targetDimension.getChunkAt(flight_target).getPos();
+                    ForgeChunkManager.forceChunk(targetDimension, VortexMod.MODID, flight_target, chunkPos.x, chunkPos.z, true, true);
                     handleTeleports(size, vortexDimension, targetDimension, pPos, flight_target);
+                    chunkPos = currentDimension.getChunkAt(pPos).getPos();
+                    ForgeChunkManager.forceChunk(currentDimension, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, false, true);
                     this.data.set(6, targetX);
                     this.data.set(7, targetY);
                     this.data.set(8, targetZ);
@@ -505,7 +517,11 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     }
                     if (this.data.get(0) % (4 * tickSpeed) == 0 && this.data.get(0) > this.data.get(1) + (4 * tickSpeed) && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) > 0.05 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ)) && closestPlayer != null) {
                         BlockPos newTarget = findNewVortexPosition(exteriorPos, pPos, new BlockPos(targetX, targetY, targetZ), size);
+                        ChunkPos chunkPos = vortexDimension.getChunkAt(newTarget).getPos();
+                        ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, newTarget, chunkPos.x, chunkPos.z, true, true);
                         handleVortex2VortexTeleports(size, pLevel, pPos, newTarget);
+                        chunkPos = vortexDimension.getChunkAt(pPos).getPos();
+                        ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, false, true);
                         vortexDimension.playSeededSound(null, newTarget.getX(), newTarget.getY(), newTarget.getZ(), ModSounds.FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
                     }
                     if (Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 0.3 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ))){
