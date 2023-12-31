@@ -35,9 +35,13 @@ import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.entities.ModEntities;
 import net.plaaasma.vortexmod.entities.Villager.ItemsForItems;
+import net.plaaasma.vortexmod.entities.animations.ModAnimationDefinitions;
 import net.plaaasma.vortexmod.item.ModItems;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,14 +49,22 @@ import java.util.EnumSet;
 import java.util.OptionalInt;
 
 public class LostTravelerEntity extends AbstractVillager {
+
+    public final AnimationState idleAnimationState = new AnimationState();
+
     @Nullable
     private BlockPos wanderTarget;
     private int despawnDelay;
 
     private int attackCooldown = 0;
 
+
     VillagerTrades.ItemListing[] listings = {
-            new ItemsForItems(ModItems.CHEESE.get(), Items.GLOWSTONE, 64, 1, 64, 1, 0.0F)
+            new ItemsForItems(ModItems.CHEESE.get(), Items.GLOWSTONE, 64, 1, 64, 1, 0.0F),
+            new ItemsForItems(ModBlocks.KEYPAD_BLOCK.get().asItem(), ModItems.CHEESE.get(), 64, Items.PRISMARINE_CRYSTALS, 64, 1, 64, 1, 0.0F),
+            new ItemsForItems(ModBlocks.INTERFACE_BLOCK.get().asItem(), ModItems.CHEESE.get(), 64, Items.PRISMARINE_CRYSTALS, 64, 1, 64, 1, 0.0F),
+            new ItemsForItems(ModBlocks.THROTTLE_BLOCK.get().asItem(), ModItems.CHEESE.get(), 64, Items.PRISMARINE_CRYSTALS, 64, 1, 64, 1, 0.0F),
+            new ItemsForItems(ModBlocks.COORDINATE_BLOCK.get().asItem(), ModItems.CHEESE.get(), 64, Items.PRISMARINE_CRYSTALS, 64, 1, 64, 1, 0.0F)
     };
 
     public LostTravelerEntity(EntityType<? extends LostTravelerEntity> type, Level world) {
@@ -71,10 +83,20 @@ public class LostTravelerEntity extends AbstractVillager {
         return Animal.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 1000000D)
                 .add(Attributes.FOLLOW_RANGE, 24D)
-                .add(Attributes.MOVEMENT_SPEED, 0.25D)
+                .add(Attributes.MOVEMENT_SPEED, 0.5D)
                 .add(Attributes.ARMOR_TOUGHNESS, 1000000f)
                 .add(Attributes.ATTACK_KNOCKBACK, 0.5f)
                 .add(Attributes.ATTACK_DAMAGE, 1000000f);
+    }
+
+    @Override
+    public void tick() {
+
+        if (level().isClientSide()){
+            this.idleAnimationState.animateWhen(!isInWaterOrBubble() && !this.walkAnimation.isMoving(), this.tickCount);
+        }
+
+        super.tick();
     }
 
     @Override
@@ -83,8 +105,8 @@ public class LostTravelerEntity extends AbstractVillager {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         //this.goalSelector.addGoal(2, new EquipAndRangeAttackGoal(this, 0.35D, 60, 10, 20, 15, new ItemStack(ModRegistry.BOMB_ITEM.get())));
 
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Mob.class, 8, true, false,
-                (mob) -> (mob instanceof Raider || mob instanceof Zombie || mob instanceof Zoglin)));
+        /*this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Mob.class, 8, true, false,
+                (mob) -> (mob instanceof Raider || mob instanceof Zombie || mob instanceof Zoglin)));*/
 
         this.goalSelector.addGoal(3, new TradeWithPlayerGoal(this));
         this.goalSelector.addGoal(3, new LookAtTradingPlayerGoal(this));
@@ -277,7 +299,7 @@ public class LostTravelerEntity extends AbstractVillager {
         MoveToGoal(LostTravelerEntity LostTravelerEntity, double v, double v1) {
             this.trader = LostTravelerEntity;
             this.stopDistance = v;
-            this.speedModifier = v1;
+            this.speedModifier = v1 * 2;
             this.setFlags(EnumSet.of(Flag.MOVE));
         }
 
@@ -295,6 +317,7 @@ public class LostTravelerEntity extends AbstractVillager {
 
         @Override
         public void tick() {
+
             BlockPos blockpos = this.trader.getWanderTarget();
             if (blockpos != null && LostTravelerEntity.this.navigation.isDone()) {
                 if (this.isTooFarAway(blockpos, 10.0D)) {

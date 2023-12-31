@@ -15,7 +15,7 @@ public class ModEntities {
 
     public static final RegistryObject<EntityType<LostTravelerEntity>> LOST_TRAVELER =
             ENTITY_TYPES.register("lost_traveler", () -> EntityType.Builder.of(LostTravelerEntity::new, MobCategory.CREATURE)
-                    .sized(2.5f, 2.5f).build("lost_traveler"));
+                    .sized(1f, 2f).build("lost_traveler"));
 
 
     public static void register(IEventBus eventBus) {

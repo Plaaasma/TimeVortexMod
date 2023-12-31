@@ -13,6 +13,8 @@ public class ItemsForItems implements VillagerTrades.ItemListing {
     private final Item item;
     private final Item costItem;
     private final int cost;
+    private Item costItem2 = null;
+    private int cost2 = 0;
     private final int f_35736_;
     private final int maxUses;
     private final int villagerXp;
@@ -44,7 +46,22 @@ public class ItemsForItems implements VillagerTrades.ItemListing {
         this.priceMultiplier = pPriceMultiplier;
     }
 
+    public ItemsForItems(Item pItem, Item costItem, int cost, Item costItem2, int cost2, int pNumberOfItems, int pMaxUses, int pVillagerXp, float pPriceMultiplier) {
+        this.item = pItem;
+        this.costItem = costItem;
+        this.cost = cost;
+        this.costItem2 = costItem2;
+        this.cost2 = cost2;
+        this.f_35736_ = pNumberOfItems;
+        this.maxUses = pMaxUses;
+        this.villagerXp = pVillagerXp;
+        this.priceMultiplier = pPriceMultiplier;
+    }
+
     public MerchantOffer getOffer(Entity pTrader, RandomSource pRandom) {
-        return new MerchantOffer(new ItemStack(costItem, cost), new ItemStack(this.item, this.f_35736_), this.maxUses, this.villagerXp, this.priceMultiplier);
+        if (costItem2 == null) {
+            return new MerchantOffer(new ItemStack(costItem, cost), new ItemStack(this.item, this.f_35736_), this.maxUses, this.villagerXp, this.priceMultiplier);
+        }
+        return new MerchantOffer(new ItemStack(costItem, cost), new ItemStack(costItem2, cost2), new ItemStack(this.item, this.f_35736_), this.maxUses, this.villagerXp, this.priceMultiplier);
     }
 }
