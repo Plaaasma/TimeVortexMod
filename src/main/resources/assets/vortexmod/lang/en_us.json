@@ -26,7 +26,7 @@
   "tooltip.vortexmod.throttle_block.tooltip": "Starts/Stops the flight sequence when right clicked.",
   "tooltip.vortexmod.interface_block.tooltip": "Use the wrench to pick me up. Main block of the TARDIS, considered the center and needed for any TARDIS.",
   "tooltip.vortexmod.coordinate_block.tooltip": "Control the target location using basic sliders.",
-  "tooltip.vortexmod.keypad_block.tooltip": "Allows you to set the coordinates with a command. Also adds dimensional functionality to the TARDIS. (Right click for tutorial). ",
+  "tooltip.vortexmod.keypad_block.tooltip": "Allows you to set the coordinates, dimension, and rotation with a command. Also adds dimensional functionality to the TARDIS. (Right click for tutorial). ",
   "tooltip.vortexmod.size_manipulator_block.tooltip": "Module that allows you to input size upgrades. Must be touching the interface block.",
   "tooltip.vortexmod.equalizer_block.tooltip": "Module that prevents the lightning from striking your landing zone.",
   "tooltip.vortexmod.door_block.tooltip": "Meant for the interior of a euclidean TARDIS, leads to the outside world, you can place as many doors as you want inside the TARDIS dimension within 100 blocks of the interface. When entering the TARDIS, you will always end up at the closest door to the original entry position.",
