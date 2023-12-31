@@ -57,7 +57,7 @@ public class CoordinateDesignatorBlock extends HorizontalBaseEntityBlock {
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
+        return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection());
     }
 
     @Override
@@ -69,10 +69,35 @@ public class CoordinateDesignatorBlock extends HorizontalBaseEntityBlock {
         if (blockEntity instanceof CoordinateDesignatorBlockEntity coordinateDesignatorBlockEntity) {
             Vec3 positionClicked = pHit.getLocation();
 
-            Vec3 x_button_location = new Vec3(pPos.getX() + 0.2515682981366041, pPos.getY() + 1.0, pPos.getZ() + 0.7634949789690628);
-            Vec3 y_button_location = new Vec3(pPos.getX() + 0.5014798645557761, pPos.getY() + 1.0, pPos.getZ() + 0.7546238460661203);
-            Vec3 z_button_location = new Vec3(pPos.getX() + 0.7411341801241704, pPos.getY() + 1.0, pPos.getZ() + 0.7659566757527658);
-            Vec3 toggle_button_location = new Vec3(pPos.getX() + 0.49837416507780574, pPos.getY() + 1.0, pPos.getZ() + 0.44492781872781384);
+            Vec3 x_button_location = new Vec3(pPos.getX(), pPos.getY(), pPos.getZ());
+            Vec3 y_button_location = new Vec3(pPos.getX(), pPos.getY(), pPos.getZ());
+            Vec3 z_button_location = new Vec3(pPos.getX(), pPos.getY(), pPos.getZ());
+            Vec3 toggle_button_location = new Vec3(pPos.getX(), pPos.getY(), pPos.getZ());
+
+            if (coordinateDesignatorBlockEntity.getBlockState().getValue(FACING) == Direction.NORTH) {
+                x_button_location = new Vec3(pPos.getX() + 0.2515682981366041, pPos.getY() + 0.1875, pPos.getZ() + 0.7634949789690628);
+                y_button_location = new Vec3(pPos.getX() + 0.5014798645557761, pPos.getY() + 0.1875, pPos.getZ() + 0.7546238460661203);
+                z_button_location = new Vec3(pPos.getX() + 0.7411341801241704, pPos.getY() + 0.1875, pPos.getZ() + 0.7659566757527658);
+                toggle_button_location = new Vec3(pPos.getX() + 0.49837416507780574, pPos.getY() + 0.1875, pPos.getZ() + 0.44492781872781384);
+            }
+            else if (coordinateDesignatorBlockEntity.getBlockState().getValue(FACING) == Direction.EAST) {
+                x_button_location = new Vec3(pPos.getX() + 0.18954457971267402, pPos.getY() + 0.1875, pPos.getZ() + 0.2304064080817625);
+                y_button_location = new Vec3(pPos.getX() + 0.20980824215803295, pPos.getY() + 0.1875, pPos.getZ() + 0.49430502974428236);
+                z_button_location = new Vec3(pPos.getX() + 0.2044773130910471, pPos.getY() + 0.1875, pPos.getZ() + 0.7369853557320312);
+                toggle_button_location = new Vec3(pPos.getX() + 0.5791702901478857, pPos.getY() + 0.1875, pPos.getZ() + 0.4774149393197149);
+            }
+            else if (coordinateDesignatorBlockEntity.getBlockState().getValue(FACING) == Direction.SOUTH) {
+                x_button_location = new Vec3(pPos.getX() + 0.7731693559326231, pPos.getY() + 0.1875, pPos.getZ() + 0.21637912222649902);
+                y_button_location = new Vec3(pPos.getX() + 0.4986674932297319, pPos.getY() + 0.1875, pPos.getZ() + 0.22904629225376993);
+                z_button_location = new Vec3(pPos.getX() + 0.26191518583800644, pPos.getY() + 0.1875, pPos.getZ() + 0.2323134943144396);
+                toggle_button_location = new Vec3(pPos.getX() + 0.5093254920793697, pPos.getY() + 0.1875, pPos.getZ() + 0.5769437467679381);
+            }
+            else if (coordinateDesignatorBlockEntity.getBlockState().getValue(FACING) == Direction.WEST) {
+                x_button_location = new Vec3(pPos.getX() + 0.7750879296800122, pPos.getY() + 0.1875, pPos.getZ() + 0.7490106313489377);
+                y_button_location = new Vec3(pPos.getX() + 0.7504194345092401, pPos.getY() + 0.1875, pPos.getZ() + 0.4977753795683384);
+                z_button_location = new Vec3(pPos.getX() + 0.7682009112322703, pPos.getY() + 0.1875, pPos.getZ() + 0.2667000818764791);
+                toggle_button_location = new Vec3(pPos.getX() + 0.44383836444467306, pPos.getY() + 0.1875, pPos.getZ() + 0.5111854062415659);
+            }
 
             Vec3[] components = { x_button_location, y_button_location, z_button_location, toggle_button_location };
 
