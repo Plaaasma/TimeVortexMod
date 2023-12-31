@@ -331,6 +331,18 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             if (targetY <= targetDimension.dimensionType().minY() + 1) {
                 targetY = targetDimension.dimensionType().minY() + 2;
             }
+            if (targetX >= 31999800) {
+                targetX = 31999800;
+            }
+            if (targetX <= -31999800) {
+                targetX = -31999800;
+            }
+            if (targetZ >= 31999800) {
+                targetZ = 31999800;
+            }
+            if (targetZ <= -31999800) {
+                targetZ = -31999800;
+            }
 
             if (proto) {
                 BlockPos exteriorPos = new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8));
