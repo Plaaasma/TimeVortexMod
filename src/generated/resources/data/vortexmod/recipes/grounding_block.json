@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "minecraft:compass"
+    },
+    "N": {
+      "item": "minecraft:quartz"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "NRN",
+    "RCR",
+    "NRN"
+  ],
+  "result": {
+    "item": "vortexmod:grounding_block"
+  },
+  "show_notification": true
+}

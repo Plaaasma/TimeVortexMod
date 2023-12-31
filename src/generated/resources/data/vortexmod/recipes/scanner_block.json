@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "minecraft:compass"
+    },
+    "E": {
+      "item": "minecraft:ender_eye"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "ERE",
+    "RCR",
+    "ERE"
+  ],
+  "result": {
+    "item": "vortexmod:scanner_block"
+  },
+  "show_notification": true
+}

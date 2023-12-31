@@ -1,0 +1,12 @@
+{
+  "values": [
+    "vortexmod:throttle_block",
+    "vortexmod:coordinate_block",
+    "vortexmod:keypad_block",
+    "vortexmod:size_manipulator_block",
+    "vortexmod:equalizer_block",
+    "vortexmod:door_block",
+    "vortexmod:scanner_block",
+    "vortexmod:grounding_block"
+  ]
+}
