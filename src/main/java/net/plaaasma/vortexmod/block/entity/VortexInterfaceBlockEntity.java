@@ -348,7 +348,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         handleTeleports(size, pLevel, targetDimension, pPos, new BlockPos(targetX, targetY, targetZ));
                     }
                 }
-                else if (throttle_on == 1 && pLevel == vortexDimension && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 100 && closestPlayer != null) {
+                else if (throttle_on == 1 && pLevel == vortexDimension && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 0.05 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ)) && closestPlayer != null) {
                     BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
                     this.data.set(1, this.data.get(0));
                     this.data.set(11, 0);
@@ -380,14 +380,14 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         targetDimension.playSeededSound(null, targetX, targetY, targetZ, ModSounds.REMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
                         this.data.set(11, 1);
                     }
-                    if (this.data.get(0) % 100 == 0 && this.data.get(0) > this.data.get(1) + 100 && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) > 100 && closestPlayer != null) {
+                    if (this.data.get(0) % (4 * tickSpeed) == 0 && this.data.get(0) > this.data.get(1) + (4 * tickSpeed) && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) > 0.05 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ)) && closestPlayer != null) {
                         BlockPos newTarget = findNewVortexPosition(exteriorPos, pPos, new BlockPos(targetX, targetY, targetZ), size);
                         handleVortex2VortexTeleports(size, pLevel, pPos, newTarget);
                         vortexDimension.playSeededSound(null, newTarget.getX(), newTarget.getY(), newTarget.getZ(), ModSounds.FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
                     }
                     if (Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 0.3 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ))){
                         handleRematParticles(size, targetDimension, new BlockPos(targetX, targetY, targetZ));
-                        if (this.data.get(0) % 100 == 0) {
+                        if (this.data.get(0) % (4 * tickSpeed) == 0) {
                             if (!has_equalizer) {
                                 handleLightningStrikes(targetDimension, new BlockPos(targetX, targetY, targetZ));
                             }
