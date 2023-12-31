@@ -316,11 +316,21 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                             temp_target = new_target.below();
                         }
                     }
+                    if (exhausted_search) {
+                        temp_target = new BlockPos(targetX, targetY, targetZ);
+                    }
                 }
             }
             targetX = temp_target.getX();
             targetY = temp_target.getY();
             targetZ = temp_target.getZ();
+
+            if (targetY >= targetDimension.dimensionType().height() - (y_size + (y_size - 1))) {
+                targetY = targetDimension.dimensionType().height() - (y_size + (y_size - 1)) - 1;
+            }
+            if (targetY <= targetDimension.dimensionType().minY() + 1) {
+                targetY = targetDimension.dimensionType().minY() + 2;
+            }
 
             if (proto) {
                 BlockPos exteriorPos = new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8));
