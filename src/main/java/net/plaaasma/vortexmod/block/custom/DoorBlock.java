@@ -2,6 +2,7 @@ package net.plaaasma.vortexmod.block.custom;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -27,7 +29,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.block.entity.ModBlockEntities;
 import net.plaaasma.vortexmod.block.entity.TardisBlockEntity;
-import net.plaaasma.vortexmod.block.entity.ThrottleBlockEntity;
 import net.plaaasma.vortexmod.block.entity.VortexInterfaceBlockEntity;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 import net.plaaasma.vortexmod.worldgen.portal.ModTeleporter;
@@ -81,8 +82,25 @@ public class DoorBlock extends Block {
                                 }
 
                                 BlockPos blockExitPos = new BlockPos(vortexInterfaceBlockEntity.data.get(6), vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8));
-                                if (targetDimension.getBlockState(blockExitPos).getBlock() == ModBlocks.TARDIS_BLOCK.get()) {
-                                    Vec3 exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) + 0.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) + 1.5);
+                                BlockState targetBlockState = targetDimension.getBlockState(blockExitPos);
+                                if (targetBlockState.getBlock() == ModBlocks.TARDIS_BLOCK.get()) {
+                                    Vec3 exitPosition;
+                                    if (targetBlockState.getValue(BlockStateProperties.HORIZONTAL_FACING) == Direction.NORTH) {
+                                        exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) + 0.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) + 1.5);
+                                        System.out.println("North");
+                                    }
+                                    else if (targetBlockState.getValue(BlockStateProperties.HORIZONTAL_FACING) == Direction.EAST) {
+                                        exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) - 0.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) + 0.5);
+                                        System.out.println("East");
+                                    }
+                                    else if (targetBlockState.getValue(BlockStateProperties.HORIZONTAL_FACING) == Direction.SOUTH) {
+                                        exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) + 0.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) - 0.5);
+                                        System.out.println("South");
+                                    }
+                                    else {
+                                        exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) + 1.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) + 0.5);
+                                        System.out.println("West");
+                                    }
                                     pPlayer.changeDimension(targetDimension, new ModTeleporter(exitPosition));
                                 } else {
                                     pPlayer.changeDimension(vortexDimension, new ModTeleporter(new Vec3(random.nextInt(1000000) - 500000, -100, random.nextInt(1000000) - 500000)));

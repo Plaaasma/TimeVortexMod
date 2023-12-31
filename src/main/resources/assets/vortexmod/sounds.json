@@ -1,0 +1,20 @@
+{
+  "flight_sound": {
+    "subtitle": "sounds.vortexmod.flight_sound",
+    "sounds": [
+      "vortexmod:flight_sound"
+    ]
+  },
+  "demat_sound": {
+    "subtitle": "sounds.vortexmod.demat_sound",
+    "sounds": [
+      "vortexmod:demat_sound"
+    ]
+  },
+  "remat_sound": {
+    "subtitle": "sounds.vortexmod.remat_sound",
+    "sounds": [
+      "vortexmod:remat_sound"
+    ]
+  }
+}

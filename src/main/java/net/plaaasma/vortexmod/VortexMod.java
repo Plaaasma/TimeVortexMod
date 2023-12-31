@@ -34,6 +34,7 @@ import net.plaaasma.vortexmod.entities.client.LostTravelerRenderer;
 import net.plaaasma.vortexmod.entities.custom.LostTravelerEntity;
 import net.plaaasma.vortexmod.item.ModCreativeModeTabs;
 import net.plaaasma.vortexmod.item.ModItems;
+import net.plaaasma.vortexmod.sound.ModSounds;
 import net.plaaasma.vortexmod.worldgen.biome.surface.ModSurfaceRules;
 import net.plaaasma.vortexmod.screen.ModMenuTypes;
 import net.plaaasma.vortexmod.screen.SizeManipulatorScreen;
@@ -70,6 +71,8 @@ public class VortexMod {
         ModMenuTypes.register(modEventBus);
 
         ModEntities.register(modEventBus);
+
+        ModSounds.register(modEventBus);
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);

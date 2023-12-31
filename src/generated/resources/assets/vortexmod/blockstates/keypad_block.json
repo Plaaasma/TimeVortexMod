@@ -1,7 +1,19 @@
 {
   "variants": {
-    "": {
+    "facing=east": {
+      "model": "vortexmod:block/tardis_keypad",
+      "y": 90
+    },
+    "facing=north": {
       "model": "vortexmod:block/tardis_keypad"
+    },
+    "facing=south": {
+      "model": "vortexmod:block/tardis_keypad",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "vortexmod:block/tardis_keypad",
+      "y": 270
     }
   }
 }

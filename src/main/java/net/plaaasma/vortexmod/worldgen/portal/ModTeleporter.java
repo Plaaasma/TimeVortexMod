@@ -1,6 +1,7 @@
 package net.plaaasma.vortexmod.worldgen.portal;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -12,6 +13,7 @@ import java.util.function.Function;
 
 public class ModTeleporter implements ITeleporter {
     public static Vec3 thisPos = Vec3.ZERO;
+    public static Direction thisDir = Direction.EAST;
 
     public ModTeleporter(Vec3 pos) {
         thisPos = pos;
