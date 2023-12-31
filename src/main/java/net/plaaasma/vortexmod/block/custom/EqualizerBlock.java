@@ -27,7 +27,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.plaaasma.vortexmod.block.entity.EqualizerBlockEntity;
 import net.plaaasma.vortexmod.block.entity.ModBlockEntities;
-import net.plaaasma.vortexmod.block.entity.ThrottleBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
