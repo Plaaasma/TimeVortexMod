@@ -22,21 +22,35 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 new ModelFile.UncheckedModelFile(modLoc("block/tardis_throttle")));
         simpleBlockWithItem(ModBlocks.INTERFACE_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/vortex_interface")));
-        simpleBlockWithItem(ModBlocks.COORDINATE_BLOCK.get(),
+        horizontalBlock(ModBlocks.COORDINATE_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/tardis_designator")));
-        simpleBlockWithItem(ModBlocks.KEYPAD_BLOCK.get(),
+        simpleBlockItem(ModBlocks.COORDINATE_BLOCK.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/tardis_designator")));
+        horizontalBlock(ModBlocks.KEYPAD_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/tardis_keypad")));
-        simpleBlockWithItem(ModBlocks.SIZE_MANIPULATOR_BLOCK.get(),
+        simpleBlockItem(ModBlocks.KEYPAD_BLOCK.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/tardis_keypad")));
+        horizontalBlock(ModBlocks.SIZE_MANIPULATOR_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/size_manipulator")));
-        simpleBlockWithItem(ModBlocks.EQUALIZER_BLOCK.get(),
+        simpleBlockItem(ModBlocks.SIZE_MANIPULATOR_BLOCK.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/size_manipulator")));
+        horizontalBlock(ModBlocks.EQUALIZER_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/equalizer")));
-        simpleBlockWithItem(ModBlocks.TARDIS_BLOCK.get(),
+        simpleBlockItem(ModBlocks.EQUALIZER_BLOCK.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/equalizer")));
+        horizontalBlock(ModBlocks.TARDIS_BLOCK.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/tardis")));
+        simpleBlockItem(ModBlocks.TARDIS_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/tardis")));
         simpleBlockWithItem(ModBlocks.DOOR_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/door_block")));
-        simpleBlockWithItem(ModBlocks.SCANNER_BLOCK.get(),
+        horizontalBlock(ModBlocks.SCANNER_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/exterior_scanner")));
-        simpleBlockWithItem(ModBlocks.GROUNDING_BLOCK.get(),
+        simpleBlockItem(ModBlocks.SCANNER_BLOCK.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/exterior_scanner")));
+        horizontalBlock(ModBlocks.GROUNDING_BLOCK.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/grounding_block")));
+        simpleBlockItem(ModBlocks.GROUNDING_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/grounding_block")));
     }
 

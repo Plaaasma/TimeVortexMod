@@ -1,7 +1,19 @@
 {
   "variants": {
-    "": {
+    "facing=east": {
+      "model": "vortexmod:block/size_manipulator",
+      "y": 90
+    },
+    "facing=north": {
       "model": "vortexmod:block/size_manipulator"
+    },
+    "facing=south": {
+      "model": "vortexmod:block/size_manipulator",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "vortexmod:block/size_manipulator",
+      "y": 270
     }
   }
 }

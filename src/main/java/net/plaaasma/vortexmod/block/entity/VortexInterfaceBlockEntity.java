@@ -254,6 +254,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         if (block == ModBlocks.GROUNDING_BLOCK.get()) {
                             auto_ground = true;
                         }
+                        else if (block == ModBlocks.EQUALIZER_BLOCK.get()) {
+                            has_equalizer = true;
+                        }
 
                         var blockEntity = pLevel.getBlockEntity(currentPos);
 
@@ -266,10 +269,6 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
                             if (blockEntity instanceof ThrottleBlockEntity throttleBlockEntity) {
                                 throttle_on = throttleBlockEntity.data.get(0);
-                            }
-
-                            if (blockEntity instanceof EqualizerBlockEntity) {
-                                has_equalizer = true;
                             }
                         }
                     }
