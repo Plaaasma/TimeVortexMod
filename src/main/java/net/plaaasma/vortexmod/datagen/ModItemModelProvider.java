@@ -22,6 +22,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.SIZE_UPGRADE);
         simpleItem(ModItems.EUCLIDEAN_UPGRADE);
         simpleItem(ModItems.WRENCH);
+        withExistingParent(ModItems.LOST_TRAVELER_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
     }
 
     private ItemModelBuilder simpleItem(RegistryObject<Item> item) {

@@ -31,6 +31,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.SCANNER_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.GROUNDING_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.DOOR_BLOCK.get().asItem());
+                        pOutput.accept(ModItems.LOST_TRAVELER_SPAWN_EGG.get());
                     })
                     .build());
 
