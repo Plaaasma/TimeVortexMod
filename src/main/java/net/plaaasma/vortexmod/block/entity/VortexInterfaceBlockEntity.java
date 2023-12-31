@@ -2,6 +2,7 @@ package net.plaaasma.vortexmod.block.entity;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -26,6 +27,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -52,6 +54,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private int current_dim = 0;
     private int target_dim = 0;
     private int did_r_sound = 0;
+    private int facing_dir = 0;
     public final ContainerData data;
 
     public VortexInterfaceBlockEntity(BlockPos pPos, BlockState pBlockState) {
@@ -72,6 +75,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     case 9 -> VortexInterfaceBlockEntity.this.current_dim;
                     case 10 -> VortexInterfaceBlockEntity.this.target_dim;
                     case 11 -> VortexInterfaceBlockEntity.this.did_r_sound;
+                    case 12 -> VortexInterfaceBlockEntity.this.facing_dir;
                     default -> 0;
                 };
             }
@@ -91,12 +95,13 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     case 9 -> VortexInterfaceBlockEntity.this.current_dim = pValue;
                     case 10 -> VortexInterfaceBlockEntity.this.target_dim = pValue;
                     case 11 -> VortexInterfaceBlockEntity.this.did_r_sound = pValue;
+                    case 12 -> VortexInterfaceBlockEntity.this.facing_dir = pValue;
                 }
             }
 
             @Override
             public int getCount() {
-                return 12;
+                return 13;
             }
         };
     }
@@ -127,6 +132,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         this.current_dim = vortexModData.getInt("current_dim");
         this.target_dim = vortexModData.getInt("target_dim");
         this.did_r_sound = vortexModData.getInt("did_r_sound");
+        this.facing_dir = vortexModData.getInt("facing_dir");
         super.load(pTag);
     }
 
@@ -146,6 +152,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         vortexModData.putInt("current_dim", this.current_dim);
         vortexModData.putInt("target_dim", this.target_dim);
         vortexModData.putInt("did_r_sound", this.did_r_sound);
+        vortexModData.putInt("facing_dir", this.facing_dir);
 
         pTag.put(VortexMod.MODID, vortexModData);
         super.saveAdditional(pTag);
@@ -344,7 +351,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 targetZ = -31999800;
             }
 
-            if (proto) {
+            if (proto) { // Proto TARDIS Logic
                 BlockPos exteriorPos = new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8));
                 Entity closestPlayer = pLevel.getNearestPlayer(pPos.getX(), pPos.getY(), pPos.getZ(), size + 1, false);
                 if (closestPlayer == null) {
@@ -417,8 +424,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     handleVortexParticles(size, vortexDimension, pPos, new BlockPos(targetX, targetY, targetZ));
                 }
             }
-            else {
+            else { // Euclidean TARDIS Logic
                 if (throttle_on == 1) {
+                    int rotation_yaw = this.data.get(12);
                     BlockPos target = new BlockPos(targetX, targetY, targetZ);
                     BlockState blockAtTarget = targetDimension.getBlockState(target);
 
@@ -455,7 +463,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                             BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
                             this.data.set(1, this.data.get(0));
                             handleTardisDeletion(currentDimension, exteriorPos);
-                            handleTardisPlacement(targetDimension, flight_target);
+                            handleTardisPlacement(targetDimension, flight_target, rotation_yaw);
                             handleLandingEntities(targetDimension, tardisDimension, flight_target, this.data.get(2));
                             this.data.set(6, targetX);
                             this.data.set(7, targetY);
@@ -680,8 +688,21 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         }
     }
 
-    public static void handleTardisPlacement(ServerLevel pLevel, BlockPos target) {
-        pLevel.setBlockAndUpdate(target, ModBlocks.TARDIS_BLOCK.get().defaultBlockState());
+    public static void handleTardisPlacement(ServerLevel pLevel, BlockPos target, Integer rotationYaw) {
+        Direction rotationDirection;
+        if (rotationYaw > 0 && rotationYaw < 90) {
+            rotationDirection = Direction.NORTH;
+        }
+        else if (rotationYaw >= 90 && rotationYaw < 180) {
+            rotationDirection = Direction.EAST;
+        }
+        else if (rotationYaw >= 180 && rotationYaw < 270) {
+            rotationDirection = Direction.SOUTH;
+        }
+        else {
+            rotationDirection = Direction.WEST;
+        }
+        pLevel.setBlockAndUpdate(target, ModBlocks.TARDIS_BLOCK.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, rotationDirection));
     }
 
     public static void handleTardisDeletion(ServerLevel pLevel, BlockPos target) {

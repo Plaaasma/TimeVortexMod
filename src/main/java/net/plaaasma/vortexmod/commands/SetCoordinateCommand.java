@@ -96,7 +96,7 @@ public class SetCoordinateCommand {
                 source.sendSuccess(() -> Component.literal("Core is not in range."), false);
             }
             if (!has_components) {
-                source.sendSuccess(() -> Component.literal("Coordinate components not in range."), false);
+                source.sendSuccess(() -> Component.literal("Coordinate components not in range. (Keypad and Designator)"), false);
             }
         }
 

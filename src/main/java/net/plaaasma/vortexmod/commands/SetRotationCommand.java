@@ -1,12 +1,17 @@
 package net.plaaasma.vortexmod.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.sun.jdi.connect.Connector;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.DimensionArgument;
+import net.minecraft.commands.arguments.coordinates.Coordinates;
+import net.minecraft.commands.arguments.coordinates.RotationArgument;
+import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -17,30 +22,22 @@ import net.plaaasma.vortexmod.block.entity.CoordinateDesignatorBlockEntity;
 import net.plaaasma.vortexmod.block.entity.VortexInterfaceBlockEntity;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 
-public class SetDimensionCommand {
-
-    public SetDimensionCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
+public class SetRotationCommand {
+    public SetRotationCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("tardis")
         .then(Commands.literal("set")
-        .then(Commands.literal("dim")
-        .then(Commands.argument("dimension", DimensionArgument.dimension())
+        .then(Commands.literal("rotation")
+        .then(Commands.argument("yaw", IntegerArgumentType.integer())
             .executes((command) -> {
-                return setDim(command.getSource(), DimensionArgument.getDimension(command, "dimension"));
+                return setRotation(command.getSource(), IntegerArgumentType.getInteger(command, "yaw"));
             }))
         )));
     }
 
-    private int setDim(CommandSourceStack source, ServerLevel targetDim) throws CommandSyntaxException {
+    private int setRotation(CommandSourceStack source, Integer targetRot) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayer();
         BlockPos ePlayerPos = player.blockPosition();
         ServerLevel pLevel = source.getPlayer().serverLevel();
-
-        MinecraftServer minecraftserver = pLevel.getServer();
-        ServerLevel tardisDimension = minecraftserver.getLevel(ModDimensions.tardisDIM_LEVEL_KEY);
-
-        if (targetDim == tardisDimension) {
-            return 1;
-        }
 
         boolean core_found = false;
 
@@ -89,10 +86,21 @@ public class SetDimensionCommand {
             }
         }
         if (core_found && has_components && designatorEntity != null) {
-            interfaceEntity.data.set(10, targetDim.dimension().location().getPath().hashCode());
-            source.sendSuccess(() -> Component.literal("Updating target dimension to: ").append(
-                    Component.literal(targetDim.dimension().location().getPath()).withStyle(ChatFormatting.GOLD)
-            ), false);
+            interfaceEntity.data.set(12, targetRot);
+            Direction rotationDirection;
+            if (targetRot > 0 && targetRot < 90) {
+                rotationDirection = Direction.NORTH;
+            }
+            else if (targetRot >= 90 && targetRot < 180) {
+                rotationDirection = Direction.EAST;
+            }
+            else if (targetRot >= 180 && targetRot < 270) {
+                rotationDirection = Direction.SOUTH;
+            }
+            else {
+                rotationDirection = Direction.WEST;
+            }
+            source.sendSuccess(() -> Component.literal("Updating target rotation to: ").append(Component.literal(rotationDirection.toString()).withStyle(ChatFormatting.GOLD)), false);
         }
         else {
             if (!core_found) {
