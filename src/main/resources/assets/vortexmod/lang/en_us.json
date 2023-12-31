@@ -15,6 +15,10 @@
   "block.vortexmod.scanner_block": "Exterior Scanner",
   "block.vortexmod.grounding_block": "Auto Grounding Module",
 
+  "sounds.vortexmod.flight_sound": "TARDIS Flight Sound",
+  "sounds.vortexmod.demat_sound": "TARDIS Dematerialization Sound",
+  "sounds.vortexmod.remat_sound": "TARDIS Rematerialization Sound",
+
   "tooltip.vortexmod.cheese.tooltip": "The holy cheese.",
   "tooltip.vortexmod.size_upgrade.tooltip": "Increases the radius that is considered the TARDIS by 1 when input in a size manipulator module.",
   "tooltip.vortexmod.euclidean_upgrade.tooltip": "Right clicking on the interface with this will make your TARDIS bigger on the inside! All modules must be within 16 blocks of the interface in the TARDIS dimension. If you have more than 1 euclidean TARDIS at a time the interiors will blend together, using the wrench you can move the interface and have multiple interfaces that point to different exteriors.",

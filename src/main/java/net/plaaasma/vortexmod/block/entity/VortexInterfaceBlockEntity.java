@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
@@ -28,9 +29,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.level.NoteBlockEvent;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
+import net.plaaasma.vortexmod.sound.ModSounds;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 import net.plaaasma.vortexmod.worldgen.portal.ModTeleporter;
 
@@ -48,6 +51,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private int pos_z = 0;
     private int current_dim = 0;
     private int target_dim = 0;
+    private int did_r_sound = 0;
     public final ContainerData data;
 
     public VortexInterfaceBlockEntity(BlockPos pPos, BlockState pBlockState) {
@@ -67,6 +71,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     case 8 -> VortexInterfaceBlockEntity.this.pos_z;
                     case 9 -> VortexInterfaceBlockEntity.this.current_dim;
                     case 10 -> VortexInterfaceBlockEntity.this.target_dim;
+                    case 11 -> VortexInterfaceBlockEntity.this.did_r_sound;
                     default -> 0;
                 };
             }
@@ -85,12 +90,13 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     case 8 -> VortexInterfaceBlockEntity.this.pos_z = pValue;
                     case 9 -> VortexInterfaceBlockEntity.this.current_dim = pValue;
                     case 10 -> VortexInterfaceBlockEntity.this.target_dim = pValue;
+                    case 11 -> VortexInterfaceBlockEntity.this.did_r_sound = pValue;
                 }
             }
 
             @Override
             public int getCount() {
-                return 11;
+                return 12;
             }
         };
     }
@@ -120,6 +126,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         this.pos_z = vortexModData.getInt("pos_z");
         this.current_dim = vortexModData.getInt("current_dim");
         this.target_dim = vortexModData.getInt("target_dim");
+        this.did_r_sound = vortexModData.getInt("did_r_sound");
         super.load(pTag);
     }
 
@@ -138,6 +145,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         vortexModData.putInt("pos_z", this.pos_z);
         vortexModData.putInt("current_dim", this.current_dim);
         vortexModData.putInt("target_dim", this.target_dim);
+        vortexModData.putInt("did_r_sound", this.did_r_sound);
 
         pTag.put(VortexMod.MODID, vortexModData);
         super.saveAdditional(pTag);
@@ -152,20 +160,18 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             ServerLevel tardisDimension = minecraftserver.getLevel(ModDimensions.tardisDIM_LEVEL_KEY);
             ServerLevel overworldDimension = minecraftserver.getLevel(Level.OVERWORLD);
 
-            VortexInterfaceBlockEntity localBlockEntity = (VortexInterfaceBlockEntity) pLevel.getBlockEntity(pPos);
-
-            localBlockEntity.data.set(0, localBlockEntity.data.get(0) + 1);
+            this.data.set(0, this.data.get(0) + 1);
 
             if (pLevel != vortexDimension && pLevel != tardisDimension) {
                 int dimId = pLevel.dimension().location().getPath().hashCode();
-                localBlockEntity.data.set(9, dimId);
-                if (localBlockEntity.data.get(10) == 0) {
-                    localBlockEntity.data.set(10, dimId);
+                this.data.set(9, dimId);
+                if (this.data.get(10) == 0) {
+                    this.data.set(10, dimId);
                 }
             }
             else {
-                if (localBlockEntity.data.get(10) == 0) {
-                    localBlockEntity.data.set(10, overworldDimension.dimension().location().getPath().hashCode());
+                if (this.data.get(10) == 0) {
+                    this.data.set(10, overworldDimension.dimension().location().getPath().hashCode());
                 }
             }
 
@@ -174,14 +180,18 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             ServerLevel targetDimension = overworldDimension;
 
             for (ServerLevel cLevel : serverLevels) {
-                if (cLevel.dimension().location().getPath().hashCode() == localBlockEntity.data.get(9)) {
+                if (cLevel.dimension().location().getPath().hashCode() == this.data.get(9)) {
                     currentDimension = cLevel;
                 }
-                if (cLevel.dimension().location().getPath().hashCode() == localBlockEntity.data.get(10)) {
+                if (cLevel.dimension().location().getPath().hashCode() == this.data.get(10)) {
                     targetDimension = cLevel;
                 }
             }
-
+            if (pLevel == targetDimension) {
+                this.data.set(6, pPos.getX());
+                this.data.set(7, pPos.getY());
+                this.data.set(8, pPos.getZ());
+            }
             int size = 1; // Diameter = size * 2 + 1
             int targetX = 0;
             int targetY = 0;
@@ -193,9 +203,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
             if (pLevel == tardisDimension) {
                 proto = false;
-                BlockEntity tBlockEntity = currentDimension.getBlockEntity(new BlockPos(localBlockEntity.data.get(6), localBlockEntity.data.get(7), localBlockEntity.data.get(8)));
+                BlockEntity tBlockEntity = currentDimension.getBlockEntity(new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8)));
                 if (tBlockEntity instanceof TardisBlockEntity tardisBlockEntity) {
-                    tardisBlockEntity.data.set(0, localBlockEntity.data.get(2));
+                    tardisBlockEntity.data.set(0, this.data.get(2));
                 }
             }
 
@@ -266,15 +276,55 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 }
             }
 
-            localBlockEntity.data.set(3, targetX);
-            localBlockEntity.data.set(4, targetY);
-            localBlockEntity.data.set(5, targetZ);
+            this.data.set(3, targetX);
+            this.data.set(4, targetY);
+            this.data.set(5, targetZ);
 
             if (throttle_on == 0) {
-                localBlockEntity.data.set(1, localBlockEntity.data.get(0));
+                this.data.set(1, this.data.get(0));
             }
 
+            BlockPos temp_target = new BlockPos(targetX, targetY, targetZ);
+
+            if (auto_ground) {
+                BlockPos new_target = temp_target.below();
+                if (targetDimension.getBlockState(new_target).getBlock() == Blocks.AIR) {
+                    boolean is_air = true;
+                    boolean going_down = true;
+                    boolean exhausted_search = false;
+                    while (is_air) {
+                        if (new_target.getY() <= targetDimension.dimensionType().minY()) {
+                            going_down = false;
+                        }
+                        if (new_target.getY() >= targetDimension.dimensionType().height() && !going_down) {
+                            exhausted_search = true;
+                            break;
+                        }
+
+                        if (going_down) {
+                            new_target = new_target.below();
+                        } else {
+                            new_target = new_target.above();
+                        }
+                        if (targetDimension.getBlockState(new_target).getBlock() != Blocks.AIR) {
+                            is_air = false;
+                        }
+                    }
+                    if (!exhausted_search) {
+                        if (going_down) {
+                            temp_target = new_target.above();
+                        } else {
+                            temp_target = new_target.below();
+                        }
+                    }
+                }
+            }
+            targetX = temp_target.getX();
+            targetY = temp_target.getY();
+            targetZ = temp_target.getZ();
+
             if (proto) {
+                BlockPos exteriorPos = new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8));
                 Entity closestPlayer = pLevel.getNearestPlayer(pPos.getX(), pPos.getY(), pPos.getZ(), size + 1, false);
                 if (closestPlayer == null) {
                     closestPlayer = vortexDimension.getNearestPlayer(pPos.getX(), pPos.getY(), pPos.getZ(), size + 1, false);
@@ -285,59 +335,28 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     }
                 }
 
-                if (throttle_on == 1 && localBlockEntity.data.get(0) > localBlockEntity.data.get(1) + 60 && pLevel != vortexDimension) {
-                    BlockPos vortexTargetPos = findNewVortexPosition(pPos, new BlockPos(targetX, targetY, targetZ), size);
+                if (throttle_on == 1 && this.data.get(0) > this.data.get(1) + (10 * tickSpeed) && pLevel != vortexDimension) {
+                    BlockPos vortexTargetPos = findNewVortexPosition(exteriorPos, pPos, new BlockPos(targetX, targetY, targetZ), size);
                     vortexTargetPos = new BlockPos(vortexTargetPos.getX(), -100, vortexTargetPos.getZ());
 
-                    localBlockEntity.data.set(1, localBlockEntity.data.get(0));
+                    this.data.set(1, this.data.get(0));
                     if (closestPlayer != null) {
                         handleVortexTeleports(size, pLevel, pPos, vortexTargetPos);
+                        vortexDimension.playSeededSound(null, vortexTargetPos.getX(), vortexTargetPos.getY(), vortexTargetPos.getZ(), ModSounds.FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
                     }
                     else {
                         handleTeleports(size, pLevel, targetDimension, pPos, new BlockPos(targetX, targetY, targetZ));
                     }
                 }
-                else if (throttle_on == 1 && pLevel == vortexDimension && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 250 && closestPlayer != null) {
+                else if (throttle_on == 1 && pLevel == vortexDimension && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 100 && closestPlayer != null) {
                     BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
-                    if (auto_ground) {
-                        BlockPos new_target = flight_target.below();
-                        if (targetDimension.getBlockState(new_target).getBlock() == Blocks.AIR) {
-                            boolean is_air = true;
-                            boolean going_down = true;
-                            boolean exhausted_search = false;
-                            while (is_air) {
-                                if (new_target.getY() <= targetDimension.dimensionType().minY()) {
-                                    going_down = false;
-                                }
-                                if (new_target.getY() >= targetDimension.dimensionType().height() && !going_down) {
-                                    exhausted_search = true;
-                                    break;
-                                }
-
-                                if (going_down) {
-                                    new_target = new_target.below();
-                                } else {
-                                    new_target = new_target.above();
-                                }
-                                if (targetDimension.getBlockState(new_target).getBlock() != Blocks.AIR) {
-                                    is_air = false;
-                                }
-                            }
-                            if (!exhausted_search) {
-                                if (going_down) {
-                                    flight_target = new_target.above();
-                                } else {
-                                    flight_target = new_target.below();
-                                }
-                            }
-                        }
-                    }
-                    targetX = flight_target.getX();
-                    targetY = flight_target.getY();
-                    targetZ = flight_target.getZ();
-                    localBlockEntity.data.set(1, localBlockEntity.data.get(0));
+                    this.data.set(1, this.data.get(0));
+                    this.data.set(11, 0);
                     handleTeleports(size, vortexDimension, targetDimension, pPos, flight_target);
-                    localBlockEntity.data.set(0, 0);
+                    this.data.set(6, targetX);
+                    this.data.set(7, targetY);
+                    this.data.set(8, targetZ);
+                    this.data.set(0, 0);
                     for (int x = -size; x <= size; x++) {
                         for (int y = -1; y <= y_size + (y_size - 1); y++) {
                             for (int z = -size; z <= size; z++) {
@@ -351,17 +370,29 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     }
                 }
                 if (throttle_on == 1 && pLevel != vortexDimension) {
+                    if (this.data.get(0) == this.data.get(1) + 1) {
+                        pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.DEMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                    }
                     handleDematParticles(size, pLevel, pPos);
                 }
-                if (throttle_on == 1 && pLevel == vortexDimension) {
-                    if (localBlockEntity.data.get(0) % 100 == 0 && localBlockEntity.data.get(0) > localBlockEntity.data.get(1) + 100 && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) > 250 && closestPlayer != null) {
-                        BlockPos newTarget = findNewVortexPosition(pPos, new BlockPos(targetX, targetY, targetZ), size);
+                if (throttle_on == 1 && pLevel == vortexDimension && this.data.get(0) > 0) {
+                    if (Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 0.3 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ)) && this.data.get(11) == 0) {
+                        targetDimension.playSeededSound(null, targetX, targetY, targetZ, ModSounds.REMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                        this.data.set(11, 1);
+                    }
+                    if (this.data.get(0) % 100 == 0 && this.data.get(0) > this.data.get(1) + 100 && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) > 100 && closestPlayer != null) {
+                        BlockPos newTarget = findNewVortexPosition(exteriorPos, pPos, new BlockPos(targetX, targetY, targetZ), size);
                         handleVortex2VortexTeleports(size, pLevel, pPos, newTarget);
-                        if (!has_equalizer) {
-                            handleLightningStrikes(targetDimension, new BlockPos(targetX, targetY, targetZ));
+                        vortexDimension.playSeededSound(null, newTarget.getX(), newTarget.getY(), newTarget.getZ(), ModSounds.FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                    }
+                    if (Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 0.3 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ))){
+                        handleRematParticles(size, targetDimension, new BlockPos(targetX, targetY, targetZ));
+                        if (this.data.get(0) % 100 == 0) {
+                            if (!has_equalizer) {
+                                handleLightningStrikes(targetDimension, new BlockPos(targetX, targetY, targetZ));
+                            }
                         }
                     }
-                    handleRematParticles(size, targetDimension, new BlockPos(targetX, targetY, targetZ));
                     handleVortexParticles(size, vortexDimension, pPos, new BlockPos(targetX, targetY, targetZ));
                 }
             }
@@ -387,67 +418,29 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                             }
                         }
                     } else {
-                        BlockPos exteriorPos = new BlockPos(localBlockEntity.data.get(6), localBlockEntity.data.get(7), localBlockEntity.data.get(8));
-//                        double total_distance = Math.sqrt(exteriorPos.distToCenterSqr(targetX, targetY, targetZ));
-//                        double ticks_per_block = tickSpeed / 10000f;
-//                        double ticks_to_travel = total_distance * ticks_per_block;
-                        double ticks_to_travel = 20 * tickSpeed;
-                        double end_tick = localBlockEntity.data.get(1) + ticks_to_travel;
-                        double mat_time = tickSpeed * 5;
+                        BlockPos exteriorPos = new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8));
+                        double ticks_to_travel = 35 * tickSpeed;
+                        double end_tick = this.data.get(1) + ticks_to_travel;
+                        double demat_time = tickSpeed * 10;
+                        double remat_time = tickSpeed * 10;
 
-                        if (localBlockEntity.data.get(0) > localBlockEntity.data.get(1) + mat_time) {
-                            BlockEntity tBlockEntity = currentDimension.getBlockEntity(new BlockPos(localBlockEntity.data.get(6), localBlockEntity.data.get(7), localBlockEntity.data.get(8)));
+                        if (this.data.get(0) > this.data.get(1) + demat_time) {
+                            BlockEntity tBlockEntity = currentDimension.getBlockEntity(new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8)));
                             if (tBlockEntity instanceof TardisBlockEntity) {
                                 handleTardisDeletion(currentDimension, exteriorPos);
                             }
                         }
-                        if (localBlockEntity.data.get(0) > end_tick && localBlockEntity.data.get(0) > localBlockEntity.data.get(1) + mat_time) {
+                        if (this.data.get(0) > end_tick && this.data.get(0) > this.data.get(1) + remat_time) {
                             BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
-                            if (auto_ground) {
-                                BlockPos new_target = flight_target.below();
-                                if (targetDimension.getBlockState(new_target).getBlock() == Blocks.AIR) {
-                                    boolean is_air = true;
-                                    boolean going_down = true;
-                                    boolean exhausted_search = false;
-                                    while (is_air) {
-                                        if (new_target.getY() <= targetDimension.dimensionType().minY()) {
-                                            going_down = false;
-                                        }
-                                        if (new_target.getY() >= targetDimension.dimensionType().height() && !going_down) {
-                                            exhausted_search = true;
-                                            break;
-                                        }
-
-                                        if (going_down) {
-                                            new_target = new_target.below();
-                                        } else {
-                                            new_target = new_target.above();
-                                        }
-                                        if (targetDimension.getBlockState(new_target).getBlock() != Blocks.AIR) {
-                                            is_air = false;
-                                        }
-                                    }
-                                    if (!exhausted_search) {
-                                        if (going_down) {
-                                            flight_target = new_target.above();
-                                        } else {
-                                            flight_target = new_target.below();
-                                        }
-                                    }
-                                }
-                            }
-                            targetX = flight_target.getX();
-                            targetY = flight_target.getY();
-                            targetZ = flight_target.getZ();
-                            localBlockEntity.data.set(1, localBlockEntity.data.get(0));
+                            this.data.set(1, this.data.get(0));
                             handleTardisDeletion(currentDimension, exteriorPos);
                             handleTardisPlacement(targetDimension, flight_target);
-                            handleLandingEntities(targetDimension, tardisDimension, flight_target, localBlockEntity.data.get(2));
-                            localBlockEntity.data.set(6, targetX);
-                            localBlockEntity.data.set(7, targetY);
-                            localBlockEntity.data.set(8, targetZ);
-                            localBlockEntity.data.set(9, targetDimension.dimension().location().getPath().hashCode());
-                            localBlockEntity.data.set(0, 0);
+                            handleLandingEntities(targetDimension, tardisDimension, flight_target, this.data.get(2));
+                            this.data.set(6, targetX);
+                            this.data.set(7, targetY);
+                            this.data.set(8, targetZ);
+                            this.data.set(9, targetDimension.dimension().location().getPath().hashCode());
+                            this.data.set(0, 0);
                             for (int x = -size; x <= size; x++) {
                                 for (int y = -1; y <= y_size + (y_size - 1); y++) {
                                     for (int z = -size; z <= size; z++) {
@@ -471,7 +464,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 }
                             }
                         }
-                        if (localBlockEntity.data.get(0) <= localBlockEntity.data.get(1) + mat_time && localBlockEntity.data.get(0) > 0) {
+                        if (this.data.get(0) <= this.data.get(1) + demat_time && this.data.get(0) - this.data.get(1) > 1 && this.data.get(0) > 0) {
                             handleDematCenterParticles(tardisDimension, pPos);
                             handleDematParticles(0, currentDimension, exteriorPos);
                             for (int x = -size; x <= size; x++) {
@@ -485,8 +478,8 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                     }
                                 }
                             }
-                        } else if (localBlockEntity.data.get(0) > end_tick - mat_time && localBlockEntity.data.get(0) > 0) {
-                            if (!has_equalizer) {
+                        } else if (this.data.get(0) > end_tick - remat_time && this.data.get(0) > 0) {
+                            if (!has_equalizer && this.data.get(0) % 100 == 0) {
                                 handleLightningStrikes(targetDimension, new BlockPos(targetX, targetY, targetZ));
                             }
                             handleRematCenterParticles(tardisDimension, pPos);
@@ -502,8 +495,11 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                     }
                                 }
                             }
-                        } else if (localBlockEntity.data.get(0) > 0) {
-                            double time_remaining = (end_tick - mat_time - localBlockEntity.data.get(0)) / tickSpeed;
+                        } else if (this.data.get(0) > 0) {
+                            double time_remaining = (end_tick - remat_time - this.data.get(0)) / tickSpeed;
+                            if (this.data.get(0) == this.data.get(1) + demat_time + 1) {
+                                pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                            }
                             for (int x = -size; x <= size; x++) {
                                 for (int y = -1; y <= y_size + (y_size - 1); y++) {
                                     for (int z = -size; z <= size; z++) {
@@ -516,6 +512,14 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 }
                             }
                             handleFlightCenterParticles(tardisDimension, pPos);
+                        }
+                        if (this.data.get(0) <= this.data.get(1) + demat_time && this.data.get(0) - this.data.get(1) <= 1 && this.data.get(0) > 0) {
+                            currentDimension.playSeededSound(null, exteriorPos.getX(), exteriorPos.getY(), exteriorPos.getZ(), ModSounds.DEMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                            pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.DEMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                        }
+                        if (this.data.get(0) == end_tick - (remat_time + (5 * tickSpeed)) && this.data.get(0) > 0) {
+                            targetDimension.playSeededSound(null, targetX, targetY, targetZ, ModSounds.REMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                            pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.REMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
                         }
                     }
                 }
@@ -1094,7 +1098,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         }
     }
 
-    private BlockPos findNewVortexPosition(BlockPos pPos, BlockPos currentTarget, int size) {
+    private BlockPos findNewVortexPosition(BlockPos fromPos, BlockPos pPos, BlockPos currentTarget, int size) {
         // Direction vector from pPos to currentTarget
         double dirX = currentTarget.getX() - pPos.getX();
         double dirZ = currentTarget.getZ() - pPos.getZ();
@@ -1104,16 +1108,11 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         dirX /= magnitude;
         dirZ /= magnitude;
 
-        double min_distance = size * 10;
-        double max_distance = 100000;
-        double total_distance = Math.sqrt(pPos.distToCenterSqr(currentTarget.getX(), pPos.getY(), currentTarget.getZ()));
-        double distance = 0.5 * total_distance;
+        double total_distance = Math.sqrt(fromPos.distToCenterSqr(currentTarget.getX(), pPos.getY(), currentTarget.getZ()));
+        double distance = (0.1 * total_distance);
 
-        if (distance < min_distance) {
-            distance = min_distance;
-        }
-        if (distance > max_distance) {
-            distance = max_distance;
+        if (distance < size) {
+            distance = size + 1;
         }
 
         // Calculate the new position
