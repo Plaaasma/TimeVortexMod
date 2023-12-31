@@ -1,5 +1,7 @@
 package net.plaaasma.vortexmod.block.entity;
 
+import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.lua.LuaFunction;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,6 +24,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -31,6 +34,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.event.level.NoteBlockEvent;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.block.ModBlocks;
@@ -55,6 +59,12 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private int target_dim = 0;
     private int did_r_sound = 0;
     private int facing_dir = 0;
+    private int cc_throttle_on = 0;
+    private int cc_set_coords = 0;
+    private int cc_set_x = 0;
+    private int cc_set_y = 0;
+    private int cc_set_z = 0;
+    private int cc_set_dim = 0;
     public final ContainerData data;
 
     public VortexInterfaceBlockEntity(BlockPos pPos, BlockState pBlockState) {
@@ -76,6 +86,12 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     case 10 -> VortexInterfaceBlockEntity.this.target_dim;
                     case 11 -> VortexInterfaceBlockEntity.this.did_r_sound;
                     case 12 -> VortexInterfaceBlockEntity.this.facing_dir;
+                    case 13 -> VortexInterfaceBlockEntity.this.cc_throttle_on;
+                    case 14 -> VortexInterfaceBlockEntity.this.cc_set_coords;
+                    case 15 -> VortexInterfaceBlockEntity.this.cc_set_x;
+                    case 16 -> VortexInterfaceBlockEntity.this.cc_set_y;
+                    case 17 -> VortexInterfaceBlockEntity.this.cc_set_z;
+                    case 18 -> VortexInterfaceBlockEntity.this.cc_set_dim;
                     default -> 0;
                 };
             }
@@ -96,12 +112,18 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     case 10 -> VortexInterfaceBlockEntity.this.target_dim = pValue;
                     case 11 -> VortexInterfaceBlockEntity.this.did_r_sound = pValue;
                     case 12 -> VortexInterfaceBlockEntity.this.facing_dir = pValue;
+                    case 13 -> VortexInterfaceBlockEntity.this.cc_throttle_on = pValue;
+                    case 14 -> VortexInterfaceBlockEntity.this.cc_set_coords = pValue;
+                    case 15 -> VortexInterfaceBlockEntity.this.cc_set_x = pValue;
+                    case 16 -> VortexInterfaceBlockEntity.this.cc_set_y = pValue;
+                    case 17 -> VortexInterfaceBlockEntity.this.cc_set_z = pValue;
+                    case 18 -> VortexInterfaceBlockEntity.this.cc_set_dim = pValue;
                 }
             }
 
             @Override
             public int getCount() {
-                return 13;
+                return 19;
             }
         };
     }
@@ -133,6 +155,12 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         this.target_dim = vortexModData.getInt("target_dim");
         this.did_r_sound = vortexModData.getInt("did_r_sound");
         this.facing_dir = vortexModData.getInt("facing_dir");
+        this.cc_throttle_on = vortexModData.getInt("cc_throttle_on");
+        this.cc_set_coords = vortexModData.getInt("cc_set_coords");
+        this.cc_set_x = vortexModData.getInt("cc_set_x");
+        this.cc_set_y = vortexModData.getInt("cc_set_y");
+        this.cc_set_z = vortexModData.getInt("cc_set_z");
+        this.cc_set_dim = vortexModData.getInt("cc_set_dim");
         super.load(pTag);
     }
 
@@ -153,9 +181,57 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         vortexModData.putInt("target_dim", this.target_dim);
         vortexModData.putInt("did_r_sound", this.did_r_sound);
         vortexModData.putInt("facing_dir", this.facing_dir);
+        vortexModData.putInt("cc_throttle_on", this.cc_throttle_on);
+        vortexModData.putInt("cc_set_coords", this.cc_set_coords);
+        vortexModData.putInt("cc_set_x", this.cc_set_x);
+        vortexModData.putInt("cc_set_y", this.cc_set_y);
+        vortexModData.putInt("cc_set_z", this.cc_set_z);
+        vortexModData.putInt("cc_set_dim", this.cc_set_dim);
 
         pTag.put(VortexMod.MODID, vortexModData);
         super.saveAdditional(pTag);
+    }
+
+    @LuaFunction
+    public final String enableThrottle(String param) throws LuaException {
+        this.data.set(13, 1);
+
+        return "true";
+    }
+
+    @LuaFunction
+    public final String setCoords(String param) throws LuaException {
+        String[] numbers = param.split(" ");
+
+        if (numbers.length == 3) {
+            for (int index = 0; index < 3; index++) {
+                int num = (int) Double.parseDouble(numbers[index]);
+
+                this.data.set(14, 1);
+
+                if (index == 0) {
+                    this.data.set(15, num);
+                }
+                if (index == 1) {
+                    this.data.set(16, num);
+                }
+                if (index == 2) {
+                    this.data.set(17, num);
+                }
+            }
+
+            return "Coords set to " + numbers[0] + " " + numbers[1] + " " + numbers[2];
+        }
+        else {
+            return "false";
+        }
+    }
+
+    @LuaFunction
+    public final String setDimension(String param) throws LuaException {
+        this.data.set(17, param.hashCode());
+
+        return "dimension set to " + param + " , if this is not a valid dimension then it simply won't be set.";
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
@@ -190,8 +266,13 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 if (cLevel.dimension().location().getPath().hashCode() == this.data.get(9)) {
                     currentDimension = cLevel;
                 }
-                if (cLevel.dimension().location().getPath().hashCode() == this.data.get(10)) {
+                if (cLevel.dimension().location().getPath().hashCode() == this.data.get(10) && this.data.get(18) == 0) {
                     targetDimension = cLevel;
+                }
+                if (cLevel.dimension().location().getPath().hashCode() == this.data.get(18)) {
+                    targetDimension = cLevel;
+                    this.data.set(10, this.data.get(18));
+                    this.data.set(18, 0);
                 }
             }
             if (pLevel == targetDimension) {
@@ -272,10 +353,24 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 targetX = designatorBlockEntity.data.get(0);
                                 targetY = designatorBlockEntity.data.get(1);
                                 targetZ = designatorBlockEntity.data.get(2);
+                                if (this.data.get(14) == 1) {
+                                    targetX = this.data.get(15);
+                                    targetY = this.data.get(16);
+                                    targetZ = this.data.get(17);
+                                    designatorBlockEntity.data.set(0, targetX);
+                                    designatorBlockEntity.data.set(1, targetY);
+                                    designatorBlockEntity.data.set(2, targetZ);
+                                    this.data.set(14, 0);
+                                }
                             }
 
                             if (blockEntity instanceof ThrottleBlockEntity throttleBlockEntity) {
                                 throttle_on = throttleBlockEntity.data.get(0);
+                                if (this.data.get(13) == 1) {
+                                    throttleBlockEntity.data.set(0, 1);
+                                    throttle_on = 1;
+                                    this.data.set(13, 0);
+                                }
                             }
                         }
                     }

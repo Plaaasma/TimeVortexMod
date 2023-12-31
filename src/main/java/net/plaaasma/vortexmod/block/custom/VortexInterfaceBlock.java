@@ -28,6 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -38,9 +39,11 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.block.entity.*;
 import net.plaaasma.vortexmod.item.ModItems;
@@ -157,6 +160,8 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
 
                 int door_distance = 10 + size;
 
+                BlockPos interfacePos = null;
+
                 for (int x = -size; x <= size; x++) {
                     for (int y = -1; y <= y_size + (y_size - 1); y++) {
                         for (int z = -size; z <= size; z++) {
@@ -170,6 +175,9 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                                 nbtData = blockEntity.saveWithFullMetadata();
                                 if (blockEntity instanceof SizeManipulatorBlockEntity sizeManipulatorBlockEntity) {
                                     sizeManipulatorBlockEntity.itemHandler.setStackInSlot(0, new ItemStack(Items.AIR, 0));
+                                }
+                                if (blockEntity instanceof VortexInterfaceBlockEntity vortexInterfaceBlockEntity) {
+                                    interfacePos = currentTargetPos;
                                 }
                             }
 
@@ -210,6 +218,9 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                 } else {
                     pPlayer.displayClientMessage(Component.literal("Exterior not found"), false);
                 }
+
+                ChunkPos chunkPos = tardisDimension.getChunkAt(interfacePos).getPos();
+                ForgeChunkManager.forceChunk(tardisDimension, VortexMod.MODID, interfacePos, chunkPos.x, chunkPos.z, true, true);
 
                 pPlayer.setItemInHand(pHand, new ItemStack(Items.AIR, 0));
 
