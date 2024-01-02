@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "vortexmod:black_trader",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 30,
+    "separation": 10,
+    "salt": 53095453
+  }
+}
