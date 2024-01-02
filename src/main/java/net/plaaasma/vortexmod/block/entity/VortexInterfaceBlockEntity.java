@@ -470,8 +470,14 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 }
 
                 if (throttle_on == 1 && this.data.get(0) > this.data.get(1) + (10 * tickSpeed) && pLevel != vortexDimension) {
-                    BlockPos vortexTargetPos = findNewVortexPosition(exteriorPos, pPos, new BlockPos(targetX, targetY, targetZ), size);
+                    BlockPos realTargetPos = new BlockPos(targetX, targetY, targetZ);
+                    BlockPos vortexTargetPos = findNewVortexPosition(exteriorPos, pPos, realTargetPos, size);
                     vortexTargetPos = new BlockPos(vortexTargetPos.getX(), -100, vortexTargetPos.getZ());
+                    if (Math.sqrt(exteriorPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 1000) {
+                        this.data.set(6, this.data.get(6) + 1000);
+                        this.data.set(8, this.data.get(8) + 1000);
+                        vortexTargetPos = vortexTargetPos.offset(1000, 0, 1000);
+                    }
 
                     this.data.set(1, this.data.get(0));
                     if (closestPlayer != null) {
