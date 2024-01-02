@@ -21,9 +21,10 @@ public class LostTravelerRenderer extends MobRenderer<LostTravelerEntity, LostTr
     @Override
     public void render(LostTravelerEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack,
                        MultiBufferSource pBuffer, int pPackedLight) {
-        /*if(pEntity.isBaby()) {
+
+        if(pEntity.isBaby()) {
             pMatrixStack.scale(0.5f, 0.5f, 0.5f);
-        }*/
+        }
 
         super.render(pEntity, pEntityYaw, pPartialTicks, pMatrixStack, pBuffer, pPackedLight);
     }

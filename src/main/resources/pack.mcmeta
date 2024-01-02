@@ -1,7 +1,8 @@
 {
   "pack": {
     "description": {
-      "text": "${mod_id} resources"
+      "text": "${mod_id} resources. Eat your beans kids :D",
+      "author": "Jesus himself"
     },
     "pack_format": 15
   }

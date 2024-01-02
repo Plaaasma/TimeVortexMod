@@ -1,6 +1,7 @@
 package net.plaaasma.vortexmod.entities.custom;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
@@ -11,6 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -34,6 +36,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -54,9 +57,6 @@ public class LostTravelerEntity extends AbstractVillager {
 
     @Nullable
     private BlockPos wanderTarget;
-    private int despawnDelay;
-
-    private int attackCooldown = 0;
 
 
     VillagerTrades.ItemListing[] listings = {
@@ -69,14 +69,6 @@ public class LostTravelerEntity extends AbstractVillager {
 
     public LostTravelerEntity(EntityType<? extends LostTravelerEntity> type, Level world) {
         super(type, world);
-    }
-
-    public int getAttackCooldown() {
-        return attackCooldown;
-    }
-
-    public void setAttackCooldown(int attackCooldown) {
-        this.attackCooldown = attackCooldown;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -162,6 +154,12 @@ public class LostTravelerEntity extends AbstractVillager {
     @Override
     public void updateTrades() {
         MerchantOffers merchantoffers = this.getOffers();
+
+       /* Biome biome = level().getBiome(getOnPos()).get();
+        Registry<Biome> biomeKey = RegistryKey.of(Registry.BIOME_KEY, biome.getKey());
+        String biomeName = biomeKey.getValue().toString();
+        if (biome.getName)*/
+
         this.addOffersFromItemListings(merchantoffers, listings, 7);
     }
 
@@ -181,7 +179,6 @@ public class LostTravelerEntity extends AbstractVillager {
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt("DespawnDelay", this.despawnDelay);
         if (this.wanderTarget != null) {
             compound.put("WanderTarget", NbtUtils.writeBlockPos(this.wanderTarget));
         }
@@ -190,9 +187,6 @@ public class LostTravelerEntity extends AbstractVillager {
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        if (compound.contains("DespawnDelay", 99)) {
-            this.despawnDelay = compound.getInt("DespawnDelay");
-        }
 
         if (compound.contains("WanderTarget")) {
             this.wanderTarget = NbtUtils.readBlockPos(compound.getCompound("WanderTarget"));
@@ -243,29 +237,6 @@ public class LostTravelerEntity extends AbstractVillager {
     @Override
     public SoundEvent getNotifyTradeSound() {
         return SoundEvents.WANDERING_TRADER_YES;
-    }
-
-    public void setDespawnDelay(int i) {
-        this.despawnDelay = i;
-    }
-
-    public int getDespawnDelay() {
-        return this.despawnDelay;
-    }
-
-    @Override
-    public void aiStep() {
-        super.aiStep();
-        if (!this.level().isClientSide) {
-            if (attackCooldown > 0) attackCooldown--;
-            this.maybeDespawn();
-        }
-    }
-
-    private void maybeDespawn() {
-        if (this.despawnDelay > 0 && !this.isTrading() && --this.despawnDelay == 0) {
-            this.remove(RemovalReason.DISCARDED);
-        }
     }
 
     public void setWanderTarget(@Nullable BlockPos pos) {
