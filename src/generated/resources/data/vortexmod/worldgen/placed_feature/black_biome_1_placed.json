@@ -1,9 +1,9 @@
 {
-  "feature": "vortexmod:sea_lantern_key",
+  "feature": "vortexmod:black_biome_1_config",
   "placement": [
     {
       "type": "minecraft:count",
-      "count": 256
+      "count": 64
     },
     {
       "type": "minecraft:in_square"

@@ -15,7 +15,11 @@
     "water_color": 11045682,
     "water_fog_color": 8343039
   },
-  "features": [],
+  "features": [
+    [
+      "vortexmod:purple_biome_1_placed"
+    ]
+  ],
   "has_precipitation": false,
   "spawn_costs": {},
   "spawners": {

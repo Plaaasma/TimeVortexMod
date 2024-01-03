@@ -17,19 +17,37 @@ import net.plaaasma.vortexmod.VortexMod;
 import java.util.List;
 
 public class ModPlacedFeatures {
-    public static final ResourceKey<PlacedFeature> SEA_LANTERN_PLACED_KEY = registerKey("sea_lantern_placed");
 
+    // Blue Vortex Biome
+    public static final ResourceKey<PlacedFeature> BLUE_BIOME_1_PlACED = registerKey("blue_biome_1_placed");
+
+    // Orange Vortex Biome
+    public static final ResourceKey<PlacedFeature> ORANGE_BIOME_1_PlACED = registerKey("orange_biome_1_placed");
+
+    // Purple Vortex Biome
+    public static final ResourceKey<PlacedFeature> PURPLE_BIOME_1_PlACED = registerKey("purple_biome_1_placed");
+
+    // Black Vortex Biome
+    public static final ResourceKey<PlacedFeature> BLACK_BIOME_1_PlACED = registerKey("black_biome_1_placed");
 
     public static void bootstrap(BootstapContext<PlacedFeature> context) {
         HolderGetter<ConfiguredFeature<?, ?>> configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
 
-        //PlacementUtils.register(context, SEA_LANTERN_PLACED_KEY, holder18, CountPlacement.of(UniformInt.of(250, 500)), InSquarePlacement.spread(), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT, BiomeFilter.biome());
-        //PlacementUtils.register(context, SEA_LANTERN_PLACED_KEY, holder18, CountPlacement.of(256), InSquarePlacement.spread(), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT, BiomeFilter.biome());
-        register(context, SEA_LANTERN_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.SEA_LANTERN_KEY),
-                ModOrePlacement.orePlacement(CountPlacement.of(256), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT));
-        /*register(context, SEA_LANTERN_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.SEA_LANTERN_KEY),
-                ModOrePlacement.commonOrePlacement(64,
-                        HeightRangePlacement.uniform(VerticalAnchor.absolute(-604), VerticalAnchor.absolute(800))));*/
+        // Blue Vortex Biome
+        register(context, BLUE_BIOME_1_PlACED, configuredFeatures.getOrThrow(ModConfiguredFeatures.BLUE_BIOME_1_CONFIG),
+                ModOrePlacement.orePlacement(CountPlacement.of(64), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT));
+
+        // Orange Vortex Biome
+        register(context, ORANGE_BIOME_1_PlACED, configuredFeatures.getOrThrow(ModConfiguredFeatures.ORANGE_BIOME_1_CONFIG),
+                ModOrePlacement.orePlacement(CountPlacement.of(64), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT));
+
+        // Purple Vortex Biome
+        register(context, PURPLE_BIOME_1_PlACED, configuredFeatures.getOrThrow(ModConfiguredFeatures.PURPLE_BIOME_1_CONFIG),
+                ModOrePlacement.orePlacement(CountPlacement.of(64), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT));
+
+        // Black Vortex Biome
+        register(context, BLACK_BIOME_1_PlACED, configuredFeatures.getOrThrow(ModConfiguredFeatures.BLACK_BIOME_1_CONFIG),
+                ModOrePlacement.orePlacement(CountPlacement.of(64), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT));
     }
 
 

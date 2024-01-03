@@ -42,29 +42,56 @@ import org.apache.commons.compress.harmony.pack200.Codec;
 import java.util.List;
 
 public class ModConfiguredFeatures {
-    public static final ResourceKey<ConfiguredFeature<?, ?>> SEA_LANTERN_KEY = registerKey("sea_lantern_key");
+    // Blue Vortex Biome
+    public static final ResourceKey<ConfiguredFeature<?, ?>> BLUE_BIOME_1_CONFIG = registerKey("blue_biome_1_config");
+
+    // Orange Vortex Biome
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ORANGE_BIOME_1_CONFIG = registerKey("orange_biome_1_config");
+
+    // Purple Vortex Biome
+    public static final ResourceKey<ConfiguredFeature<?, ?>> PURPLE_BIOME_1_CONFIG = registerKey("purple_biome_1_config");
+
+    // Black Vortex Biome
+    public static final ResourceKey<ConfiguredFeature<?, ?>> BLACK_BIOME_1_CONFIG = registerKey("black_biome_1_config");
 
     public static void bootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {
-        RuleTest stoneReplace = new TagMatchTest(BlockTags.BASE_STONE_OVERWORLD);
-        RuleTest deepslateReplace = new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES);
-        RuleTest dirtReplace = new TagMatchTest(BlockTags.DIRT);
-        RuleTest infReplace = new TagMatchTest(BlockTags.INFINIBURN_OVERWORLD);
-        RuleTest stoneRReplace = new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES);
+        RuleTest blueReplace = new BlockMatchTest(Blocks.SEA_LANTERN);
+        RuleTest orangeReplace = new BlockMatchTest(Blocks.GLOWSTONE);
+        RuleTest purpleReplace = new BlockMatchTest(Blocks.PURPLE_CONCRETE);
+        RuleTest blackReplace = new BlockMatchTest(Blocks.OBSIDIAN);
 
 
-        List<OreConfiguration.TargetBlockState> vortexSeaLanterns = List.of(
-                OreConfiguration.target(stoneReplace, Blocks.SEA_LANTERN.defaultBlockState()),
-                OreConfiguration.target(deepslateReplace, Blocks.SEA_LANTERN.defaultBlockState()),
-                OreConfiguration.target(infReplace, Blocks.SEA_LANTERN.defaultBlockState()),
-                OreConfiguration.target(stoneRReplace, Blocks.SEA_LANTERN.defaultBlockState()),
-                OreConfiguration.target(deepslateReplace, Blocks.SEA_LANTERN.defaultBlockState())
+        // Blue Vortex Biome
+        register(context, BLUE_BIOME_1_CONFIG, Feature.ORE,
+                new OreConfiguration(List.of(OreConfiguration.target
+                        (blueReplace, Blocks.LIGHT_BLUE_CONCRETE.defaultBlockState())),
+                        64
+                )
         );
 
-        //register(context, SEA_LANTERN_KEY, Feature.ORE, new OreConfiguration(vortexSeaLanterns, 64));
-        WeightedStateProvider weightedstateprovider = new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder().add(Blocks.CAVE_VINES_PLANT.defaultBlockState(), 4).add(Blocks.CAVE_VINES_PLANT.defaultBlockState().setValue(CaveVines.BERRIES, Boolean.valueOf(true)), 1));
-        RandomizedIntStateProvider randomizedintstateprovider = new RandomizedIntStateProvider(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder().add(Blocks.CAVE_VINES.defaultBlockState(), 4).add(Blocks.CAVE_VINES.defaultBlockState().setValue(CaveVines.BERRIES, Boolean.valueOf(true)), 1)), CaveVinesBlock.AGE, UniformInt.of(23, 25));
-        register(context, SEA_LANTERN_KEY, Feature.BLOCK_COLUMN, new BlockColumnConfiguration(List.of(BlockColumnConfiguration.layer(new WeightedListInt(SimpleWeightedRandomList.<IntProvider>builder().add(UniformInt.of(0, 19), 2).add(UniformInt.of(0, 2), 3).add(UniformInt.of(0, 6), 10).build()), weightedstateprovider), BlockColumnConfiguration.layer(ConstantInt.of(1), randomizedintstateprovider)), Direction.DOWN, BlockPredicate.ONLY_IN_AIR_PREDICATE, true));
-        //register(context, SEA_LANTERN_KEY, Feature.FILL_LAYER, new FillLayerFeature(new Codec<Laye));
+        // Orange Vortex Biome
+        register(context, ORANGE_BIOME_1_CONFIG, Feature.ORE,
+                new OreConfiguration(List.of(OreConfiguration.target
+                        (orangeReplace, Blocks.YELLOW_TERRACOTTA.defaultBlockState())),
+                        64
+                )
+        );
+
+        // Purple Vortex Biome
+        register(context, PURPLE_BIOME_1_CONFIG, Feature.ORE,
+                new OreConfiguration(List.of(OreConfiguration.target
+                        (purpleReplace, Blocks.PURPLE_TERRACOTTA.defaultBlockState())),
+                        64
+                )
+        );
+
+        // Black Vortex Biome
+        register(context, BLACK_BIOME_1_CONFIG, Feature.ORE,
+                new OreConfiguration(List.of(OreConfiguration.target
+                        (blackReplace, Blocks.GILDED_BLACKSTONE.defaultBlockState())),
+                        64
+                )
+        );
     }
 
 

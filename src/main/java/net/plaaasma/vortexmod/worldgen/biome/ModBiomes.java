@@ -25,21 +25,42 @@ public class ModBiomes {
     public static final ResourceKey<Biome> BLACK_VORTEX_BIOME = ResourceKey.create(Registries.BIOME, new ResourceLocation(VortexMod.MODID, "black_vortex_biome"));
     public static final ResourceKey<Biome> TARDIS_BIOME = ResourceKey.create(Registries.BIOME, new ResourceLocation(VortexMod.MODID, "tardis_biome"));
 
+    private enum BiomeColor {
+        BLUE,
+        ORANGE,
+        PURPLE,
+        BLACK
+
+    }
+
     public static void bootstrap(BootstapContext<Biome> context) {
-        context.register(BLUE_VORTEX_BIOME, vortexBiome(context));
-        context.register(ORANGE_VORTEX_BIOME, vortexBiome(context));
-        context.register(PURPLE_VORTEX_BIOME, vortexBiome(context));
-        context.register(BLACK_VORTEX_BIOME, vortexBiome(context));
+        context.register(BLUE_VORTEX_BIOME, vortexBiome(context, BiomeColor.BLUE));
+        context.register(ORANGE_VORTEX_BIOME, vortexBiome(context, BiomeColor.ORANGE));
+        context.register(PURPLE_VORTEX_BIOME, vortexBiome(context, BiomeColor.PURPLE));
+        context.register(BLACK_VORTEX_BIOME, vortexBiome(context, BiomeColor.BLACK));
         context.register(TARDIS_BIOME, tardisBiome(context));
     }
 
-    public static Biome vortexBiome(BootstapContext<Biome> context) {
+    public static Biome vortexBiome(BootstapContext<Biome> context, BiomeColor biomeColor) {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
         BiomeGenerationSettings.Builder biomeBuilder =
                 new BiomeGenerationSettings.Builder(context.lookup(Registries.PLACED_FEATURE), context.lookup(Registries.CONFIGURED_CARVER));
 
-        //biomeBuilder.addFeature(GenerationStep.Decoration.RAW_GENERATION, ModPlacedFeatures.SEA_LANTERN_PLACED_KEY);
+        switch (biomeColor) {
+            case BLUE -> {
+                biomeBuilder.addFeature(GenerationStep.Decoration.RAW_GENERATION, ModPlacedFeatures.BLUE_BIOME_1_PlACED);
+            }
+            case ORANGE -> {
+                biomeBuilder.addFeature(GenerationStep.Decoration.RAW_GENERATION, ModPlacedFeatures.ORANGE_BIOME_1_PlACED);
+            }
+            case PURPLE -> {
+                biomeBuilder.addFeature(GenerationStep.Decoration.RAW_GENERATION, ModPlacedFeatures.PURPLE_BIOME_1_PlACED);
+            }
+            case BLACK -> {
+                biomeBuilder.addFeature(GenerationStep.Decoration.RAW_GENERATION, ModPlacedFeatures.BLACK_BIOME_1_PlACED);
+            }
+        }
 
         return new Biome.BiomeBuilder()
                 .hasPrecipitation(false)
