@@ -125,6 +125,7 @@ repositories {
     // flatDir {
     //     dir 'libs'
     // }
+
     maven {
         // location of the maven that hosts JEI files since January 2023
         name = "Jared's maven"

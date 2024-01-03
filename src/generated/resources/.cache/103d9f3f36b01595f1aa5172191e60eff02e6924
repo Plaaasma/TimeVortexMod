@@ -1,8 +1,8 @@
-// 1.20.1	2023-12-27T19:25:06.6922443	Registries
+// 1.20.1	2024-01-02T19:51:44.8361692	Registries
 9c1136c085028c3862ef5723c3990bba55d3347a data/vortexmod/dimension/tardisdim.json
 742ef3452199136ffe12ea8212588825f6be7638 data/vortexmod/dimension/vortexdim.json
-9f1ec69d535c8407a72ed28810026990d9dc060a data/vortexmod/dimension_type/tardisdim_type.json
-d99c3463485b540477176e1f343f9ab3203f42d7 data/vortexmod/dimension_type/vortexdim_type.json
+de6437769e598cde9d23a62fa3dece339dfe9b95 data/vortexmod/dimension_type/tardisdim_type.json
+f3ddce74b84e4445257f47a9b358d45ef000ddee data/vortexmod/dimension_type/vortexdim_type.json
 6c026734baf6c9304a776e2b1ca900a19d8e8fe2 data/vortexmod/worldgen/biome/black_vortex_biome.json
 6c026734baf6c9304a776e2b1ca900a19d8e8fe2 data/vortexmod/worldgen/biome/blue_vortex_biome.json
 6c026734baf6c9304a776e2b1ca900a19d8e8fe2 data/vortexmod/worldgen/biome/orange_vortex_biome.json
