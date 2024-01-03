@@ -1,4 +1,4 @@
-package net.plaaasma.vortexmod.screen;
+package net.plaaasma.vortexmod.screen.custom.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.plaaasma.vortexmod.VortexMod;
@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.plaaasma.vortexmod.screen.custom.menu.SizeManipulatorMenu;
 
 public class SizeManipulatorScreen extends AbstractContainerScreen<SizeManipulatorMenu> {
     private static final ResourceLocation TEXTURE =

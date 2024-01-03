@@ -1,4 +1,4 @@
-package net.plaaasma.vortexmod.datagen;
+package net.plaaasma.vortexmod.datagen.generators;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -8,6 +8,7 @@ import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.plaaasma.vortexmod.VortexMod;
+import net.plaaasma.vortexmod.datagen.providers.*;
 
 import java.util.concurrent.CompletableFuture;
 

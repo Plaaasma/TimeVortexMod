@@ -8,6 +8,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.entities.ModEntities;
+import net.plaaasma.vortexmod.item.custom.Cheese;
+import net.plaaasma.vortexmod.item.custom.EuclideanUpgrade;
+import net.plaaasma.vortexmod.item.custom.SizeUpgrade;
+import net.plaaasma.vortexmod.item.custom.Wrench;
 
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, VortexMod.MODID);

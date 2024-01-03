@@ -1,14 +1,11 @@
-package net.plaaasma.vortexmod.entities.Villager;
+package net.plaaasma.vortexmod.entities.villager;
 
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 
-import com.google.common.collect.ImmutableSet;
 import net.plaaasma.vortexmod.VortexMod;
 
 public class ModVillagers {

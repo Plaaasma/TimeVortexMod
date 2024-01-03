@@ -21,7 +21,7 @@ import net.plaaasma.vortexmod.item.ModCreativeModeTabs;
 import net.plaaasma.vortexmod.item.ModItems;
 import net.plaaasma.vortexmod.sound.ModSounds;
 import net.plaaasma.vortexmod.screen.ModMenuTypes;
-import net.plaaasma.vortexmod.screen.SizeManipulatorScreen;
+import net.plaaasma.vortexmod.screen.custom.screen.SizeManipulatorScreen;
 import org.slf4j.Logger;
 
 import java.util.regex.Pattern;

@@ -1,14 +1,13 @@
-package net.plaaasma.vortexmod.datagen;
+package net.plaaasma.vortexmod.datagen.providers;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.worldgen.ModConfiguredFeatures;
-import net.plaaasma.vortexmod.worldgen.ModNoiseGenerator;
+import net.plaaasma.vortexmod.worldgen.utils.ModNoiseGenerator;
 import net.plaaasma.vortexmod.worldgen.ModPlacedFeatures;
 import net.plaaasma.vortexmod.worldgen.biome.ModBiomes;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;

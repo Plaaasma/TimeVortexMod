@@ -1,4 +1,4 @@
-package net.plaaasma.vortexmod.datagen;
+package net.plaaasma.vortexmod.datagen.providers;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
