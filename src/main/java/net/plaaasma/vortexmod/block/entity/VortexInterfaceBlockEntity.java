@@ -818,7 +818,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
     public static void handleTardisPlacement(ServerLevel pLevel, BlockPos target, Integer rotationYaw) {
         Direction rotationDirection;
-        if (rotationYaw > 0 && rotationYaw < 90) {
+        if (rotationYaw >= 0 && rotationYaw < 90) {
             rotationDirection = Direction.NORTH;
         }
         else if (rotationYaw >= 90 && rotationYaw < 180) {
