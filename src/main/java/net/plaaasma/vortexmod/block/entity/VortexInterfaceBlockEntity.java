@@ -438,8 +438,8 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             targetY = temp_target.getY();
             targetZ = temp_target.getZ();
 
-            if (targetY >= targetDimension.dimensionType().height() - (y_size + (y_size - 1))) {
-                targetY = targetDimension.dimensionType().height() - (y_size + (y_size - 1)) - 1;
+            if (targetY >= (targetDimension.dimensionType().minY() + targetDimension.dimensionType().height()) - (y_size + (y_size - 1))) {
+                targetY = (targetDimension.dimensionType().minY() + targetDimension.dimensionType().height()) - (y_size + (y_size - 1)) - 1;
             }
             if (targetY <= targetDimension.dimensionType().minY() + 1) {
                 targetY = targetDimension.dimensionType().minY() + 2;
