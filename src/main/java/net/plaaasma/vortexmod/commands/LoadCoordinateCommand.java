@@ -1,17 +1,11 @@
 package net.plaaasma.vortexmod.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.sun.jdi.connect.Connector;
-import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.coordinates.Coordinates;
-import net.minecraft.commands.arguments.coordinates.RotationArgument;
-import net.minecraft.commands.arguments.coordinates.Vec3Argument;
+import net.minecraft.commands.arguments.ComponentArgument;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -22,32 +16,32 @@ import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.block.entity.CoordinateDesignatorBlockEntity;
 import net.plaaasma.vortexmod.block.entity.VortexInterfaceBlockEntity;
 import net.plaaasma.vortexmod.mapdata.DimensionMapData;
-import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
+import net.plaaasma.vortexmod.mapdata.LocationMapData;
 
-public class SetRotationCommand {
-    public SetRotationCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
+public class LoadCoordinateCommand {
+    public LoadCoordinateCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("tardis")
-        .then(Commands.literal("set")
-        .then(Commands.literal("rotation")
-        .then(Commands.argument("yaw", IntegerArgumentType.integer())
-            .executes((command) -> {
-                return setRotation(command.getSource(), IntegerArgumentType.getInteger(command, "yaw"));
-            }))
-        )));
+        .then(Commands.literal("load")
+                .then(Commands.argument("name", ComponentArgument.textComponent())
+                        .executes((command) -> {
+                            return loadCoords(command.getSource(), ComponentArgument.getComponent(command, "name"));
+                        }))));
     }
 
-    private int setRotation(CommandSourceStack source, Integer targetRot) throws CommandSyntaxException {
+    private int loadCoords(CommandSourceStack source, Component locName) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayer();
         BlockPos ePlayerPos = player.blockPosition();
         ServerLevel pLevel = source.getPlayer().serverLevel();
         MinecraftServer minecraftserver = pLevel.getServer();
         ServerLevel overworld = minecraftserver.getLevel(Level.OVERWORLD);
+        LocationMapData coord_data = LocationMapData.get(overworld);
+        DimensionMapData dim_data = DimensionMapData.get(overworld);
 
         boolean core_found = false;
 
         BlockPos corePos = ePlayerPos;
 
-        VortexInterfaceBlockEntity interfaceEntity = null;
+        VortexInterfaceBlockEntity vortexInterfaceBlockEntity = null;
 
         for (int _x = -16; _x <= 16 && !core_found; _x++) {
             for (int _y = -16; _y <= 16 && !core_found; _y++) {
@@ -57,8 +51,8 @@ public class SetRotationCommand {
                     BlockState blockState = pLevel.getBlockState(currentPos);
                     if (blockState.getBlock() == ModBlocks.INTERFACE_BLOCK.get()) {
                         core_found = true;
+                        vortexInterfaceBlockEntity = (VortexInterfaceBlockEntity) pLevel.getBlockEntity(currentPos);
                         corePos = currentPos;
-                        interfaceEntity = (VortexInterfaceBlockEntity) pLevel.getBlockEntity(corePos);
                     }
                 }
             }
@@ -70,9 +64,9 @@ public class SetRotationCommand {
 
         CoordinateDesignatorBlockEntity designatorEntity = null;
 
-        for (int _x = -16; _x <= 16; _x++) {
-            for (int _y = -16; _y <= 16; _y++) {
-                for (int _z = -16; _z <= 16; _z++) {
+        for (int _x = -16; _x <= 16 && !has_components; _x++) {
+            for (int _y = -16; _y <= 16 && !has_components; _y++) {
+                for (int _z = -16; _z <= 16 && !has_components; _z++) {
                     BlockPos currentPos = corePos.offset(_x, _y, _z);
 
                     BlockState blockState = pLevel.getBlockState(currentPos);
@@ -90,22 +84,24 @@ public class SetRotationCommand {
             }
         }
         if (core_found && has_components && designatorEntity != null) {
-            DimensionMapData dim_data = DimensionMapData.get(overworld);
-            interfaceEntity.data.set(12, targetRot);
-            Direction rotationDirection;
-            if (targetRot >= 0 && targetRot < 90) {
-                rotationDirection = Direction.NORTH;
+            BlockPos savedPos = coord_data.getDataMap().get(player.getScoreboardName() + locName.getString());
+            String savedDimName = dim_data.getDataMap().get(player.getScoreboardName() + locName.getString());
+            int savedDimHash = 0;
+            Iterable<ServerLevel> serverLevels = minecraftserver.getAllLevels();
+
+            for (ServerLevel cLevel : serverLevels) {
+                if (cLevel.dimension().location().getPath().equals(savedDimName)) {
+                    savedDimHash = cLevel.dimension().location().getPath().hashCode();
+                }
             }
-            else if (targetRot >= 90 && targetRot < 180) {
-                rotationDirection = Direction.EAST;
-            }
-            else if (targetRot >= 180 && targetRot < 270) {
-                rotationDirection = Direction.SOUTH;
-            }
-            else {
-                rotationDirection = Direction.WEST;
-            }
-            source.sendSuccess(() -> Component.literal("Updating target rotation to: ").append(Component.literal(rotationDirection.toString()).withStyle(ChatFormatting.GOLD)), false);
+
+            vortexInterfaceBlockEntity.data.set(14, 1);
+            vortexInterfaceBlockEntity.data.set(15, savedPos.getX());
+            vortexInterfaceBlockEntity.data.set(16, savedPos.getY());
+            vortexInterfaceBlockEntity.data.set(17, savedPos.getZ());
+            vortexInterfaceBlockEntity.data.set(18, savedDimHash);
+
+            source.sendSuccess(() -> Component.literal("Loading " + locName.getString() + " to the designator. (" + savedPos.getX() + " " + savedPos.getY() + " " + savedPos.getZ() + ")"), false);
         }
         else {
             if (!core_found) {
@@ -118,5 +114,4 @@ public class SetRotationCommand {
 
         return 1;
     }
-
 }

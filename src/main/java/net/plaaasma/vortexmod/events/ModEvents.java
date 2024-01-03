@@ -2,13 +2,12 @@ package net.plaaasma.vortexmod.events;
 
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.server.command.ConfigCommand;
 import net.plaaasma.vortexmod.VortexMod;
-import net.plaaasma.vortexmod.commands.SetCoordinateCommand;
-import net.plaaasma.vortexmod.commands.SetDimensionCommand;
-import net.plaaasma.vortexmod.commands.SetRotationCommand;
+import net.plaaasma.vortexmod.commands.*;
 
 @Mod.EventBusSubscriber(modid = VortexMod.MODID)
 public class ModEvents {
@@ -18,6 +17,8 @@ public class ModEvents {
         new SetCoordinateCommand(event.getDispatcher());
         new SetDimensionCommand(event.getDispatcher());
         new SetRotationCommand(event.getDispatcher());
+        new SaveCoordinateCommand(event.getDispatcher());
+        new LoadCoordinateCommand(event.getDispatcher());
 
         ConfigCommand.register(event.getDispatcher());
     }
@@ -31,6 +32,12 @@ public class ModEvents {
                     event.getOriginal().getPersistentData().getIntArray(VortexMod.MODID + "targetdim"));
             event.getEntity().getPersistentData().putIntArray(VortexMod.MODID + "targetrot",
                     event.getOriginal().getPersistentData().getIntArray(VortexMod.MODID + "targetrot"));
+            event.getEntity().getPersistentData().putIntArray(VortexMod.MODID + "saveddim",
+                    event.getOriginal().getPersistentData().getIntArray(VortexMod.MODID + "saveddim"));
+            event.getEntity().getPersistentData().putIntArray(VortexMod.MODID + "savedpos",
+                    event.getOriginal().getPersistentData().getIntArray(VortexMod.MODID + "savedpos"));
+            event.getEntity().getPersistentData().putIntArray(VortexMod.MODID + "savedname",
+                    event.getOriginal().getPersistentData().getIntArray(VortexMod.MODID + "savedname"));
         }
     }
 }
