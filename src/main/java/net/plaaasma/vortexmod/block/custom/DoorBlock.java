@@ -87,19 +87,15 @@ public class DoorBlock extends Block {
                                     Vec3 exitPosition;
                                     if (targetBlockState.getValue(BlockStateProperties.HORIZONTAL_FACING) == Direction.NORTH) {
                                         exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) + 0.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) + 1.5);
-                                        System.out.println("North");
                                     }
                                     else if (targetBlockState.getValue(BlockStateProperties.HORIZONTAL_FACING) == Direction.EAST) {
                                         exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) - 0.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) + 0.5);
-                                        System.out.println("East");
                                     }
                                     else if (targetBlockState.getValue(BlockStateProperties.HORIZONTAL_FACING) == Direction.SOUTH) {
                                         exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) + 0.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) - 0.5);
-                                        System.out.println("South");
                                     }
                                     else {
                                         exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) + 1.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) + 0.5);
-                                        System.out.println("West");
                                     }
                                     pPlayer.changeDimension(targetDimension, new ModTeleporter(exitPosition));
                                 } else {

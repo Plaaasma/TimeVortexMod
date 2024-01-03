@@ -88,7 +88,7 @@ public class SetRotationCommand {
         if (core_found && has_components && designatorEntity != null) {
             interfaceEntity.data.set(12, targetRot);
             Direction rotationDirection;
-            if (targetRot > 0 && targetRot < 90) {
+            if (targetRot >= 0 && targetRot < 90) {
                 rotationDirection = Direction.NORTH;
             }
             else if (targetRot >= 90 && targetRot < 180) {

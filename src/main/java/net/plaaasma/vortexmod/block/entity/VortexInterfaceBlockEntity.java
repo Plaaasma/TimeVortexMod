@@ -65,6 +65,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private int cc_set_y = 0;
     private int cc_set_z = 0;
     private int cc_set_dim = 0;
+    private int is_flying = 0;
     public final ContainerData data;
 
     public VortexInterfaceBlockEntity(BlockPos pPos, BlockState pBlockState) {
@@ -92,6 +93,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     case 16 -> VortexInterfaceBlockEntity.this.cc_set_y;
                     case 17 -> VortexInterfaceBlockEntity.this.cc_set_z;
                     case 18 -> VortexInterfaceBlockEntity.this.cc_set_dim;
+                    case 19 -> VortexInterfaceBlockEntity.this.is_flying;
                     default -> 0;
                 };
             }
@@ -118,12 +120,13 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     case 16 -> VortexInterfaceBlockEntity.this.cc_set_y = pValue;
                     case 17 -> VortexInterfaceBlockEntity.this.cc_set_z = pValue;
                     case 18 -> VortexInterfaceBlockEntity.this.cc_set_dim = pValue;
+                    case 19 -> VortexInterfaceBlockEntity.this.is_flying = pValue;
                 }
             }
 
             @Override
             public int getCount() {
-                return 19;
+                return 20;
             }
         };
     }
@@ -161,6 +164,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         this.cc_set_y = vortexModData.getInt("cc_set_y");
         this.cc_set_z = vortexModData.getInt("cc_set_z");
         this.cc_set_dim = vortexModData.getInt("cc_set_dim");
+        this.is_flying = vortexModData.getInt("is_flying");
         super.load(pTag);
     }
 
@@ -187,20 +191,26 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         vortexModData.putInt("cc_set_y", this.cc_set_y);
         vortexModData.putInt("cc_set_z", this.cc_set_z);
         vortexModData.putInt("cc_set_dim", this.cc_set_dim);
+        vortexModData.putInt("is_flying", this.is_flying);
 
         pTag.put(VortexMod.MODID, vortexModData);
         super.saveAdditional(pTag);
     }
 
     @LuaFunction
-    public final String enableThrottle(String param) throws LuaException {
+    public final Boolean enableThrottle() throws LuaException {
         this.data.set(13, 1);
 
-        return "true";
+        return true;
     }
 
     @LuaFunction
-    public final String setCoords(String param) throws LuaException {
+    public final Boolean isFlying() throws LuaException {
+        return this.data.get(19) == 1;
+    }
+
+    @LuaFunction
+    public final Boolean setCoords(String param) throws LuaException {
         String[] numbers = param.split(" ");
 
         if (numbers.length == 3) {
@@ -220,18 +230,18 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 }
             }
 
-            return "Coords set to " + numbers[0] + " " + numbers[1] + " " + numbers[2];
+            return true;
         }
         else {
-            return "false";
+            return false;
         }
     }
 
     @LuaFunction
-    public final String setDimension(String param) throws LuaException {
+    public final Boolean setDimension(String param) throws LuaException {
         this.data.set(17, param.hashCode());
 
-        return "dimension set to " + param + " , if this is not a valid dimension then it simply won't be set.";
+        return true;
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
@@ -384,6 +394,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             if (throttle_on == 0) {
                 this.data.set(1, this.data.get(0));
             }
+            this.data.set(19, throttle_on);
 
             BlockPos temp_target = new BlockPos(targetX, targetY, targetZ);
 
@@ -459,8 +470,14 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 }
 
                 if (throttle_on == 1 && this.data.get(0) > this.data.get(1) + (10 * tickSpeed) && pLevel != vortexDimension) {
-                    BlockPos vortexTargetPos = findNewVortexPosition(exteriorPos, pPos, new BlockPos(targetX, targetY, targetZ), size);
+                    BlockPos realTargetPos = new BlockPos(targetX, targetY, targetZ);
+                    BlockPos vortexTargetPos = findNewVortexPosition(exteriorPos, pPos, realTargetPos, size);
                     vortexTargetPos = new BlockPos(vortexTargetPos.getX(), -100, vortexTargetPos.getZ());
+                    if (Math.sqrt(exteriorPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 1000) {
+                        this.data.set(6, this.data.get(6) + 1000);
+                        this.data.set(8, this.data.get(8) + 1000);
+                        vortexTargetPos = vortexTargetPos.offset(1000, 0, 1000);
+                    }
 
                     this.data.set(1, this.data.get(0));
                     if (closestPlayer != null) {
@@ -801,7 +818,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
     public static void handleTardisPlacement(ServerLevel pLevel, BlockPos target, Integer rotationYaw) {
         Direction rotationDirection;
-        if (rotationYaw > 0 && rotationYaw < 90) {
+        if (rotationYaw >= 0 && rotationYaw < 90) {
             rotationDirection = Direction.NORTH;
         }
         else if (rotationYaw >= 90 && rotationYaw < 180) {

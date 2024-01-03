@@ -15,6 +15,7 @@ public class CoordinateDesignatorBlockEntity extends BlockEntity {
     private int y = 0;
     private int z = 0;
     private int negative = 0;
+    private int increment = 0;
 
     public CoordinateDesignatorBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.COORDINATE_DESIGNATOR_BE.get(), pPos, pBlockState);
@@ -26,6 +27,7 @@ public class CoordinateDesignatorBlockEntity extends BlockEntity {
                     case 1 -> CoordinateDesignatorBlockEntity.this.y;
                     case 2 -> CoordinateDesignatorBlockEntity.this.z;
                     case 3 -> CoordinateDesignatorBlockEntity.this.negative;
+                    case 4 -> CoordinateDesignatorBlockEntity.this.increment;
                     default -> 0;
                 };
             }
@@ -37,12 +39,13 @@ public class CoordinateDesignatorBlockEntity extends BlockEntity {
                     case 1 -> CoordinateDesignatorBlockEntity.this.y = pValue;
                     case 2 -> CoordinateDesignatorBlockEntity.this.z = pValue;
                     case 3 -> CoordinateDesignatorBlockEntity.this.negative = pValue;
+                    case 4 -> CoordinateDesignatorBlockEntity.this.increment = pValue;
                 }
             }
 
             @Override
             public int getCount() {
-                return 4;
+                return 5;
             }
         };
     }
@@ -67,6 +70,7 @@ public class CoordinateDesignatorBlockEntity extends BlockEntity {
         this.y = vortexModData.getInt("y");
         this.z = vortexModData.getInt("z");
         this.negative = vortexModData.getInt("negative");
+        this.increment = vortexModData.getInt("increment");
     }
 
     @Override
@@ -79,6 +83,7 @@ public class CoordinateDesignatorBlockEntity extends BlockEntity {
         vortexModData.putInt("y", this.y);
         vortexModData.putInt("z", this.z);
         vortexModData.putInt("negative", this.negative);
+        vortexModData.putInt("increment", this.increment);
 
         pTag.put(VortexMod.MODID, vortexModData);
     }
@@ -86,6 +91,10 @@ public class CoordinateDesignatorBlockEntity extends BlockEntity {
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
         if (pLevel.isClientSide()) {
             return;
+        }
+
+        if (this.data.get(4) == 0) {
+            this.data.set(4, 1);
         }
 
         setChanged(pLevel, pPos, pState);
