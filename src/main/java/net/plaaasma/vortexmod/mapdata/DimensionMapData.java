@@ -21,7 +21,6 @@ public class DimensionMapData extends SavedData {
         CompoundTag dataTag = new CompoundTag();
 
         for (Map.Entry<String, String> entry : dataMap.entrySet()) {
-            System.out.println(entry.getValue());
             dataTag.putString(entry.getKey(), entry.getValue());
         }
         pCompoundTag.put(DATA_NAME, dataTag);
@@ -37,8 +36,7 @@ public class DimensionMapData extends SavedData {
         DimensionMapData savedData = new DimensionMapData();
         CompoundTag dataTag = pCompoundTag.getCompound(DATA_NAME);
         for (String key : dataTag.getAllKeys()) {
-            System.out.println(dataTag.getCompound(key));
-            savedData.dataMap.put(key, dataTag.getCompound(key).toString());
+            savedData.dataMap.put(key, dataTag.getString(key));
         }
         return savedData;
     }

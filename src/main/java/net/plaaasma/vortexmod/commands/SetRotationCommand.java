@@ -109,10 +109,10 @@ public class SetRotationCommand {
         }
         else {
             if (!core_found) {
-                source.sendSuccess(() -> Component.literal("Core is not in range."), false);
+                source.sendFailure(Component.literal("Core is not in range."));
             }
             if (!has_components) {
-                source.sendSuccess(() -> Component.literal("Coordinate components not in range. (Keypad and Designator)"), false);
+                source.sendFailure(Component.literal("Coordinate components not in range. (Keypad and Designator)"));
             }
         }
 

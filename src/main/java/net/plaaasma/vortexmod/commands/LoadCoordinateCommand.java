@@ -17,6 +17,7 @@ import net.plaaasma.vortexmod.block.entity.CoordinateDesignatorBlockEntity;
 import net.plaaasma.vortexmod.block.entity.VortexInterfaceBlockEntity;
 import net.plaaasma.vortexmod.mapdata.DimensionMapData;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
+import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 
 public class LoadCoordinateCommand {
     public LoadCoordinateCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -33,9 +34,10 @@ public class LoadCoordinateCommand {
         BlockPos ePlayerPos = player.blockPosition();
         ServerLevel pLevel = source.getPlayer().serverLevel();
         MinecraftServer minecraftserver = pLevel.getServer();
-        ServerLevel overworld = minecraftserver.getLevel(Level.OVERWORLD);
-        LocationMapData coord_data = LocationMapData.get(overworld);
-        DimensionMapData dim_data = DimensionMapData.get(overworld);
+        ServerLevel tardis_dim = minecraftserver.getLevel(ModDimensions.tardisDIM_LEVEL_KEY);
+        ServerLevel vortex = minecraftserver.getLevel(ModDimensions.vortexDIM_LEVEL_KEY);
+        LocationMapData coord_data = LocationMapData.get(vortex);
+        DimensionMapData dim_data = DimensionMapData.get(tardis_dim);
 
         boolean core_found = false;
 
@@ -84,33 +86,41 @@ public class LoadCoordinateCommand {
             }
         }
         if (core_found && has_components && designatorEntity != null) {
-            BlockPos savedPos = coord_data.getDataMap().get(player.getScoreboardName() + locName.getString());
-            String savedDimName = dim_data.getDataMap().get(player.getScoreboardName() + locName.getString());
-            int savedDimHash = 0;
-            Iterable<ServerLevel> serverLevels = minecraftserver.getAllLevels();
+            if (coord_data.getDataMap().containsKey(player.getScoreboardName() + locName.getString())) {
+                BlockPos savedPos = coord_data.getDataMap().get(player.getScoreboardName() + locName.getString());
+                String savedDimName = dim_data.getDataMap().get(player.getScoreboardName() + locName.getString());
+                int savedDimHash = 0;
+                Iterable<ServerLevel> serverLevels = minecraftserver.getAllLevels();
 
-            for (ServerLevel cLevel : serverLevels) {
-                if (cLevel.dimension().location().getPath().equals(savedDimName)) {
-                    savedDimHash = cLevel.dimension().location().getPath().hashCode();
+                for (ServerLevel cLevel : serverLevels) {
+                    if (cLevel.dimension().location().getPath().equals(savedDimName)) {
+                        savedDimHash = cLevel.dimension().location().getPath().hashCode();
+                    }
                 }
+
+                vortexInterfaceBlockEntity.data.set(14, 1);
+                vortexInterfaceBlockEntity.data.set(15, savedPos.getX());
+                vortexInterfaceBlockEntity.data.set(16, savedPos.getY());
+                vortexInterfaceBlockEntity.data.set(17, savedPos.getZ());
+                vortexInterfaceBlockEntity.data.set(18, savedDimHash);
+
+                source.sendSuccess(() -> Component.literal("Loading " + locName.getString() + " to the designator. (" + savedPos.getX() + " " + savedPos.getY() + " " + savedPos.getZ() + ")"), false);
             }
-
-            vortexInterfaceBlockEntity.data.set(14, 1);
-            vortexInterfaceBlockEntity.data.set(15, savedPos.getX());
-            vortexInterfaceBlockEntity.data.set(16, savedPos.getY());
-            vortexInterfaceBlockEntity.data.set(17, savedPos.getZ());
-            vortexInterfaceBlockEntity.data.set(18, savedDimHash);
-
-            source.sendSuccess(() -> Component.literal("Loading " + locName.getString() + " to the designator. (" + savedPos.getX() + " " + savedPos.getY() + " " + savedPos.getZ() + ")"), false);
+            else {
+                source.sendFailure(Component.literal("You do not have a saved destination called " + locName.getString() + ", you can list your destinations with /tardis list"));
+            }
         }
         else {
             if (!core_found) {
-                source.sendSuccess(() -> Component.literal("Core is not in range."), false);
+                source.sendFailure(Component.literal("Core is not in range."));
             }
             if (!has_components) {
-                source.sendSuccess(() -> Component.literal("Coordinate components not in range. (Keypad and Designator)"), false);
+                source.sendFailure(Component.literal("Coordinate components not in range. (Keypad and Designator)"));
             }
         }
+
+        dim_data.setDirty();
+        coord_data.setDirty();
 
         return 1;
     }
