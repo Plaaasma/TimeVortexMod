@@ -79,6 +79,7 @@ public class ScannerBlock extends HorizontalBaseEntityBlock {
 
             boolean setVars = false;
 
+            //Scanner Scan lol
             for (int x = -16; x <= 16 && !setVars; x++) {
                 for (int y = -16; y <= 16 && !setVars; y++) {
                     for (int z = -16; z <= 16 && !setVars; z++) {
