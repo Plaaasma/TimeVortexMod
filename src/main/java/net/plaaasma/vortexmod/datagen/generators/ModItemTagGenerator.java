@@ -1,4 +1,4 @@
-package net.plaaasma.vortexmod.datagen;
+package net.plaaasma.vortexmod.datagen.generators;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;

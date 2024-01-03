@@ -1,4 +1,4 @@
-package net.plaaasma.vortexmod.item;
+package net.plaaasma.vortexmod.item.custom;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;

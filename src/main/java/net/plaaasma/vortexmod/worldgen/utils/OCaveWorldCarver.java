@@ -1,4 +1,4 @@
-package net.plaaasma.vortexmod.worldgen.carvers;
+package net.plaaasma.vortexmod.worldgen.utils;
 
 import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.Codec;

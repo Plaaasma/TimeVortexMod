@@ -3,6 +3,10 @@
   "item.vortexmod.size_upgrade": "Size Upgrade",
   "item.vortexmod.euclidean_upgrade": "Euclidean Upgrade",
   "item.vortexmod.wrench": "Space Time Wrench",
+  "item.vortexmod.blue_trader_spawn_egg": "Blue Trading Traveler Spawn Egg",
+  "item.vortexmod.orange_trader_spawn_egg": "Orange Trading Traveler Spawn Egg",
+  "item.vortexmod.purple_trader_spawn_egg": "Purple Trading Traveler Spawn Egg",
+  "item.vortexmod.black_trader_spawn_egg": "Black Trading Traveler Spawn Egg",
 
   "block.vortexmod.throttle_block": "Throttle Module",
   "block.vortexmod.interface_block": "Time Vortex Interface Module",
@@ -15,7 +19,10 @@
   "block.vortexmod.scanner_block": "Exterior Scanner",
   "block.vortexmod.grounding_block": "Auto Grounding Module",
 
-  "entity.vortexmod.lost_traveler": "Lost Traveler",
+  "entity.vortexmod.blue_trader": "Trading Traveler",
+  "entity.vortexmod.orange_trader": "Trading Traveler",
+  "entity.vortexmod.purple_trader": "Trading Traveler",
+  "entity.vortexmod.black_trader": "Trading Traveler",
 
   "sounds.vortexmod.flight_sound": "TARDIS Flight Sound",
   "sounds.vortexmod.demat_sound": "TARDIS Dematerialization Sound",

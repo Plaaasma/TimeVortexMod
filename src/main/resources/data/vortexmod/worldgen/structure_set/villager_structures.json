@@ -1,6 +1,18 @@
 {
   "structures": [
     {
+      "structure": "vortexmod:blue_trader",
+      "weight": 1
+    },
+    {
+      "structure": "vortexmod:orange_trader",
+      "weight": 1
+    },
+    {
+      "structure": "vortexmod:purple_trader",
+      "weight": 1
+    },
+    {
       "structure": "vortexmod:black_trader",
       "weight": 1
     }

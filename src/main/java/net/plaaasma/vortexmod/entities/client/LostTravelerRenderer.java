@@ -15,6 +15,21 @@ public class LostTravelerRenderer extends MobRenderer<LostTravelerEntity, LostTr
 
     @Override
     public ResourceLocation getTextureLocation(LostTravelerEntity pEntity) {
+
+        switch (pEntity.travelerType) {
+            case BLUE_TRADER -> {
+                return new ResourceLocation(VortexMod.MODID, "textures/entity/blue_trader.png");
+            }
+            case ORANGE_TRADER -> {
+                return new ResourceLocation(VortexMod.MODID, "textures/entity/orange_trader.png");
+            }
+            case PURPLE_TRADER -> {
+                return new ResourceLocation(VortexMod.MODID, "textures/entity/purple_trader.png");
+            }
+            case BLACK_TRADER -> {
+                return new ResourceLocation(VortexMod.MODID, "textures/entity/black_trader.png");
+            }
+        }
         return new ResourceLocation(VortexMod.MODID, "textures/entity/lost_traveler.png");
     }
 

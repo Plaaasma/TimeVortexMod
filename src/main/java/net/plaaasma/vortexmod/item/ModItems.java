@@ -8,6 +8,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.entities.ModEntities;
+import net.plaaasma.vortexmod.item.custom.Cheese;
+import net.plaaasma.vortexmod.item.custom.EuclideanUpgrade;
+import net.plaaasma.vortexmod.item.custom.SizeUpgrade;
+import net.plaaasma.vortexmod.item.custom.Wrench;
 
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, VortexMod.MODID);
@@ -24,8 +28,17 @@ public class ModItems {
     public static final RegistryObject<Item> WRENCH = ITEMS.register("wrench",
             () -> new Wrench(new Item.Properties().stacksTo(1)));
 
-    public static final RegistryObject<Item> LOST_TRAVELER_SPAWN_EGG = ITEMS.register("lost_traveler_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.LOST_TRAVELER, 0x7e9680, 0xc5d1c5, new Item.Properties()));
+    public static final RegistryObject<Item> BLUE_TRADER_SPAWN_EGG = ITEMS.register("blue_trader_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.BLUE_TRADER, 0x7e9680, 0xc5d1c5, new Item.Properties()));
+
+    public static final RegistryObject<Item> ORANGE_TRADER_SPAWN_EGG = ITEMS.register("orange_trader_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.ORANGE_TRADER, 0x7e9680, 0xc5d1c5, new Item.Properties()));
+
+    public static final RegistryObject<Item> PURPLE_TRADER_SPAWN_EGG = ITEMS.register("purple_trader_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.PURPLE_TRADER, 0x7e9680, 0xc5d1c5, new Item.Properties()));
+
+    public static final RegistryObject<Item> BLACK_TRADER_SPAWN_EGG = ITEMS.register("black_trader_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.BLACK_TRADER, 0x7e9680, 0xc5d1c5, new Item.Properties()));
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);

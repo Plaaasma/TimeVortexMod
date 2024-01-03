@@ -2,8 +2,6 @@ package net.plaaasma.vortexmod.worldgen.dimension;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.HolderGetter;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
@@ -12,15 +10,12 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.*;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.chunk.ChunkGenerators;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.*;
-import net.minecraft.world.level.material.Fluids;
 import net.plaaasma.vortexmod.VortexMod;
-import net.plaaasma.vortexmod.worldgen.ModNoiseGenerator;
+import net.plaaasma.vortexmod.worldgen.utils.ModNoiseGenerator;
 import net.plaaasma.vortexmod.worldgen.biome.ModBiomes;
 
 import java.util.List;

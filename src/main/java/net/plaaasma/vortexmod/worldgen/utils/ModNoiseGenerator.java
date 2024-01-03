@@ -1,4 +1,4 @@
-package net.plaaasma.vortexmod.worldgen;
+package net.plaaasma.vortexmod.worldgen.utils;
 
 import com.mojang.serialization.DataResult;
 import net.minecraft.core.HolderGetter;

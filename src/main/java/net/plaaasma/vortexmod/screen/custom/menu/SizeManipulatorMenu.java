@@ -1,4 +1,4 @@
-package net.plaaasma.vortexmod.screen;
+package net.plaaasma.vortexmod.screen.custom.menu;
 
 import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.block.entity.SizeManipulatorBlockEntity;
@@ -11,6 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.SlotItemHandler;
+import net.plaaasma.vortexmod.screen.ModMenuTypes;
 
 public class SizeManipulatorMenu extends AbstractContainerMenu {
     public final SizeManipulatorBlockEntity blockEntity;
