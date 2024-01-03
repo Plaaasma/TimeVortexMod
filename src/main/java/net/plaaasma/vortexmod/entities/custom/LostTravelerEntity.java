@@ -1,29 +1,22 @@
 package net.plaaasma.vortexmod.entities.custom;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.DamageTypeTags;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.entity.npc.AbstractVillager;
@@ -37,38 +30,30 @@ import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.entities.ModEntities;
-import net.plaaasma.vortexmod.entities.Villager.ItemsForItems;
-import net.plaaasma.vortexmod.entities.animations.ModAnimationDefinitions;
-import net.plaaasma.vortexmod.item.ModItems;
-import org.jetbrains.annotations.Nullable;
+import net.plaaasma.vortexmod.worldgen.biome.ModBiomes;
 
+import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
-import java.util.OptionalInt;
 
 public class LostTravelerEntity extends AbstractVillager {
 
     public final AnimationState idleAnimationState = new AnimationState();
 
+    public LostTravelerUtils.LostTravelerType travelerType;
+
     @Nullable
     private BlockPos wanderTarget;
 
+    private VillagerTrades.ItemListing[] listings;
 
-    VillagerTrades.ItemListing[] listings = {
-            new ItemsForItems(ModItems.CHEESE.get(), Items.GLOWSTONE, 64, 1, 64, 1, 0.0F),
-            new ItemsForItems(ModBlocks.KEYPAD_BLOCK.get().asItem(), ModItems.CHEESE.get(), 64, Items.PRISMARINE_CRYSTALS, 64, 1, 64, 1, 0.0F),
-            new ItemsForItems(ModBlocks.INTERFACE_BLOCK.get().asItem(), ModItems.CHEESE.get(), 64, Items.PRISMARINE_CRYSTALS, 64, 1, 64, 1, 0.0F),
-            new ItemsForItems(ModBlocks.THROTTLE_BLOCK.get().asItem(), ModItems.CHEESE.get(), 64, Items.PRISMARINE_CRYSTALS, 64, 1, 64, 1, 0.0F),
-            new ItemsForItems(ModBlocks.COORDINATE_BLOCK.get().asItem(), ModItems.CHEESE.get(), 64, Items.PRISMARINE_CRYSTALS, 64, 1, 64, 1, 0.0F)
-    };
-
-    public LostTravelerEntity(EntityType<? extends LostTravelerEntity> type, Level world) {
+    public LostTravelerEntity(EntityType<? extends LostTravelerEntity> type, Level world, LostTravelerUtils.LostTravelerType travelerType) {
         super(type, world);
+
+        this.travelerType = travelerType;
+
+        listings = LostTravelerUtils.type_listings.get(travelerType);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -120,7 +105,21 @@ public class LostTravelerEntity extends AbstractVillager {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel pLevel, AgeableMob pOtherParent) {
-        return ModEntities.LOST_TRAVELER.get().create(pLevel);
+        switch (travelerType) {
+            case BLUE_TRADER -> {
+                return ModEntities.BLUE_TRADER.get().create(pLevel);
+            }
+            case ORANGE_TRADER -> {
+                return ModEntities.ORANGE_TRADER.get().create(pLevel);
+            }
+            case PURPLE_TRADER -> {
+                return ModEntities.PURPLE_TRADER.get().create(pLevel);
+            }
+            case BLACK_TRADER -> {
+                return ModEntities.BLACK_TRADER.get().create(pLevel);
+            }
+        }
+        return null;
     }
 
     @Override
@@ -154,11 +153,6 @@ public class LostTravelerEntity extends AbstractVillager {
     @Override
     public void updateTrades() {
         MerchantOffers merchantoffers = this.getOffers();
-
-       /* Biome biome = level().getBiome(getOnPos()).get();
-        Registry<Biome> biomeKey = RegistryKey.of(Registry.BIOME_KEY, biome.getKey());
-        String biomeName = biomeKey.getValue().toString();
-        if (biome.getName)*/
 
         this.addOffersFromItemListings(merchantoffers, listings, 7);
     }

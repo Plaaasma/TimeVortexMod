@@ -11,6 +11,9 @@ import net.plaaasma.vortexmod.entities.custom.LostTravelerEntity;
 public class ModEventBusEvents {
     @SubscribeEvent
     public static void registerAttributes(EntityAttributeCreationEvent event) {
-        event.put(ModEntities.LOST_TRAVELER.get(), LostTravelerEntity.createAttributes().build());
+        event.put(ModEntities.BLUE_TRADER.get(), LostTravelerEntity.createAttributes().build());
+        event.put(ModEntities.ORANGE_TRADER.get(), LostTravelerEntity.createAttributes().build());
+        event.put(ModEntities.PURPLE_TRADER.get(), LostTravelerEntity.createAttributes().build());
+        event.put(ModEntities.BLACK_TRADER.get(), LostTravelerEntity.createAttributes().build());
     }
 }
