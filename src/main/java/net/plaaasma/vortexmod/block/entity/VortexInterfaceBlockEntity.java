@@ -239,8 +239,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
     @LuaFunction
     public final Boolean setDimension(String param) throws LuaException {
-        this.data.set(17, param.hashCode());
-
+        this.data.set(18, param.hashCode());
         return true;
     }
 
