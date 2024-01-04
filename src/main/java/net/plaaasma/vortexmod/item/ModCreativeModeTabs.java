@@ -19,8 +19,10 @@ public class ModCreativeModeTabs {
                     .title(Component.translatable("creativetab.vortex_tab"))
                     .displayItems((pParameters, pOutput) -> {
                         pOutput.accept(ModItems.CHEESE.get());
+                        pOutput.accept(ModItems.CORE.get());
                         pOutput.accept(ModItems.SIZE_UPGRADE.get());
                         pOutput.accept(ModItems.EUCLIDEAN_UPGRADE.get());
+                        pOutput.accept(ModItems.TARDIS_KEY.get());
                         pOutput.accept(ModItems.WRENCH.get());
                         pOutput.accept(ModBlocks.INTERFACE_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.THROTTLE_BLOCK.get().asItem());

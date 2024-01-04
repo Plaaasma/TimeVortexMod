@@ -8,10 +8,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.entities.ModEntities;
-import net.plaaasma.vortexmod.item.custom.Cheese;
-import net.plaaasma.vortexmod.item.custom.EuclideanUpgrade;
-import net.plaaasma.vortexmod.item.custom.SizeUpgrade;
-import net.plaaasma.vortexmod.item.custom.Wrench;
+import net.plaaasma.vortexmod.item.custom.*;
 
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, VortexMod.MODID);
@@ -27,6 +24,12 @@ public class ModItems {
 
     public static final RegistryObject<Item> WRENCH = ITEMS.register("wrench",
             () -> new Wrench(new Item.Properties().stacksTo(1)));
+
+    public static final RegistryObject<Item> CORE = ITEMS.register("vortex_core_texture",
+            () -> new VortexCore(new Item.Properties().stacksTo(1)));
+
+    public static final RegistryObject<Item> TARDIS_KEY = ITEMS.register("tardis_key",
+            () -> new TardisKey(new Item.Properties().stacksTo(1)));
 
     public static final RegistryObject<Item> BLUE_TRADER_SPAWN_EGG = ITEMS.register("blue_trader_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.BLUE_TRADER, 0x7e9680, 0xc5d1c5, new Item.Properties()));
