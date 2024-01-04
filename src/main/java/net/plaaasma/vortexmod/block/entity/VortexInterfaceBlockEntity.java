@@ -243,6 +243,96 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         return true;
     }
 
+    @LuaFunction
+    public final Map<String, Integer> getTargetLocation() throws LuaException {
+        Map<String, Integer> coordMap = new HashMap<>();
+        coordMap.put("x", this.data.get(3));
+        coordMap.put("y", this.data.get(4));
+        coordMap.put("z", this.data.get(5));
+        return coordMap;
+    }
+
+    @LuaFunction
+    public final Map<String, Integer> getExtLocation() throws LuaException {
+        Map<String, Integer> coordMap = new HashMap<>();
+        coordMap.put("x", this.data.get(6));
+        coordMap.put("y", this.data.get(7));
+        coordMap.put("z", this.data.get(8));
+        return coordMap;
+    }
+
+    @LuaFunction
+    public final String getTargetDimension() throws LuaException {
+        MinecraftServer minecraftserver = this.getLevel().getServer();
+        Iterable<ServerLevel> serverLevels = minecraftserver.getAllLevels();
+
+        String targetDim = "";
+
+        for (ServerLevel cLevel : serverLevels) {
+            if (cLevel.dimension().location().getPath().hashCode() == this.data.get(10)) {
+                targetDim = cLevel.dimension().location().getPath();
+                break;
+            }
+        }
+        return targetDim;
+    }
+
+    @LuaFunction
+    public final String getExtDimension() throws LuaException {
+        MinecraftServer minecraftserver = this.getLevel().getServer();
+        Iterable<ServerLevel> serverLevels = minecraftserver.getAllLevels();
+
+        String currentDim = "";
+
+        for (ServerLevel cLevel : serverLevels) {
+            if (cLevel.dimension().location().getPath().hashCode() == this.data.get(9)) {
+                currentDim = cLevel.dimension().location().getPath();
+                break;
+            }
+        }
+        return currentDim;
+    }
+
+    @LuaFunction
+    public final String getTargetRotation() throws LuaException {
+        int rotation_yaw = this.data.get(12);
+        Direction rotationDirection;
+        if (rotation_yaw >= 0 && rotation_yaw < 90) {
+            rotationDirection = Direction.NORTH;
+        }
+        else if (rotation_yaw >= 90 && rotation_yaw < 180) {
+            rotationDirection = Direction.EAST;
+        }
+        else if (rotation_yaw >= 180 && rotation_yaw < 270) {
+            rotationDirection = Direction.SOUTH;
+        }
+        else {
+            rotationDirection = Direction.WEST;
+        }
+
+        return rotationDirection.toString();
+    }
+
+    @LuaFunction
+    public final String getTargetBlock() throws LuaException {
+        MinecraftServer minecraftserver = this.getLevel().getServer();
+        ServerLevel overworldDimension = minecraftserver.getLevel(Level.OVERWORLD);
+
+        Iterable<ServerLevel> serverLevels = minecraftserver.getAllLevels();
+
+        ServerLevel targetDimension = overworldDimension;
+        for (ServerLevel cLevel : serverLevels) {
+            if (cLevel.dimension().location().getPath().hashCode() == this.data.get(10)) {
+                targetDimension = cLevel;
+                break;
+            }
+        }
+
+        BlockState targetState = targetDimension.getBlockState(new BlockPos(this.data.get(3), this.data.get(4), this.data.get(5)));
+
+        return targetState.getBlock().getName().getString();
+    }
+
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
         if (!pLevel.isClientSide()) {
             MinecraftServer minecraftserver = pLevel.getServer();
