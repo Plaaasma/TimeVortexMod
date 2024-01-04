@@ -23,6 +23,7 @@ import net.plaaasma.vortexmod.block.entity.CoordinateDesignatorBlockEntity;
 import net.plaaasma.vortexmod.block.entity.VortexInterfaceBlockEntity;
 import net.plaaasma.vortexmod.mapdata.DimensionMapData;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
+import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 
 public class SaveCoordinateCommand {
     public SaveCoordinateCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -39,9 +40,10 @@ public class SaveCoordinateCommand {
         BlockPos ePlayerPos = player.blockPosition();
         ServerLevel pLevel = source.getPlayer().serverLevel();
         MinecraftServer minecraftserver = pLevel.getServer();
-        ServerLevel overworld = minecraftserver.getLevel(Level.OVERWORLD);
-        LocationMapData coord_data = LocationMapData.get(overworld);
-        DimensionMapData dim_data = DimensionMapData.get(overworld);
+        ServerLevel tardis_dim = minecraftserver.getLevel(ModDimensions.tardisDIM_LEVEL_KEY);
+        ServerLevel vortex = minecraftserver.getLevel(ModDimensions.vortexDIM_LEVEL_KEY);
+        LocationMapData coord_data = LocationMapData.get(vortex);
+        DimensionMapData dim_data = DimensionMapData.get(tardis_dim);
 
         boolean core_found = false;
 
@@ -109,12 +111,15 @@ public class SaveCoordinateCommand {
         }
         else {
             if (!core_found) {
-                source.sendSuccess(() -> Component.literal("Core is not in range."), false);
+                source.sendFailure(Component.literal("Core is not in range."));
             }
             if (!has_components) {
-                source.sendSuccess(() -> Component.literal("Coordinate components not in range. (Keypad and Designator)"), false);
+                source.sendFailure(Component.literal("Coordinate components not in range. (Keypad and Designator)"));
             }
         }
+
+        dim_data.setDirty();
+        coord_data.setDirty();
 
         return 1;
     }

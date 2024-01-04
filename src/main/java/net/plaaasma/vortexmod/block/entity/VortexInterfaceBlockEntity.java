@@ -239,8 +239,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
     @LuaFunction
     public final Boolean setDimension(String param) throws LuaException {
-        this.data.set(17, param.hashCode());
-
+        this.data.set(18, param.hashCode());
         return true;
     }
 
@@ -438,8 +437,8 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             targetY = temp_target.getY();
             targetZ = temp_target.getZ();
 
-            if (targetY >= targetDimension.dimensionType().height() - (y_size + (y_size - 1))) {
-                targetY = targetDimension.dimensionType().height() - (y_size + (y_size - 1)) - 1;
+            if (targetY >= (targetDimension.dimensionType().minY() + targetDimension.dimensionType().height()) - (y_size + (y_size - 1))) {
+                targetY = (targetDimension.dimensionType().minY() + targetDimension.dimensionType().height()) - (y_size + (y_size - 1)) - 1;
             }
             if (targetY <= targetDimension.dimensionType().minY() + 1) {
                 targetY = targetDimension.dimensionType().minY() + 2;
@@ -623,7 +622,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         }
                         if (this.data.get(0) <= this.data.get(1) + demat_time && this.data.get(0) - this.data.get(1) > 1 && this.data.get(0) > 0) {
                             handleDematCenterParticles(tardisDimension, pPos);
-                            handleDematParticles(0, currentDimension, exteriorPos);
+                            handleEucDematParticles(currentDimension, exteriorPos);
                             for (int x = -size; x <= size; x++) {
                                 for (int y = -1; y <= y_size + (y_size - 1); y++) {
                                     for (int z = -size; z <= size; z++) {
@@ -640,7 +639,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 handleLightningStrikes(targetDimension, new BlockPos(targetX, targetY, targetZ));
                             }
                             handleRematCenterParticles(tardisDimension, pPos);
-                            handleRematParticles(0, targetDimension, new BlockPos(targetX, targetY, targetZ));
+                            handleEucRematParticles(targetDimension, new BlockPos(targetX, targetY, targetZ));
                             for (int x = -size; x <= size; x++) {
                                 for (int y = -1; y <= y_size + (y_size - 1); y++) {
                                     for (int z = -size; z <= size; z++) {
@@ -1111,6 +1110,85 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         }
     }
 
+    public static void spawnEucDematSquare(Connection pConnection, BlockPos center) {
+        int particleCount = 100;
+
+        Random random = new Random();
+
+        // Calculate the number of particles per edge
+        int particlesPerEdge = (int) Math.pow(particleCount, 1.0/2);
+
+        for (int face = 0; face < 6; face++) { // 6 faces on a cube
+            for (int i = 0; i < particlesPerEdge; i++) {
+                for (int j = 0; j < particlesPerEdge; j++) {
+                    // Normalize the coordinates to be between 0 and 1
+                    double normalizedI = i / (double) (particlesPerEdge - 1);
+                    double normalizedJ = j / (double) (particlesPerEdge - 1);
+
+                    // Calculate positions based on the face
+                    double x = 0, y = 0, z = 0;
+                    switch (face) {
+                        case 0: x = normalizedI * 2 - 1; y = 1; z = normalizedJ * 2 - 1; break; // Top face
+                        case 1: x = normalizedI * 2 - 1; y = -1; z = normalizedJ * 2 - 1; break; // Bottom face
+                        case 2: x = 1; y = normalizedI * 2 - 1; z = normalizedJ * 2 - 1; break; // Right face
+                        case 3: x = -1; y = normalizedI * 2 - 1; z = normalizedJ * 2 - 1; break; // Left face
+                        case 4: x = normalizedI * 2 - 1; y = normalizedJ * 2 - 1; z = 1; break; // Front face
+                        case 5: x = normalizedI * 2 - 1; y = normalizedJ * 2 - 1; z = -1; break; // Back face
+                    }
+
+                    float randomFloat = random.nextFloat();
+
+                    ParticleOptions particle = ParticleTypes.ENCHANT; // Or your custom particle
+
+                    if (randomFloat > 0.33 && randomFloat < 0.66) {
+                        particle = ParticleTypes.DRAGON_BREATH;
+                    } else if (randomFloat > 0.66) {
+                        particle = ParticleTypes.GLOW;
+                    }
+
+                    int xVel = 0;
+                    int yVel = 0;
+                    int zVel = 0;
+
+                    switch (face) {
+                        case 0:
+                        case 1:
+                            xVel = random.nextInt(3) - 1; zVel = random.nextInt(3) - 1; yVel = 0; break; // Top face
+// Bottom face
+                        case 2:
+                        case 3:
+                            yVel = random.nextInt(3) - 1; zVel = random.nextInt(3) - 1; xVel = 0; break; // Right face
+// Left face
+                        case 4:
+                        case 5:
+                            yVel = random.nextInt(3) - 1; xVel = random.nextInt(3) - 1; zVel = 0; break; // Front face
+// Back face
+                    }
+
+                    double radius = 0.75;
+                    double y_radius = 1.25;
+
+                    double newX = center.getX() + (radius * x);
+                    double newY = (center.getY() - 1) + ((y_radius + 2) * y);
+                    double newZ = center.getZ() + (radius * z);
+
+                    if (newY < center.getY() - 1) {
+                        newY = center.getY() - 1;
+                    }
+
+                    ClientboundLevelParticlesPacket particlesPacket = new ClientboundLevelParticlesPacket(
+                            particle, false,
+                            newX + 0.5,
+                            newY,
+                            newZ + 0.5,
+                            0, yVel / 4f, 0, 0, 1
+                    );
+                    pConnection.send(particlesPacket);
+                }
+            }
+        }
+    }
+
     public static void spawnRematSquare(Connection pConnection, BlockPos center, double radius) {
         radius = radius + 1;
 
@@ -1184,6 +1262,79 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                             newY,
                             newZ + 0.5,
                             xVel, yVel, zVel, 0, 1
+                    );
+                    pConnection.send(particlesPacket);
+                }
+            }
+        }
+    }
+
+    public static void spawnEucRematSquare(Connection pConnection, BlockPos center) {
+        int particleCount = 100;
+
+        Random random = new Random();
+
+        // Calculate the number of particles per edge
+        int particlesPerEdge = (int) Math.pow(particleCount, 1.0/2);
+
+        for (int face = 0; face < 6; face++) { // 6 faces on a cube
+            for (int i = 0; i < particlesPerEdge; i++) {
+                for (int j = 0; j < particlesPerEdge; j++) {
+                    // Normalize the coordinates to be between 0 and 1
+                    double normalizedI = i / (double) (particlesPerEdge - 1);
+                    double normalizedJ = j / (double) (particlesPerEdge - 1);
+
+                    // Calculate positions based on the face
+                    double x = 0, y = 0, z = 0;
+                    switch (face) {
+                        case 0: x = normalizedI * 2 - 1; y = 1; z = normalizedJ * 2 - 1; break; // Top face
+                        case 1: x = normalizedI * 2 - 1; y = -1; z = normalizedJ * 2 - 1; break; // Bottom face
+                        case 2: x = 1; y = normalizedI * 2 - 1; z = normalizedJ * 2 - 1; break; // Right face
+                        case 3: x = -1; y = normalizedI * 2 - 1; z = normalizedJ * 2 - 1; break; // Left face
+                        case 4: x = normalizedI * 2 - 1; y = normalizedJ * 2 - 1; z = 1; break; // Front face
+                        case 5: x = normalizedI * 2 - 1; y = normalizedJ * 2 - 1; z = -1; break; // Back face
+                    }
+
+                    float randomFloat = random.nextFloat();
+
+                    ParticleOptions particle = ParticleTypes.ENCHANT; // Or your custom particle
+
+                    if (randomFloat > 0.5) {
+                        particle = ParticleTypes.CHERRY_LEAVES;
+                    }
+                    int xVel = 0;
+                    int yVel = 0;
+                    int zVel = 0;
+
+                    switch (face) {
+                        case 0:
+                        case 1:
+                            xVel = random.nextInt(3) - 1; zVel = random.nextInt(3) - 1; break; // Top face // Bottom face
+                        case 2:
+                        case 3:
+                            yVel = random.nextInt(3) - 1; zVel = random.nextInt(3) - 1; break; // Right face // Left face
+                        case 4:
+                        case 5:
+                            yVel = random.nextInt(3) - 1; xVel = random.nextInt(3) - 1; break; // Front face // Back face
+                    }
+
+                    double radius = 0.75;
+                    double y_radius = 1.25;
+
+                    double newX = center.getX() + radius * x;
+                    double newY = (center.getY() - 1) + (y_radius + 2) * y;
+                    double newZ = center.getZ() + radius * z;
+
+                    if (newY < center.getY() - 1) {
+                        newY = center.getY() - 1;
+                    }
+
+                    ClientboundLevelParticlesPacket particlesPacket = new ClientboundLevelParticlesPacket(
+                            particle, false,
+                            newX + 0.5,
+                            newY,
+                            newZ + 0.5,
+                            0, yVel / 4f, 0, 0, 1
                     );
                     pConnection.send(particlesPacket);
                 }
@@ -1342,10 +1493,24 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         }
     }
 
+    private void handleEucDematParticles(Level pLevel, BlockPos pPos) {
+        List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
+        for (Connection pConnection : connectionList) {
+            spawnEucDematSquare(pConnection, pPos);
+        }
+    }
+
     private void handleRematParticles(int size, Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
             spawnRematSquare(pConnection, pPos, size);
+        }
+    }
+
+    private void handleEucRematParticles(Level pLevel, BlockPos pPos) {
+        List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
+        for (Connection pConnection : connectionList) {
+            spawnEucRematSquare(pConnection, pPos);
         }
     }
 

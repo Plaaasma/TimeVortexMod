@@ -19,6 +19,7 @@ public class ModEvents {
         new SetRotationCommand(event.getDispatcher());
         new SaveCoordinateCommand(event.getDispatcher());
         new LoadCoordinateCommand(event.getDispatcher());
+        new ListCoordinateCommand(event.getDispatcher());
 
         ConfigCommand.register(event.getDispatcher());
     }

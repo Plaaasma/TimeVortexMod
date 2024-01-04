@@ -105,14 +105,14 @@ public class SetRotationCommand {
             else {
                 rotationDirection = Direction.WEST;
             }
-            source.sendSuccess(() -> Component.literal("Updating target rotation to: ").append(Component.literal(rotationDirection.toString()).withStyle(ChatFormatting.GOLD)), false);
+            source.sendSuccess(() -> Component.literal("Updating target rotation to: ").append(Component.literal(rotationDirection.getOpposite().toString()).withStyle(ChatFormatting.GOLD)), false);
         }
         else {
             if (!core_found) {
-                source.sendSuccess(() -> Component.literal("Core is not in range."), false);
+                source.sendFailure(Component.literal("Core is not in range."));
             }
             if (!has_components) {
-                source.sendSuccess(() -> Component.literal("Coordinate components not in range. (Keypad and Designator)"), false);
+                source.sendFailure(Component.literal("Coordinate components not in range. (Keypad and Designator)"));
             }
         }
 
