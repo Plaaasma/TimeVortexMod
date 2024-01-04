@@ -85,13 +85,13 @@ public class ModDimensions {
                 true, // hasSkylight
                 false, // hasCeiling
                 false, // ultraWarm
-                false, // natural
+                true, // natural
                 1.0, // coordinateScale
                 true, // bedWorks
                 false, // respawnAnchorWorks
                 -256, // minY
-                256, // height
-                256, // logicalHeight
+                384, // height
+                384, // logicalHeight
                 BlockTags.INFINIBURN_OVERWORLD, // infiniburn
                 BuiltinDimensionTypes.OVERWORLD_EFFECTS, // effectsLocation
                 1.0f, // ambientLight
@@ -148,6 +148,7 @@ public class ModDimensions {
                                         biomeRegistry.getOrThrow(Biomes.NETHER_WASTES))
                         ))),
                 noiseGenSettings.getOrThrow(NoiseGeneratorSettings.AMPLIFIED));
+
 
         LevelStem sakroStem = new LevelStem(dimTypes.getOrThrow(ModDimensions.SAKRO_DIM_TYPE), sakroNoiseBasedChunkGenerator);
 
