@@ -25,7 +25,7 @@ public class ModItems {
     public static final RegistryObject<Item> WRENCH = ITEMS.register("wrench",
             () -> new Wrench(new Item.Properties().stacksTo(1)));
 
-    public static final RegistryObject<Item> CORE = ITEMS.register("vortex_core_texture",
+    public static final RegistryObject<Item> CORE = ITEMS.register("vortex_core",
             () -> new VortexCore(new Item.Properties().stacksTo(1)));
 
     public static final RegistryObject<Item> TARDIS_KEY = ITEMS.register("tardis_key",
