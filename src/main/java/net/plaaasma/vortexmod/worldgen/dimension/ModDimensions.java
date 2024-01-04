@@ -14,6 +14,7 @@ import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.*;
+import net.minecraftforge.common.Tags;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.worldgen.utils.ModNoiseGenerator;
 import net.plaaasma.vortexmod.worldgen.biome.ModBiomes;
@@ -22,19 +23,27 @@ import java.util.List;
 import java.util.OptionalLong;
 
 public class ModDimensions {
+    // Vortex DIM
     public static final ResourceKey<LevelStem> vortexDIM_KEY = ResourceKey.create(Registries.LEVEL_STEM,
             new ResourceLocation(VortexMod.MODID, "vortexdim"));
     public static final ResourceKey<Level> vortexDIM_LEVEL_KEY = ResourceKey.create(Registries.DIMENSION,
             new ResourceLocation(VortexMod.MODID, "vortexdim"));
     public static final ResourceKey<DimensionType> vortex_DIM_TYPE = ResourceKey.create(Registries.DIMENSION_TYPE,
             new ResourceLocation(VortexMod.MODID, "vortexdim_type"));
-
+    // Tardis DIM
     public static final ResourceKey<LevelStem> tardisDIM_KEY = ResourceKey.create(Registries.LEVEL_STEM,
             new ResourceLocation(VortexMod.MODID, "tardisdim"));
     public static final ResourceKey<Level> tardisDIM_LEVEL_KEY = ResourceKey.create(Registries.DIMENSION,
             new ResourceLocation(VortexMod.MODID, "tardisdim"));
     public static final ResourceKey<DimensionType> tardis_DIM_TYPE = ResourceKey.create(Registries.DIMENSION_TYPE,
             new ResourceLocation(VortexMod.MODID, "tardisdim_type"));
+    // Vortex DIM
+    public static final ResourceKey<LevelStem> SAKRO_DIM_KEY = ResourceKey.create(Registries.LEVEL_STEM,
+            new ResourceLocation(VortexMod.MODID, "sakrodim"));
+    public static final ResourceKey<Level> SAKRO_DIM_LEVEL_KEY = ResourceKey.create(Registries.DIMENSION,
+            new ResourceLocation(VortexMod.MODID, "sakrodim"));
+    public static final ResourceKey<DimensionType> SAKRO_DIM_TYPE = ResourceKey.create(Registries.DIMENSION_TYPE,
+            new ResourceLocation(VortexMod.MODID, "sakrodim_type"));
 
     public static void bootstrapType(BootstapContext<DimensionType> context) {
         context.register(vortex_DIM_TYPE, new DimensionType(
@@ -70,6 +79,23 @@ public class ModDimensions {
                 BuiltinDimensionTypes.END_EFFECTS, // effectsLocation
                 1.0f, // ambientLight
                 new DimensionType.MonsterSettings(false, false, ConstantInt.of(0), 0)));
+
+        context.register(SAKRO_DIM_TYPE, new DimensionType(
+                OptionalLong.of(12000), // fixedTime
+                true, // hasSkylight
+                false, // hasCeiling
+                false, // ultraWarm
+                false, // natural
+                1.0, // coordinateScale
+                true, // bedWorks
+                false, // respawnAnchorWorks
+                -256, // minY
+                256, // height
+                256, // logicalHeight
+                BlockTags.INFINIBURN_OVERWORLD, // infiniburn
+                BuiltinDimensionTypes.OVERWORLD_EFFECTS, // effectsLocation
+                1.0f, // ambientLight
+                new DimensionType.MonsterSettings(false, false, ConstantInt.of(0), 0)));
     }
 
     public static void bootstrapStem(BootstapContext<LevelStem> context) {
@@ -77,19 +103,27 @@ public class ModDimensions {
         HolderGetter<DimensionType> dimTypes = context.lookup(Registries.DIMENSION_TYPE);
         HolderGetter<NoiseGeneratorSettings> noiseGenSettings = context.lookup(Registries.NOISE_SETTINGS);
 
+        // VORTEX
+
        NoiseBasedChunkGenerator vortexNoiseBasedChunkGenerator = new NoiseBasedChunkGenerator(
                MultiNoiseBiomeSource.createFromList(
                         new Climate.ParameterList<>(List.of(
-                                Pair.of(Climate.parameters(0.9F, 0.0F, 0.8F, 0.0F, 0.0F, 0.0F, 0.0F), biomeRegistry.getOrThrow(ModBiomes.BLUE_VORTEX_BIOME)),
-                                Pair.of(Climate.parameters(0.0F, 0.9F, 0.8F, 0.0F, 0.0F, 0.0F, 0.0F), biomeRegistry.getOrThrow(ModBiomes.ORANGE_VORTEX_BIOME)),
-                                Pair.of(Climate.parameters(0.0F, 0.0F, 0.0F, 1.0F, 0.7F, 0.0F, 0.0F), biomeRegistry.getOrThrow(ModBiomes.PURPLE_VORTEX_BIOME)),
-                                Pair.of(Climate.parameters(0.5F, 0.5F, 0.8F, 0.0F, 0.0F, 0.0F, 0.0F), biomeRegistry.getOrThrow(ModBiomes.BLACK_VORTEX_BIOME))
+                                Pair.of(Climate.parameters(0.9F, 0.0F, 0.8F, 0.0F, 0.0F, 0.0F, 0.0F),
+                                        biomeRegistry.getOrThrow(ModBiomes.BLUE_VORTEX_BIOME)),
+                                Pair.of(Climate.parameters(0.0F, 0.9F, 0.8F, 0.0F, 0.0F, 0.0F, 0.0F),
+                                        biomeRegistry.getOrThrow(ModBiomes.ORANGE_VORTEX_BIOME)),
+                                Pair.of(Climate.parameters(0.0F, 0.0F, 0.0F, 1.0F, 0.7F, 0.0F, 0.0F),
+                                        biomeRegistry.getOrThrow(ModBiomes.PURPLE_VORTEX_BIOME)),
+                                Pair.of(Climate.parameters(0.5F, 0.5F, 0.8F, 0.0F, 0.0F, 0.0F, 0.0F),
+                                        biomeRegistry.getOrThrow(ModBiomes.BLACK_VORTEX_BIOME))
                        ))),
-                noiseGenSettings.getOrThrow(ModNoiseGenerator.CAVES));
+                noiseGenSettings.getOrThrow(ModNoiseGenerator.VORTEX_CAVES));
 
         LevelStem vortexStem = new LevelStem(dimTypes.getOrThrow(ModDimensions.vortex_DIM_TYPE), vortexNoiseBasedChunkGenerator);
 
         context.register(vortexDIM_KEY, vortexStem);
+
+        // TARDIS
 
         NoiseBasedChunkGenerator tardisNoiseBasedChunkGenerator = new NoiseBasedChunkGenerator(
                 new FixedBiomeSource(biomeRegistry.getOrThrow(ModBiomes.TARDIS_BIOME)),
@@ -98,5 +132,25 @@ public class ModDimensions {
         LevelStem tardisStem = new LevelStem(dimTypes.getOrThrow(ModDimensions.tardis_DIM_TYPE), tardisNoiseBasedChunkGenerator);
 
         context.register(tardisDIM_KEY, tardisStem);
+
+        // SAKRO
+
+        NoiseBasedChunkGenerator sakroNoiseBasedChunkGenerator = new NoiseBasedChunkGenerator(
+                MultiNoiseBiomeSource.createFromList(
+                        new Climate.ParameterList<>(List.of(
+                                Pair.of(Climate.parameters(0.9F, 0.0F, 0.8F, 0.0F, 0.0F, 0.0F, 0.0F),
+                                        biomeRegistry.getOrThrow(Biomes.BADLANDS)),
+                                Pair.of(Climate.parameters(0.0F, 0.9F, 0.8F, 0.0F, 0.0F, 0.0F, 0.0F),
+                                        biomeRegistry.getOrThrow(Biomes.ERODED_BADLANDS)),
+                                Pair.of(Climate.parameters(0.0F, 0.0F, 0.0F, 1.0F, 0.7F, 0.0F, 0.0F),
+                                        biomeRegistry.getOrThrow(Biomes.BASALT_DELTAS)),
+                                Pair.of(Climate.parameters(0.5F, 0.5F, 0.8F, 0.0F, 0.0F, 0.0F, 0.0F),
+                                        biomeRegistry.getOrThrow(Biomes.NETHER_WASTES))
+                        ))),
+                noiseGenSettings.getOrThrow(NoiseGeneratorSettings.AMPLIFIED));
+
+        LevelStem sakroStem = new LevelStem(dimTypes.getOrThrow(ModDimensions.SAKRO_DIM_TYPE), sakroNoiseBasedChunkGenerator);
+
+        context.register(SAKRO_DIM_KEY, sakroStem);
     }
 }

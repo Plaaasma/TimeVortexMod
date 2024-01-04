@@ -4,7 +4,6 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
-import net.minecraft.data.worldgen.SurfaceRuleData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Climate;
@@ -20,10 +19,10 @@ import java.util.List;
 
 public record ModNoiseGenerator(NoiseSettings noiseSettings, BlockState defaultBlock, BlockState defaultFluid, NoiseRouter noiseRouter, SurfaceRules.RuleSource surfaceRule, List<Climate.ParameterPoint> spawnTarget, int seaLevel, boolean disableMobGeneration, boolean aquifersEnabled, boolean oreVeinsEnabled, boolean useLegacyRandomSource) {
 
-    public static final ResourceKey<NoiseGeneratorSettings> CAVES = ResourceKey.create(Registries.NOISE_SETTINGS, new ResourceLocation(VortexMod.MODID,"vortex_caves"));
+    public static final ResourceKey<NoiseGeneratorSettings> VORTEX_CAVES = ResourceKey.create(Registries.NOISE_SETTINGS, new ResourceLocation(VortexMod.MODID,"vortex_caves"));
     public static final ResourceKey<NoiseGeneratorSettings> VOID = ResourceKey.create(Registries.NOISE_SETTINGS, new ResourceLocation(VortexMod.MODID,"tardis_void"));
     public static void bootstrap(BootstapContext<NoiseGeneratorSettings> pContext) {
-        pContext.register(CAVES, dummy(pContext));
+        pContext.register(VORTEX_CAVES, dummy(pContext));
         pContext.register(VOID, void_dummy(pContext));
     }
 
