@@ -222,7 +222,7 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                 ChunkPos chunkPos = tardisDimension.getChunkAt(interfacePos).getPos();
                 ForgeChunkManager.forceChunk(tardisDimension, VortexMod.MODID, interfacePos, chunkPos.x, chunkPos.z, true, true);
 
-                pPlayer.setItemInHand(pHand, new ItemStack(Items.AIR, 0));
+                pPlayer.setItemInHand(pHand, new ItemStack(ModItems.TARDIS_KEY.get(), 1));
 
                 handleLightningStrikes(serverLevel, pPos);
 

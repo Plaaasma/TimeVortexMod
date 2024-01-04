@@ -30,6 +30,7 @@ import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.block.entity.ModBlockEntities;
 import net.plaaasma.vortexmod.block.entity.TardisBlockEntity;
 import net.plaaasma.vortexmod.block.entity.VortexInterfaceBlockEntity;
+import net.plaaasma.vortexmod.item.ModItems;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 import net.plaaasma.vortexmod.worldgen.portal.ModTeleporter;
 import org.jetbrains.annotations.Nullable;
@@ -63,6 +64,7 @@ public class DoorBlock extends Block {
             Iterable<ServerLevel> serverLevels = minecraftserver.getAllLevels();
             ServerLevel tardisDimension = minecraftserver.getLevel(ModDimensions.tardisDIM_LEVEL_KEY);
             ServerLevel vortexDimension = minecraftserver.getLevel(ModDimensions.vortexDIM_LEVEL_KEY);
+            ItemStack heldStack = pPlayer.getItemInHand(pHand);
 
             Random random = new Random();
 
@@ -84,20 +86,37 @@ public class DoorBlock extends Block {
                                 BlockPos blockExitPos = new BlockPos(vortexInterfaceBlockEntity.data.get(6), vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8));
                                 BlockState targetBlockState = targetDimension.getBlockState(blockExitPos);
                                 if (targetBlockState.getBlock() == ModBlocks.TARDIS_BLOCK.get()) {
-                                    Vec3 exitPosition;
-                                    if (targetBlockState.getValue(BlockStateProperties.HORIZONTAL_FACING) == Direction.NORTH) {
-                                        exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) + 0.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) + 1.5);
-                                    }
-                                    else if (targetBlockState.getValue(BlockStateProperties.HORIZONTAL_FACING) == Direction.EAST) {
-                                        exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) - 0.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) + 0.5);
-                                    }
-                                    else if (targetBlockState.getValue(BlockStateProperties.HORIZONTAL_FACING) == Direction.SOUTH) {
-                                        exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) + 0.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) - 0.5);
+                                    if (heldStack.is(ModItems.TARDIS_KEY.get())) {
+                                        TardisBlockEntity tardisBlockEntity = (TardisBlockEntity) targetDimension.getBlockEntity(blockExitPos);
+
+                                        int ownerCode = tardisBlockEntity.data.get(0);
+                                        if (ownerCode == pPlayer.getScoreboardName().hashCode()) {
+                                            if (tardisBlockEntity.data.get(1) == 0) {
+                                                tardisBlockEntity.data.set(1, 1);
+                                                pPlayer.displayClientMessage(Component.literal("Locking TARDIS").withStyle(ChatFormatting.GREEN), true);
+                                            }
+                                            else {
+                                                tardisBlockEntity.data.set(1, 0);
+                                                pPlayer.displayClientMessage(Component.literal("Unlocking TARDIS").withStyle(ChatFormatting.AQUA), true);
+                                            }
+                                        }
+                                        else {
+                                            pPlayer.displayClientMessage(Component.literal("This TARDIS is not yours.").withStyle(ChatFormatting.RED), true);
+                                        }
                                     }
                                     else {
-                                        exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) + 1.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) + 0.5);
+                                        Vec3 exitPosition;
+                                        if (targetBlockState.getValue(BlockStateProperties.HORIZONTAL_FACING) == Direction.NORTH) {
+                                            exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) + 0.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) + 1.5);
+                                        } else if (targetBlockState.getValue(BlockStateProperties.HORIZONTAL_FACING) == Direction.EAST) {
+                                            exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) - 0.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) + 0.5);
+                                        } else if (targetBlockState.getValue(BlockStateProperties.HORIZONTAL_FACING) == Direction.SOUTH) {
+                                            exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) + 0.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) - 0.5);
+                                        } else {
+                                            exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) + 1.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) + 0.5);
+                                        }
+                                        pPlayer.changeDimension(targetDimension, new ModTeleporter(exitPosition));
                                     }
-                                    pPlayer.changeDimension(targetDimension, new ModTeleporter(exitPosition));
                                 } else {
                                     pPlayer.changeDimension(vortexDimension, new ModTeleporter(new Vec3(random.nextInt(1000000) - 500000, -100, random.nextInt(1000000) - 500000)));
                                 }
