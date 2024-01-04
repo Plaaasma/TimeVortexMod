@@ -17,27 +17,19 @@ public class ModEntities {
     public static final RegistryObject<EntityType<LostTravelerEntity>> BLUE_TRADER =
             ENTITY_TYPES.register("blue_trader", () -> EntityType.Builder.<LostTravelerEntity>of((type, world) ->
                                     new LostTravelerEntity( type, world, LostTravelerUtils.LostTravelerType.BLUE_TRADER),
-                            MobCategory.CREATURE)
-                    .sized(1f, 2f)
-                    .build("blue_trader"));
+                            MobCategory.CREATURE).sized(1f, 2f).build("blue_trader"));
     public static final RegistryObject<EntityType<LostTravelerEntity>> ORANGE_TRADER =
             ENTITY_TYPES.register("orange_trader", () -> EntityType.Builder.<LostTravelerEntity>of((type, world) ->
                             new LostTravelerEntity( type, world, LostTravelerUtils.LostTravelerType.ORANGE_TRADER),
-                            MobCategory.CREATURE)
-                    .sized(1f, 2f)
-                    .build("orange_trader"));
+                            MobCategory.CREATURE).sized(1f, 2f).build("orange_trader"));
     public static final RegistryObject<EntityType<LostTravelerEntity>> PURPLE_TRADER =
             ENTITY_TYPES.register("purple_trader", () -> EntityType.Builder.<LostTravelerEntity>of((type, world) ->
                                     new LostTravelerEntity( type, world, LostTravelerUtils.LostTravelerType.PURPLE_TRADER),
-                            MobCategory.CREATURE)
-                    .sized(1f, 2f)
-                    .build("purple_trader"));
+                            MobCategory.CREATURE).sized(1f, 2f).build("purple_trader"));
     public static final RegistryObject<EntityType<LostTravelerEntity>> BLACK_TRADER =
             ENTITY_TYPES.register("black_trader", () -> EntityType.Builder.<LostTravelerEntity>of((type, world) ->
                                     new LostTravelerEntity( type, world, LostTravelerUtils.LostTravelerType.BLACK_TRADER),
-                            MobCategory.CREATURE)
-                    .sized(1f, 2f)
-                    .build("black_trader"));
+                            MobCategory.CREATURE).sized(1f, 2f).build("black_trader"));
 
 
     public static void register(IEventBus eventBus) {
