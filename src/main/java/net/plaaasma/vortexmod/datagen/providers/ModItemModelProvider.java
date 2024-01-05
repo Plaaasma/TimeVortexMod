@@ -22,10 +22,16 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.SIZE_UPGRADE);
         simpleItem(ModItems.EUCLIDEAN_UPGRADE);
         simpleItem(ModItems.WRENCH);
+
         withExistingParent(ModItems.BLUE_TRADER_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.ORANGE_TRADER_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.PURPLE_TRADER_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.BLACK_TRADER_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
+
+        withExistingParent(ModItems.GOLD_DALEK_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
+        withExistingParent(ModItems.SILVER_DALEK_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
+        withExistingParent(ModItems.BLACK_DALEK_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
+        withExistingParent(ModItems.SILVER_BLACK_DALEK_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
     }
 
     private ItemModelBuilder simpleItem(RegistryObject<Item> item) {

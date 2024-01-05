@@ -40,19 +40,19 @@ public class ModEntities {
     public static final RegistryObject<EntityType<DalekEntity>> GOLD_DALEK =
             ENTITY_TYPES.register("gold_dalek", () -> EntityType.Builder.<DalekEntity>of((type, world) ->
                             new DalekEntity( type, world, DalekUtils.DalekType.GOLD_DALEK),
-                    MobCategory.CREATURE).sized(1f, 2f).build("gold_dalek"));
+                    MobCategory.CREATURE).sized(2f, 2.5f).build("gold_dalek"));
     public static final RegistryObject<EntityType<DalekEntity>> SILVER_DALEK =
             ENTITY_TYPES.register("silver_dalek", () -> EntityType.Builder.<DalekEntity>of((type, world) ->
                             new DalekEntity( type, world, DalekUtils.DalekType.SILVER_DALEK),
-                    MobCategory.CREATURE).sized(1f, 2f).build("silver_dalek"));
+                    MobCategory.CREATURE).sized(2f, 2.5f).build("silver_dalek"));
     public static final RegistryObject<EntityType<DalekEntity>> BLACK_DALEK =
             ENTITY_TYPES.register("black_dalek", () -> EntityType.Builder.<DalekEntity>of((type, world) ->
                             new DalekEntity( type, world, DalekUtils.DalekType.BLACK_DALEK),
-                    MobCategory.CREATURE).sized(1f, 2f).build("black_dalek"));
+                    MobCategory.CREATURE).sized(2f, 2.5f).build("black_dalek"));
     public static final RegistryObject<EntityType<DalekEntity>> SILVER_BLACK_DALEK =
             ENTITY_TYPES.register("silver_black_dalek", () -> EntityType.Builder.<DalekEntity>of((type, world) ->
                             new DalekEntity( type, world, DalekUtils.DalekType.SILVER_BLACK_DALEK),
-                    MobCategory.CREATURE).sized(1f, 2f).build("silver_black_dalek"));
+                    MobCategory.CREATURE).sized(2f, 2.5f).build("silver_black_dalek"));
 
 
     public static void register(IEventBus eventBus) {

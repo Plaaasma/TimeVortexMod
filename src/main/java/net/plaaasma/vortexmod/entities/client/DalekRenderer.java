@@ -16,7 +16,7 @@ public class DalekRenderer extends MobRenderer<DalekEntity, DalekModel<DalekEnti
     @Override
     public ResourceLocation getTextureLocation(DalekEntity pEntity) {
 
-        /*switch (pEntity.dalekType) {
+        switch (pEntity.dalekType) {
             case GOLD_DALEK -> {
                 return new ResourceLocation(VortexMod.MODID, "textures/entity/gold_dalek.png");
             }
@@ -29,7 +29,7 @@ public class DalekRenderer extends MobRenderer<DalekEntity, DalekModel<DalekEnti
             case SILVER_BLACK_DALEK -> {
                 return new ResourceLocation(VortexMod.MODID, "textures/entity/silver_black_dalek.png");
             }
-        }*/
+        }
         return new ResourceLocation(VortexMod.MODID, "textures/entity/gold_dalek.png");
     }
 
