@@ -82,18 +82,18 @@ public class LostTravelerModel <T extends Entity> extends HierarchicalModel<T> {
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.root().getAllParts().forEach(ModelPart::resetPose);
-        this.applyHeadRotation(netHeadYaw, headPitch, ageInTicks);
+        //this.applyHeadRotation(netHeadYaw, headPitch, ageInTicks);
 
         animateWalk(ModAnimationDefinitions.lost_traveler_walk, limbSwing, limbSwingAmount, 5f, 10f);
     }
 
-    private void applyHeadRotation(float pNetHeadYaw, float pHeadPitch, float pAgeInTicks) {
+    /*private void applyHeadRotation(float pNetHeadYaw, float pHeadPitch, float pAgeInTicks) {
         pNetHeadYaw = Mth.clamp(pNetHeadYaw, -30.0F, 30.0F);
         pHeadPitch = Mth.clamp(pHeadPitch, -25.0F, 45.0F);
 
         this.head.yRot = pNetHeadYaw * ((float)Math.PI / 180F);
         this.head.xRot = pHeadPitch * ((float)Math.PI / 180F);
-    }
+    }*/
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {

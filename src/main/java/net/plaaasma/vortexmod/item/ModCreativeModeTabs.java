@@ -34,10 +34,16 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.GROUNDING_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.BIOMETRIC_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.DOOR_BLOCK.get().asItem());
+
                         pOutput.accept(ModItems.BLUE_TRADER_SPAWN_EGG.get());
                         pOutput.accept(ModItems.ORANGE_TRADER_SPAWN_EGG.get());
                         pOutput.accept(ModItems.PURPLE_TRADER_SPAWN_EGG.get());
                         pOutput.accept(ModItems.BLACK_TRADER_SPAWN_EGG.get());
+
+                        pOutput.accept(ModItems.GOLD_DALEK_SPAWN_EGG.get());
+                        pOutput.accept(ModItems.SILVER_DALEK_SPAWN_EGG.get());
+                        pOutput.accept(ModItems.BLACK_DALEK_SPAWN_EGG.get());
+                        pOutput.accept(ModItems.SILVER_BLACK_DALEK_SPAWN_EGG.get());
                     })
                     .build());
 
