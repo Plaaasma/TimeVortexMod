@@ -243,6 +243,96 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         return true;
     }
 
+    @LuaFunction
+    public final Map<String, Integer> getTargetLocation() throws LuaException {
+        Map<String, Integer> coordMap = new HashMap<>();
+        coordMap.put("x", this.data.get(3));
+        coordMap.put("y", this.data.get(4));
+        coordMap.put("z", this.data.get(5));
+        return coordMap;
+    }
+
+    @LuaFunction
+    public final Map<String, Integer> getExtLocation() throws LuaException {
+        Map<String, Integer> coordMap = new HashMap<>();
+        coordMap.put("x", this.data.get(6));
+        coordMap.put("y", this.data.get(7));
+        coordMap.put("z", this.data.get(8));
+        return coordMap;
+    }
+
+    @LuaFunction
+    public final String getTargetDimension() throws LuaException {
+        MinecraftServer minecraftserver = this.getLevel().getServer();
+        Iterable<ServerLevel> serverLevels = minecraftserver.getAllLevels();
+
+        String targetDim = "";
+
+        for (ServerLevel cLevel : serverLevels) {
+            if (cLevel.dimension().location().getPath().hashCode() == this.data.get(10)) {
+                targetDim = cLevel.dimension().location().getPath();
+                break;
+            }
+        }
+        return targetDim;
+    }
+
+    @LuaFunction
+    public final String getExtDimension() throws LuaException {
+        MinecraftServer minecraftserver = this.getLevel().getServer();
+        Iterable<ServerLevel> serverLevels = minecraftserver.getAllLevels();
+
+        String currentDim = "";
+
+        for (ServerLevel cLevel : serverLevels) {
+            if (cLevel.dimension().location().getPath().hashCode() == this.data.get(9)) {
+                currentDim = cLevel.dimension().location().getPath();
+                break;
+            }
+        }
+        return currentDim;
+    }
+
+    @LuaFunction
+    public final String getTargetRotation() throws LuaException {
+        int rotation_yaw = this.data.get(12);
+        Direction rotationDirection;
+        if (rotation_yaw >= 0 && rotation_yaw < 90) {
+            rotationDirection = Direction.NORTH;
+        }
+        else if (rotation_yaw >= 90 && rotation_yaw < 180) {
+            rotationDirection = Direction.EAST;
+        }
+        else if (rotation_yaw >= 180 && rotation_yaw < 270) {
+            rotationDirection = Direction.SOUTH;
+        }
+        else {
+            rotationDirection = Direction.WEST;
+        }
+
+        return rotationDirection.toString();
+    }
+
+    @LuaFunction
+    public final String getTargetBlock() throws LuaException {
+        MinecraftServer minecraftserver = this.getLevel().getServer();
+        ServerLevel overworldDimension = minecraftserver.getLevel(Level.OVERWORLD);
+
+        Iterable<ServerLevel> serverLevels = minecraftserver.getAllLevels();
+
+        ServerLevel targetDimension = overworldDimension;
+        for (ServerLevel cLevel : serverLevels) {
+            if (cLevel.dimension().location().getPath().hashCode() == this.data.get(10)) {
+                targetDimension = cLevel;
+                break;
+            }
+        }
+
+        BlockState targetState = targetDimension.getBlockState(new BlockPos(this.data.get(3), this.data.get(4), this.data.get(5)));
+
+        return targetState.getBlock().getName().getString();
+    }
+
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
         if (!pLevel.isClientSide()) {
             MinecraftServer minecraftserver = pLevel.getServer();
@@ -295,12 +385,14 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             int targetZ = 0;
             int throttle_on = 0;
             boolean has_equalizer = false;
+            boolean has_bio_sec = false;
             boolean auto_ground = false;
             boolean proto = true;
 
+            BlockEntity tBlockEntity = currentDimension.getBlockEntity(new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8)));
+
             if (pLevel == tardisDimension) {
                 proto = false;
-                BlockEntity tBlockEntity = currentDimension.getBlockEntity(new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8)));
                 if (tBlockEntity instanceof TardisBlockEntity tardisBlockEntity) {
                     tardisBlockEntity.data.set(0, this.data.get(2));
                 }
@@ -381,8 +473,21 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                     this.data.set(13, 0);
                                 }
                             }
+
+                            if (blockEntity instanceof BiometricBlockEntity) {
+                                has_bio_sec = true;
+                            }
                         }
                     }
+                }
+            }
+
+            if (tBlockEntity instanceof TardisBlockEntity tardisBlockEntity) {
+                if (has_bio_sec) {
+                    tardisBlockEntity.data.set(2, 1);
+                }
+                else {
+                    tardisBlockEntity.data.set(2, 0);
                 }
             }
 
@@ -581,7 +686,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         double remat_time = tickSpeed * 10;
 
                         if (this.data.get(0) > this.data.get(1) + demat_time) {
-                            BlockEntity tBlockEntity = currentDimension.getBlockEntity(new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8)));
+                            tBlockEntity = currentDimension.getBlockEntity(new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8)));
                             if (tBlockEntity instanceof TardisBlockEntity) {
                                 handleTardisDeletion(currentDimension, exteriorPos);
                             }

@@ -154,6 +154,17 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy(getHasName(ModBlocks.INTERFACE_BLOCK.get()), has(ModBlocks.INTERFACE_BLOCK.get()))
                 .save(pWriter);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModBlocks.BIOMETRIC_BLOCK.get())
+                .pattern("DRD")
+                .pattern("DID")
+                .pattern("WWW")
+                .define('I', Items.ITEM_FRAME)
+                .define('R', Items.REDSTONE)
+                .define('D', Items.DIAMOND)
+                .define('W', ItemTags.WOODEN_SLABS)
+                .unlockedBy(getHasName(ModItems.EUCLIDEAN_UPGRADE.get()), has(ModItems.EUCLIDEAN_UPGRADE.get()))
+                .save(pWriter);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.WRENCH.get())
                 .pattern("  R")
                 .pattern(" I ")

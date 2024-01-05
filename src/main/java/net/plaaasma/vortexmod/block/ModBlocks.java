@@ -39,6 +39,8 @@ public class ModBlocks {
             () -> new ScannerBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
     public static final RegistryObject<Block> GROUNDING_BLOCK = registerBlock("grounding_block",
             () -> new GroundingBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
+    public static final RegistryObject<Block> BIOMETRIC_BLOCK = registerBlock("biometric_module",
+            () -> new BiometricBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);

@@ -49,6 +49,11 @@ public class ModBlockEntities {
                     BlockEntityType.Builder.of(ScannerBlockEntity::new,
                             ModBlocks.SCANNER_BLOCK.get()).build(null));
 
+    public static final RegistryObject<BlockEntityType<BiometricBlockEntity>> BIOMETRIC_BLOCK_BE =
+            BLOCK_ENTITIES.register("biometric_be", () ->
+                    BlockEntityType.Builder.of(BiometricBlockEntity::new,
+                            ModBlocks.BIOMETRIC_BLOCK.get()).build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }

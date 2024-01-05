@@ -20,6 +20,7 @@ public class ModEvents {
         new SaveCoordinateCommand(event.getDispatcher());
         new LoadCoordinateCommand(event.getDispatcher());
         new ListCoordinateCommand(event.getDispatcher());
+        new SecurityCommand(event.getDispatcher());
 
         ConfigCommand.register(event.getDispatcher());
     }
@@ -39,6 +40,8 @@ public class ModEvents {
                     event.getOriginal().getPersistentData().getIntArray(VortexMod.MODID + "savedpos"));
             event.getEntity().getPersistentData().putIntArray(VortexMod.MODID + "savedname",
                     event.getOriginal().getPersistentData().getIntArray(VortexMod.MODID + "savedname"));
+            event.getEntity().getPersistentData().putIntArray(VortexMod.MODID + "targetname",
+                    event.getOriginal().getPersistentData().getIntArray(VortexMod.MODID + "targetname"));
         }
     }
 }
