@@ -13,6 +13,7 @@ public class TardisBlockEntity extends BlockEntity {
 
     public int owner = 0;
     public int locked = 0;
+    public int bio_sec = 0;
 
     public TardisBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.TARDIS_BE.get(), pPos, pBlockState);
@@ -22,6 +23,7 @@ public class TardisBlockEntity extends BlockEntity {
                 return switch (pIndex) {
                     case 0 -> TardisBlockEntity.this.owner;
                     case 1 -> TardisBlockEntity.this.locked;
+                    case 2 -> TardisBlockEntity.this.bio_sec;
                     default -> 0;
                 };
             }
@@ -31,12 +33,13 @@ public class TardisBlockEntity extends BlockEntity {
                 switch (pIndex) {
                     case 0 -> TardisBlockEntity.this.owner = pValue;
                     case 1 -> TardisBlockEntity.this.locked = pValue;
+                    case 2 -> TardisBlockEntity.this.bio_sec = pValue;
                 }
             }
 
             @Override
             public int getCount() {
-                return 2;
+                return 3;
             }
         };
     }
@@ -59,6 +62,7 @@ public class TardisBlockEntity extends BlockEntity {
 
         this.owner = vortexModData.getInt("owner");
         this.locked = vortexModData.getInt("locked");
+        this.bio_sec = vortexModData.getInt("bio_sec");
     }
 
     @Override
@@ -69,6 +73,7 @@ public class TardisBlockEntity extends BlockEntity {
 
         vortexModData.putInt("owner", this.owner);
         vortexModData.putInt("locked", this.locked);
+        vortexModData.putInt("bio_sec", this.bio_sec);
 
         pTag.put(VortexMod.MODID, vortexModData);
     }

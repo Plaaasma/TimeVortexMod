@@ -32,6 +32,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.EQUALIZER_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.SCANNER_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.GROUNDING_BLOCK.get().asItem());
+                        pOutput.accept(ModBlocks.BIOMETRIC_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.DOOR_BLOCK.get().asItem());
                         pOutput.accept(ModItems.BLUE_TRADER_SPAWN_EGG.get());
                         pOutput.accept(ModItems.ORANGE_TRADER_SPAWN_EGG.get());

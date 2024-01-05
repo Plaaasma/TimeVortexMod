@@ -34,11 +34,14 @@ import net.plaaasma.vortexmod.block.entity.*;
 import net.plaaasma.vortexmod.item.ModItems;
 import net.plaaasma.vortexmod.item.custom.TardisKey;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
+import net.plaaasma.vortexmod.mapdata.SecurityMapData;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 import net.plaaasma.vortexmod.worldgen.portal.ModTeleporter;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class TardisBlock extends HorizontalBaseEntityBlock {
     public static final VoxelShape SHAPE = Block.box(-1, 0, -1, 18, 32, 18);
@@ -71,6 +74,7 @@ public class TardisBlock extends HorizontalBaseEntityBlock {
             ResourceKey<Level> resourcekey = ModDimensions.tardisDIM_LEVEL_KEY;
             ServerLevel dimension = minecraftserver.getLevel(resourcekey);
             ServerLevel overworld = minecraftserver.getLevel(Level.OVERWORLD);
+            SecurityMapData security_data = SecurityMapData.get(overworld);
             LocationMapData data = LocationMapData.get(overworld);
             TardisBlockEntity localBlockEntity = (TardisBlockEntity) serverLevel.getBlockEntity(pPos);
             int ownerCode = localBlockEntity.data.get(0);
@@ -88,70 +92,87 @@ public class TardisBlock extends HorizontalBaseEntityBlock {
                     }
                 }
                 else {
-                    pPlayer.displayClientMessage(Component.literal("This TARDIS is not yours.").withStyle(ChatFormatting.RED), true);
+                    pPlayer.displayClientMessage(Component.literal("This TARDIS is not yours").withStyle(ChatFormatting.RED), true);
                 }
             }
             else {
                 if (localBlockEntity.data.get(1) == 0) {
-                    BlockPos blockTardisTarget = data.getDataMap().get(Integer.toString(ownerCode));
-                    Vec3 tardisTarget = new Vec3(blockTardisTarget.getX() + 1.5, blockTardisTarget.getY(), blockTardisTarget.getZ() + 0.5);
-                    boolean found_door = false;
-                    for (int x = -100; x <= 100 && !found_door; x++) {
-                        for (int y = -1; y <= 100 && !found_door; y++) {
-                            for (int z = -100; z <= 100 && !found_door; z++) {
-                                BlockPos currentPos = blockTardisTarget.offset(x, y, z);
+                    boolean hasBioSecurity = localBlockEntity.data.get(2) == 1;
 
-                                BlockState blockState = dimension.getBlockState(currentPos);
+                    List<String> whitelistedCodes = new ArrayList<>();
 
-                                if (blockState.getBlock() == ModBlocks.DOOR_BLOCK.get()) {
-                                    for (int direction = 0; direction < 4; direction++) {
-                                        BlockPos newPos;
-                                        double x_offset;
-                                        double z_offset;
-                                        if (direction == 0) {
-                                            newPos = currentPos.east();
-                                            x_offset = 1.5;
-                                            z_offset = 0.5;
-                                        } else if (direction == 1) {
-                                            newPos = currentPos.south();
-                                            x_offset = 0.5;
-                                            z_offset = 1.5;
-                                        } else if (direction == 2) {
-                                            newPos = currentPos.west();
-                                            x_offset = -0.5;
-                                            z_offset = 0.5;
-                                        } else {
-                                            newPos = currentPos.north();
-                                            x_offset = 0.5;
-                                            z_offset = -0.5;
+                    Set<String> secSet = security_data.getDataMap().keySet();
+
+                    for (String secKey : secSet) {
+                        if (secKey.startsWith(Integer.toString(pPlayer.getScoreboardName().hashCode()))) {
+                            whitelistedCodes.add(security_data.getDataMap().get(secKey));
+                        }
+                    }
+
+                    if (pPlayer.getScoreboardName().hashCode() == ownerCode || !hasBioSecurity || whitelistedCodes.contains(pPlayer.getScoreboardName())) {
+                        BlockPos blockTardisTarget = data.getDataMap().get(Integer.toString(ownerCode));
+                        Vec3 tardisTarget = new Vec3(blockTardisTarget.getX() + 1.5, blockTardisTarget.getY(), blockTardisTarget.getZ() + 0.5);
+                        boolean found_door = false;
+                        for (int x = -100; x <= 100 && !found_door; x++) {
+                            for (int y = -1; y <= 100 && !found_door; y++) {
+                                for (int z = -100; z <= 100 && !found_door; z++) {
+                                    BlockPos currentPos = blockTardisTarget.offset(x, y, z);
+
+                                    BlockState blockState = dimension.getBlockState(currentPos);
+
+                                    if (blockState.getBlock() == ModBlocks.DOOR_BLOCK.get()) {
+                                        for (int direction = 0; direction < 4; direction++) {
+                                            BlockPos newPos;
+                                            double x_offset;
+                                            double z_offset;
+                                            if (direction == 0) {
+                                                newPos = currentPos.east();
+                                                x_offset = 1.5;
+                                                z_offset = 0.5;
+                                            } else if (direction == 1) {
+                                                newPos = currentPos.south();
+                                                x_offset = 0.5;
+                                                z_offset = 1.5;
+                                            } else if (direction == 2) {
+                                                newPos = currentPos.west();
+                                                x_offset = -0.5;
+                                                z_offset = 0.5;
+                                            } else {
+                                                newPos = currentPos.north();
+                                                x_offset = 0.5;
+                                                z_offset = -0.5;
+                                            }
+
+                                            if (dimension.getBlockState(newPos) == Blocks.AIR.defaultBlockState() && dimension.getBlockState(newPos.above()) == Blocks.AIR.defaultBlockState()) {
+                                                tardisTarget = new Vec3(currentPos.getX() + x_offset, currentPos.getY(), currentPos.getZ() + z_offset);
+                                                break;
+                                            }
                                         }
 
-                                        if (dimension.getBlockState(newPos) == Blocks.AIR.defaultBlockState() && dimension.getBlockState(newPos.above()) == Blocks.AIR.defaultBlockState()) {
-                                            tardisTarget = new Vec3(currentPos.getX() + x_offset, currentPos.getY(), currentPos.getZ() + z_offset);
-                                            break;
-                                        }
+                                        found_door = true;
                                     }
-
-                                    found_door = true;
                                 }
                             }
                         }
-                    }
-                    if (!found_door) {
-                        BlockPos doorTarget = new BlockPos((int) (tardisTarget.x - 1.5), (int) tardisTarget.y, (int) (tardisTarget.z - 0.5));
+                        if (!found_door) {
+                            BlockPos doorTarget = new BlockPos((int) (tardisTarget.x - 1.5), (int) tardisTarget.y, (int) (tardisTarget.z - 0.5));
 
-                        serverLevel.setBlockAndUpdate(doorTarget, ModBlocks.TARDIS_BLOCK.get().defaultBlockState());
+                            serverLevel.setBlockAndUpdate(doorTarget, ModBlocks.TARDIS_BLOCK.get().defaultBlockState());
 
-                        BlockEntity tBlockEntity = serverLevel.getBlockEntity(doorTarget);
-                        if (tBlockEntity instanceof TardisBlockEntity tardisBlockEntity) {
-                            tardisBlockEntity.data.set(0, ownerCode);
+                            BlockEntity tBlockEntity = serverLevel.getBlockEntity(doorTarget);
+                            if (tBlockEntity instanceof TardisBlockEntity tardisBlockEntity) {
+                                tardisBlockEntity.data.set(0, ownerCode);
+                            }
                         }
-                    }
 
-                    pPlayer.changeDimension(dimension, new ModTeleporter(tardisTarget));
+                        pPlayer.changeDimension(dimension, new ModTeleporter(tardisTarget));
+                    }
+                    else {
+                        pPlayer.displayClientMessage(Component.literal("You are not whitelisted in this TARDIS").withStyle(ChatFormatting.RED), true);
+                    }
                 }
                 else {
-                    pPlayer.displayClientMessage(Component.literal("This TARDIS is locked.").withStyle(ChatFormatting.RED), true);
+                    pPlayer.displayClientMessage(Component.literal("This TARDIS is locked").withStyle(ChatFormatting.RED), true);
                 }
             }
         }

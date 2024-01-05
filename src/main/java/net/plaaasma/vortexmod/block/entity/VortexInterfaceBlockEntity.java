@@ -385,12 +385,14 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             int targetZ = 0;
             int throttle_on = 0;
             boolean has_equalizer = false;
+            boolean has_bio_sec = false;
             boolean auto_ground = false;
             boolean proto = true;
 
+            BlockEntity tBlockEntity = currentDimension.getBlockEntity(new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8)));
+
             if (pLevel == tardisDimension) {
                 proto = false;
-                BlockEntity tBlockEntity = currentDimension.getBlockEntity(new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8)));
                 if (tBlockEntity instanceof TardisBlockEntity tardisBlockEntity) {
                     tardisBlockEntity.data.set(0, this.data.get(2));
                 }
@@ -471,8 +473,21 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                     this.data.set(13, 0);
                                 }
                             }
+
+                            if (blockEntity instanceof BiometricBlockEntity) {
+                                has_bio_sec = true;
+                            }
                         }
                     }
+                }
+            }
+
+            if (tBlockEntity instanceof TardisBlockEntity tardisBlockEntity) {
+                if (has_bio_sec) {
+                    tardisBlockEntity.data.set(2, 1);
+                }
+                else {
+                    tardisBlockEntity.data.set(2, 0);
                 }
             }
 
@@ -671,7 +686,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         double remat_time = tickSpeed * 10;
 
                         if (this.data.get(0) > this.data.get(1) + demat_time) {
-                            BlockEntity tBlockEntity = currentDimension.getBlockEntity(new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8)));
+                            tBlockEntity = currentDimension.getBlockEntity(new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8)));
                             if (tBlockEntity instanceof TardisBlockEntity) {
                                 handleTardisDeletion(currentDimension, exteriorPos);
                             }
