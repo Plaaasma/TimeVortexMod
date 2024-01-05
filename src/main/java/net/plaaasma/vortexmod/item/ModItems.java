@@ -43,6 +43,15 @@ public class ModItems {
     public static final RegistryObject<Item> BLACK_TRADER_SPAWN_EGG = ITEMS.register("black_trader_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.BLACK_TRADER, 0x7e9680, 0xc5d1c5, new Item.Properties()));
 
+    public static final RegistryObject<Item> GOLD_DALEK_SPAWN_EGG = ITEMS.register("gold_dalek_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.GOLD_DALEK, 0x7e9680, 0xc5d1c5, new Item.Properties()));
+    public static final RegistryObject<Item> SILVER_DALEK_SPAWN_EGG = ITEMS.register("silver_dalek_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.SILVER_DALEK, 0x7e9680, 0xc5d1c5, new Item.Properties()));
+    public static final RegistryObject<Item> BLACK_DALEK_SPAWN_EGG = ITEMS.register("black_dalek_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.GOLD_DALEK, 0x7e9680, 0xc5d1c5, new Item.Properties()));
+    public static final RegistryObject<Item> SILVER_BLACK_DALEK_SPAWN_EGG = ITEMS.register("silver_black_dalek_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.GOLD_DALEK, 0x7e9680, 0xc5d1c5, new Item.Properties()));
+
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
     }

@@ -16,6 +16,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.block.entity.*;
 import net.plaaasma.vortexmod.entities.ModEntities;
+import net.plaaasma.vortexmod.entities.client.DalekRenderer;
 import net.plaaasma.vortexmod.entities.client.LostTravelerRenderer;
 import net.plaaasma.vortexmod.item.ModCreativeModeTabs;
 import net.plaaasma.vortexmod.item.ModItems;
@@ -83,6 +84,11 @@ public class VortexMod {
             EntityRenderers.register(ModEntities.ORANGE_TRADER.get(), LostTravelerRenderer::new);
             EntityRenderers.register(ModEntities.PURPLE_TRADER.get(), LostTravelerRenderer::new);
             EntityRenderers.register(ModEntities.BLACK_TRADER.get(), LostTravelerRenderer::new);
+
+            EntityRenderers.register(ModEntities.GOLD_DALEK.get(), DalekRenderer::new);
+            EntityRenderers.register(ModEntities.SILVER_DALEK.get(), DalekRenderer::new);
+            EntityRenderers.register(ModEntities.BLACK_DALEK.get(), DalekRenderer::new);
+            EntityRenderers.register(ModEntities.SILVER_BLACK_DALEK.get(), DalekRenderer::new);
 
             MenuScreens.register(ModMenuTypes.SIZE_MANIPULATOR_MENU.get(), SizeManipulatorScreen::new);
         }

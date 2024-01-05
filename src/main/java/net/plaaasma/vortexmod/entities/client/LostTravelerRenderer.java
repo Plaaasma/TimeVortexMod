@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.entities.custom.LostTravelerEntity;
 
-public class LostTravelerRenderer extends MobRenderer<LostTravelerEntity, LostTravelerModel<LostTravelerEntity>/*<LostTravelerRenderer>*/> {
+public class LostTravelerRenderer extends MobRenderer<LostTravelerEntity, LostTravelerModel<LostTravelerEntity>> {
     public LostTravelerRenderer(EntityRendererProvider.Context pContext) {
         super(pContext, new LostTravelerModel<>(pContext.bakeLayer(ModModelLayers.LOST_TRAVELER_LAYER)), 0.5f);
     }

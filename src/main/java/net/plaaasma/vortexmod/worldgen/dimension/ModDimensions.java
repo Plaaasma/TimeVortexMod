@@ -14,7 +14,6 @@ import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.*;
-import net.minecraftforge.common.Tags;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.worldgen.utils.ModNoiseGenerator;
 import net.plaaasma.vortexmod.worldgen.biome.ModBiomes;
@@ -38,12 +37,12 @@ public class ModDimensions {
     public static final ResourceKey<DimensionType> tardis_DIM_TYPE = ResourceKey.create(Registries.DIMENSION_TYPE,
             new ResourceLocation(VortexMod.MODID, "tardisdim_type"));
     // Vortex DIM
-    public static final ResourceKey<LevelStem> SAKRO_DIM_KEY = ResourceKey.create(Registries.LEVEL_STEM,
-            new ResourceLocation(VortexMod.MODID, "sakrodim"));
-    public static final ResourceKey<Level> SAKRO_DIM_LEVEL_KEY = ResourceKey.create(Registries.DIMENSION,
-            new ResourceLocation(VortexMod.MODID, "sakrodim"));
-    public static final ResourceKey<DimensionType> SAKRO_DIM_TYPE = ResourceKey.create(Registries.DIMENSION_TYPE,
-            new ResourceLocation(VortexMod.MODID, "sakrodim_type"));
+    public static final ResourceKey<LevelStem> SKARO_DIM_KEY = ResourceKey.create(Registries.LEVEL_STEM,
+            new ResourceLocation(VortexMod.MODID, "skarodim"));
+    public static final ResourceKey<Level> SKARO_DIM_LEVEL_KEY = ResourceKey.create(Registries.DIMENSION,
+            new ResourceLocation(VortexMod.MODID, "skarodim"));
+    public static final ResourceKey<DimensionType> SKARO_DIM_TYPE = ResourceKey.create(Registries.DIMENSION_TYPE,
+            new ResourceLocation(VortexMod.MODID, "skarodim_type"));
 
     public static void bootstrapType(BootstapContext<DimensionType> context) {
         context.register(vortex_DIM_TYPE, new DimensionType(
@@ -80,16 +79,16 @@ public class ModDimensions {
                 1.0f, // ambientLight
                 new DimensionType.MonsterSettings(false, false, ConstantInt.of(0), 0)));
 
-        context.register(SAKRO_DIM_TYPE, new DimensionType(
+        context.register(SKARO_DIM_TYPE, new DimensionType(
                 OptionalLong.of(12000), // fixedTime
                 true, // hasSkylight
                 false, // hasCeiling
-                false, // ultraWarm
-                true, // natural
+                true, // ultraWarm
+                false, // natural
                 1.0, // coordinateScale
                 true, // bedWorks
                 false, // respawnAnchorWorks
-                -256, // minY
+                -64, // minY
                 384, // height
                 384, // logicalHeight
                 BlockTags.INFINIBURN_OVERWORLD, // infiniburn
@@ -133,9 +132,9 @@ public class ModDimensions {
 
         context.register(tardisDIM_KEY, tardisStem);
 
-        // SAKRO
+        // SKARO
 
-        NoiseBasedChunkGenerator sakroNoiseBasedChunkGenerator = new NoiseBasedChunkGenerator(
+        NoiseBasedChunkGenerator skaroNoiseBasedChunkGenerator = new NoiseBasedChunkGenerator(
                 MultiNoiseBiomeSource.createFromList(
                         new Climate.ParameterList<>(List.of(
                                 Pair.of(Climate.parameters(0.9F, 0.0F, 0.8F, 0.0F, 0.0F, 0.0F, 0.0F),
@@ -147,11 +146,11 @@ public class ModDimensions {
                                 Pair.of(Climate.parameters(0.5F, 0.5F, 0.8F, 0.0F, 0.0F, 0.0F, 0.0F),
                                         biomeRegistry.getOrThrow(Biomes.NETHER_WASTES))
                         ))),
-                noiseGenSettings.getOrThrow(NoiseGeneratorSettings.AMPLIFIED));
+                noiseGenSettings.getOrThrow(NoiseGeneratorSettings.OVERWORLD));
 
 
-        LevelStem sakroStem = new LevelStem(dimTypes.getOrThrow(ModDimensions.SAKRO_DIM_TYPE), sakroNoiseBasedChunkGenerator);
+        LevelStem skaroStem = new LevelStem(dimTypes.getOrThrow(ModDimensions.SKARO_DIM_TYPE), skaroNoiseBasedChunkGenerator);
 
-        context.register(SAKRO_DIM_KEY, sakroStem);
+        context.register(SKARO_DIM_KEY, skaroStem);
     }
 }
