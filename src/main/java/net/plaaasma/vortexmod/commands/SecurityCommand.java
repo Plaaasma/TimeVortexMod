@@ -1,11 +1,13 @@
 package net.plaaasma.vortexmod.commands;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.commands.arguments.coordinates.Coordinates;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.core.BlockPos;
@@ -21,28 +23,30 @@ import net.plaaasma.vortexmod.mapdata.LocationMapData;
 import net.plaaasma.vortexmod.mapdata.SecurityMapData;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 
+import java.util.Collection;
+
 public class SecurityCommand {
     public SecurityCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("tardis")
         .then(Commands.literal("security")
         .then(Commands.literal("blacklist")
-        .then(Commands.argument("target", EntityArgument.player())
+        .then(Commands.argument("target", GameProfileArgument.gameProfile())
             .executes((command) -> {
-                return blacklistPlayer(command.getSource(), EntityArgument.getPlayer(command, "target"));
+                return blacklistPlayer(command.getSource(), GameProfileArgument.getGameProfiles(command, "target"));
             }))
         )));
 
         dispatcher.register(Commands.literal("tardis")
         .then(Commands.literal("security")
         .then(Commands.literal("whitelist")
-        .then(Commands.argument("target", EntityArgument.player())
+        .then(Commands.argument("target", GameProfileArgument.gameProfile())
             .executes((command) -> {
-                return whitelistPlayer(command.getSource(), EntityArgument.getPlayer(command, "target"));
+                return whitelistPlayer(command.getSource(), GameProfileArgument.getGameProfiles(command, "target"));
             }))
         )));
     }
 
-    private int blacklistPlayer(CommandSourceStack source, ServerPlayer targetPlayer) throws CommandSyntaxException {
+    private int blacklistPlayer(CommandSourceStack source, Collection<GameProfile> profileCollection) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayer();
         BlockPos ePlayerPos = player.blockPosition();
         ServerLevel pLevel = source.getPlayer().serverLevel();
@@ -83,17 +87,18 @@ public class SecurityCommand {
             }
         }
         if (core_found && has_bio_module) {
-            if (player.getScoreboardName().equals(targetPlayer.getScoreboardName())) {
-                source.sendFailure(Component.literal("You cannot blacklist yourself"));
-            }
-            else {
-                if (security_data.getDataMap().containsKey(targetPlayer.getScoreboardName().hashCode() + " " + player.getScoreboardName())) {
-                    security_data.getDataMap().remove(targetPlayer.getScoreboardName().hashCode() + " " + player.getScoreboardName());
-                    security_data.setDirty();
-                    source.sendSuccess(() -> Component.literal("Removing " + targetPlayer.getScoreboardName() + " from the whitelist."), false);
-                }
-                else {
-                    source.sendFailure(Component.literal(targetPlayer.getScoreboardName() + " is already blacklisted."));
+            for (GameProfile profile : profileCollection) {
+                String profile_name = profile.getName();
+                if (player.getScoreboardName().equals(profile_name)) {
+                    source.sendFailure(Component.literal("You cannot blacklist yourself"));
+                } else {
+                    if (security_data.getDataMap().containsKey(profile_name.hashCode() + " " + player.getScoreboardName())) {
+                        security_data.getDataMap().remove(profile_name.hashCode() + " " + player.getScoreboardName());
+                        security_data.setDirty();
+                        source.sendSuccess(() -> Component.literal("Removing " + profile_name + " from the whitelist."), false);
+                    } else {
+                        source.sendFailure(Component.literal(profile_name + " is already blacklisted."));
+                    }
                 }
             }
         }
@@ -109,7 +114,7 @@ public class SecurityCommand {
         return 1;
     }
 
-    private int whitelistPlayer(CommandSourceStack source, ServerPlayer targetPlayer) throws CommandSyntaxException {
+    private int whitelistPlayer(CommandSourceStack source, Collection<GameProfile> profileCollection) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayer();
         BlockPos ePlayerPos = player.blockPosition();
         ServerLevel pLevel = source.getPlayer().serverLevel();
@@ -150,13 +155,15 @@ public class SecurityCommand {
             }
         }
         if (core_found && has_bio_module) {
-            if (security_data.getDataMap().containsKey(targetPlayer.getScoreboardName().hashCode() + " " + player.getScoreboardName())) {
-                source.sendSuccess(() -> Component.literal(targetPlayer.getScoreboardName() + " is already whitelisted."), false);
-            }
-            else {
-                security_data.getDataMap().put(targetPlayer.getScoreboardName().hashCode() + " " + player.getScoreboardName(), targetPlayer.getScoreboardName());
-                security_data.setDirty();
-                source.sendSuccess(() -> Component.literal("Adding " + targetPlayer.getScoreboardName() + " to the whitelist."), false);
+            for (GameProfile profile : profileCollection) {
+                String profile_name = profile.getName();
+                if (security_data.getDataMap().containsKey(profile_name.hashCode() + " " + player.getScoreboardName())) {
+                    source.sendSuccess(() -> Component.literal(profile_name + " is already whitelisted."), false);
+                } else {
+                    security_data.getDataMap().put(profile_name.hashCode() + " " + player.getScoreboardName(), profile_name);
+                    security_data.setDirty();
+                    source.sendSuccess(() -> Component.literal("Adding " + profile_name + " to the whitelist."), false);
+                }
             }
         }
         else {
