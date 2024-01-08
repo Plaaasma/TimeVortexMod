@@ -18,6 +18,7 @@ import net.plaaasma.vortexmod.block.entity.*;
 import net.plaaasma.vortexmod.entities.ModEntities;
 import net.plaaasma.vortexmod.entities.client.DalekRenderer;
 import net.plaaasma.vortexmod.entities.client.LostTravelerRenderer;
+import net.plaaasma.vortexmod.entities.client.TardisRenderer;
 import net.plaaasma.vortexmod.item.ModCreativeModeTabs;
 import net.plaaasma.vortexmod.item.ModItems;
 import net.plaaasma.vortexmod.sound.ModSounds;
@@ -89,6 +90,8 @@ public class VortexMod {
             EntityRenderers.register(ModEntities.SILVER_DALEK.get(), DalekRenderer::new);
             EntityRenderers.register(ModEntities.BLACK_DALEK.get(), DalekRenderer::new);
             EntityRenderers.register(ModEntities.SILVER_BLACK_DALEK.get(), DalekRenderer::new);
+
+            EntityRenderers.register(ModEntities.TARDIS.get(), TardisRenderer::new);
 
             MenuScreens.register(ModMenuTypes.SIZE_MANIPULATOR_MENU.get(), SizeManipulatorScreen::new);
         }

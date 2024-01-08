@@ -2,6 +2,7 @@ package net.plaaasma.vortexmod.block.entity;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import io.netty.buffer.Unpooled;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -9,17 +10,18 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
+import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
@@ -29,15 +31,20 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.event.level.NoteBlockEvent;
+import net.minecraftforge.network.NetworkHooks;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.block.ModBlocks;
+import net.plaaasma.vortexmod.entities.ModEntities;
+import net.plaaasma.vortexmod.entities.custom.TardisEntity;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
 import net.plaaasma.vortexmod.sound.ModSounds;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
@@ -67,6 +74,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private int cc_set_dim = 0;
     private int is_flying = 0;
     public final ContainerData data;
+    public UUID exterior_uuid = UUID.randomUUID();
 
     public VortexInterfaceBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.VORTEX_INTERFACE_BE.get(), pPos, pBlockState);
@@ -165,6 +173,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         this.cc_set_z = vortexModData.getInt("cc_set_z");
         this.cc_set_dim = vortexModData.getInt("cc_set_dim");
         this.is_flying = vortexModData.getInt("is_flying");
+        this.exterior_uuid = pTag.getUUID("exterior_uuid");
         super.load(pTag);
     }
 
@@ -194,6 +203,8 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         vortexModData.putInt("is_flying", this.is_flying);
 
         pTag.put(VortexMod.MODID, vortexModData);
+
+        pTag.putUUID("exterior_uuid", this.exterior_uuid);
         super.saveAdditional(pTag);
     }
 
@@ -346,7 +357,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
             if (pLevel != vortexDimension && pLevel != tardisDimension) {
                 int dimId = pLevel.dimension().location().getPath().hashCode();
-                this.data.set(9, dimId);
+                if (this.data.get(9) == 0) {
+                    this.data.set(9, dimId);
+                }
                 if (this.data.get(10) == 0) {
                     this.data.set(10, dimId);
                 }
@@ -389,12 +402,14 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             boolean auto_ground = false;
             boolean proto = true;
 
-            BlockEntity tBlockEntity = currentDimension.getBlockEntity(new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8)));
+            //System.out.println(this.exterior_uuid);
+
+            TardisEntity tardisEntity = (TardisEntity) currentDimension.getEntity(this.exterior_uuid);
 
             if (pLevel == tardisDimension) {
                 proto = false;
-                if (tBlockEntity instanceof TardisBlockEntity tardisBlockEntity) {
-                    tardisBlockEntity.data.set(0, this.data.get(2));
+                if (tardisEntity != null) {
+                    tardisEntity.ownerID = this.data.get(2);
                 }
             }
 
@@ -482,13 +497,8 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 }
             }
 
-            if (tBlockEntity instanceof TardisBlockEntity tardisBlockEntity) {
-                if (has_bio_sec) {
-                    tardisBlockEntity.data.set(2, 1);
-                }
-                else {
-                    tardisBlockEntity.data.set(2, 0);
-                }
+            if (tardisEntity != null) {
+                tardisEntity.has_bio_security = has_bio_sec;
             }
 
             this.data.set(3, targetX);
@@ -584,21 +594,12 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     }
 
                     this.data.set(1, this.data.get(0));
-                    if (closestPlayer != null) {
-                        ChunkPos chunkPos = vortexDimension.getChunkAt(vortexTargetPos).getPos();
-                        ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, vortexTargetPos, chunkPos.x, chunkPos.z, true, true);
-                        handleVortexTeleports(size, pLevel, pPos, vortexTargetPos);
-                        chunkPos = currentDimension.getChunkAt(pPos).getPos();
-                        ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, false, true);
-                        vortexDimension.playSeededSound(null, vortexTargetPos.getX(), vortexTargetPos.getY(), vortexTargetPos.getZ(), ModSounds.FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
-                    }
-                    else {
-                        ChunkPos chunkPos = targetDimension.getChunkAt(new BlockPos(targetX, targetY, targetZ)).getPos();
-                        ForgeChunkManager.forceChunk(targetDimension, VortexMod.MODID, new BlockPos(targetX, targetY, targetZ), chunkPos.x, chunkPos.z, true, true);
-                        handleTeleports(size, pLevel, targetDimension, pPos, new BlockPos(targetX, targetY, targetZ));
-                        chunkPos = currentDimension.getChunkAt(pPos).getPos();
-                        ForgeChunkManager.forceChunk(currentDimension, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, false, true);
-                    }
+                    ChunkPos chunkPos = vortexDimension.getChunkAt(vortexTargetPos).getPos();
+                    ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, vortexTargetPos, chunkPos.x, chunkPos.z, true, true);
+                    handleVortexTeleports(size, pLevel, pPos, vortexTargetPos);
+                    chunkPos = currentDimension.getChunkAt(pPos).getPos();
+                    ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, false, true);
+                    vortexDimension.playSeededSound(null, vortexTargetPos.getX(), vortexTargetPos.getY(), vortexTargetPos.getZ(), ModSounds.FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
                 }
                 else if (throttle_on == 1 && pLevel == vortexDimension && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 0.05 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ)) && closestPlayer != null) {
                     BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
@@ -657,6 +658,12 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 }
             }
             else { // Euclidean TARDIS Logic
+                if (tardisEntity != null) {
+                    this.data.set(6, tardisEntity.getBlockX());
+                    this.data.set(7, tardisEntity.getBlockY());
+                    this.data.set(8, tardisEntity.getBlockZ());
+                }
+
                 if (throttle_on == 1) {
                     int rotation_yaw = this.data.get(12);
                     BlockPos target = new BlockPos(targetX, targetY, targetZ);
@@ -685,18 +692,14 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         double demat_time = tickSpeed * 10;
                         double remat_time = tickSpeed * 10;
 
-                        if (this.data.get(0) > this.data.get(1) + demat_time) {
-                            tBlockEntity = currentDimension.getBlockEntity(new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8)));
-                            if (tBlockEntity instanceof TardisBlockEntity) {
-                                handleTardisDeletion(currentDimension, exteriorPos);
-                            }
-                        }
+//                        if (this.data.get(0) > this.data.get(1) + demat_time) {
+//                            //delete tardis
+//                        }
                         if (this.data.get(0) > end_tick && this.data.get(0) > this.data.get(1) + remat_time) {
                             BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
                             this.data.set(1, this.data.get(0));
-                            handleTardisDeletion(currentDimension, exteriorPos);
-                            handleTardisPlacement(targetDimension, flight_target, rotation_yaw);
                             handleLandingEntities(targetDimension, tardisDimension, flight_target, this.data.get(2));
+                            //tardisEntity.teleportTo(targetDimension, flight_target.getX(), flight_target.getY(), flight_target.getZ(), RelativeMovement.ALL, rotation_yaw, 0);
                             this.data.set(6, targetX);
                             this.data.set(7, targetY);
                             this.data.set(8, targetZ);
@@ -727,7 +730,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         }
                         if (this.data.get(0) <= this.data.get(1) + demat_time && this.data.get(0) - this.data.get(1) > 1 && this.data.get(0) > 0) {
                             handleDematCenterParticles(tardisDimension, pPos);
-                            handleEucDematParticles(currentDimension, exteriorPos);
+                            //handleEucDematParticles(currentDimension, exteriorPos);
                             for (int x = -size; x <= size; x++) {
                                 for (int y = -1; y <= y_size + (y_size - 1); y++) {
                                     for (int z = -size; z <= size; z++) {
@@ -744,7 +747,6 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 handleLightningStrikes(targetDimension, new BlockPos(targetX, targetY, targetZ));
                             }
                             handleRematCenterParticles(tardisDimension, pPos);
-                            handleEucRematParticles(targetDimension, new BlockPos(targetX, targetY, targetZ));
                             for (int x = -size; x <= size; x++) {
                                 for (int y = -1; y <= y_size + (y_size - 1); y++) {
                                     for (int z = -size; z <= size; z++) {
@@ -757,6 +759,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 }
                             }
                         } else if (this.data.get(0) > 0) {
+                            tardisEntity.in_flight = true;
                             double time_remaining = (end_tick - remat_time - this.data.get(0)) / tickSpeed;
                             if (this.data.get(0) == this.data.get(1) + demat_time + 1) {
                                 pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
@@ -774,9 +777,23 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                             }
                             handleFlightCenterParticles(tardisDimension, pPos);
                         }
+                        else {
+                            tardisEntity.in_flight = false;
+                        }
+                        if (this.data.get(0) == end_tick - remat_time && this.data.get(0) > 0) {
+                            BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
+                            ChunkPos chunkPos = targetDimension.getChunkAt(flight_target).getPos();
+                            ForgeChunkManager.forceChunk(targetDimension, VortexMod.MODID, flight_target, chunkPos.x, chunkPos.z, true, true);
+                            tardisEntity.teleportTo(targetDimension, flight_target.getX(), flight_target.getY(), flight_target.getZ(), RelativeMovement.ALL, rotation_yaw, 0);
+                            tardisEntity.setYRot(rotation_yaw);
+                            chunkPos = vortexDimension.getChunkAt(exteriorPos).getPos();
+                            ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, exteriorPos, chunkPos.x, chunkPos.z, false, true);
+                            tardisEntity.remat = true;
+                        }
                         if (this.data.get(0) <= this.data.get(1) + demat_time && this.data.get(0) - this.data.get(1) <= 1 && this.data.get(0) > 0) {
                             currentDimension.playSeededSound(null, exteriorPos.getX(), exteriorPos.getY(), exteriorPos.getZ(), ModSounds.DEMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
                             pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.DEMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                            tardisEntity.demat = true;
                         }
                         if (this.data.get(0) == end_tick - (remat_time + (5 * tickSpeed)) && this.data.get(0) > 0) {
                             targetDimension.playSeededSound(null, targetX, targetY, targetZ, ModSounds.REMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
@@ -786,6 +803,18 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 }
             }
             setChanged(pLevel, pPos, pState);
+        }
+    }
+
+    public static void handleClientTardisTeleport(Level pLevel, TardisEntity tardisEntity) {
+        // Create the teleport packet with the buffer
+        ClientboundTeleportEntityPacket teleportEntityPacket = new ClientboundTeleportEntityPacket(tardisEntity);
+
+        List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
+        for (Connection pConnection : connectionList) {
+            if (pConnection.isConnected()) {
+                pConnection.send(teleportEntityPacket);
+            }
         }
     }
 
@@ -842,12 +871,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             if (!found_door) {
                 BlockPos doorTarget = new BlockPos((int) (tardisTarget.x - 1.5), (int) tardisTarget.y, (int) (tardisTarget.z - 0.5));
 
-                serverLevel.setBlockAndUpdate(doorTarget, ModBlocks.TARDIS_BLOCK.get().defaultBlockState());
-
-                BlockEntity tBlockEntity = serverLevel.getBlockEntity(doorTarget);
-                if (tBlockEntity instanceof TardisBlockEntity tardisBlockEntity) {
-                    tardisBlockEntity.data.set(0, ownerCode);
-                }
+                serverLevel.setBlockAndUpdate(doorTarget, ModBlocks.DOOR_BLOCK.get().defaultBlockState());
             }
 
             player.changeDimension(pLevel, new ModTeleporter(tardisTarget));
@@ -858,65 +882,62 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         List<Entity> nearbyEntities = serverLevel.getEntitiesOfClass(Entity.class, searchBB, entity -> !(entity instanceof Player));
 
         for (Entity nearbyEntity : nearbyEntities) {
-            MinecraftServer minecraftserver = pLevel.getServer();
-            ServerLevel overworld = minecraftserver.getLevel(Level.OVERWORLD);
-            LocationMapData data = LocationMapData.get(overworld);
-            BlockPos blockTardisTarget = data.getDataMap().get(Integer.toString(ownerCode));
-            Vec3 tardisTarget = new Vec3(blockTardisTarget.getX() + 1.5, blockTardisTarget.getY(), blockTardisTarget.getZ() + 0.5);
-            boolean found_door = false;
-            for (int x = -100; x <= 100 && !found_door; x++) {
-                for (int y = -1; y <= 100 && !found_door; y++) {
-                    for (int z = -100; z <= 100 && !found_door; z++) {
-                        BlockPos currentPos = blockTardisTarget.offset(x, y, z);
+            if (!(nearbyEntity instanceof TardisEntity)) {
+                MinecraftServer minecraftserver = pLevel.getServer();
+                ServerLevel overworld = minecraftserver.getLevel(Level.OVERWORLD);
+                LocationMapData data = LocationMapData.get(overworld);
+                BlockPos blockTardisTarget = data.getDataMap().get(Integer.toString(ownerCode));
+                Vec3 tardisTarget = new Vec3(blockTardisTarget.getX() + 1.5, blockTardisTarget.getY(), blockTardisTarget.getZ() + 0.5);
+                boolean found_door = false;
+                for (int x = -100; x <= 100 && !found_door; x++) {
+                    for (int y = -1; y <= 100 && !found_door; y++) {
+                        for (int z = -100; z <= 100 && !found_door; z++) {
+                            BlockPos currentPos = blockTardisTarget.offset(x, y, z);
 
-                        BlockState blockState = pLevel.getBlockState(currentPos);
+                            BlockState blockState = pLevel.getBlockState(currentPos);
 
-                        if (blockState.getBlock() == ModBlocks.DOOR_BLOCK.get()) {
-                            for (int direction = 0; direction < 4; direction++) {
-                                BlockPos newPos;
-                                double x_offset;
-                                double z_offset;
-                                if (direction == 0) {
-                                    newPos = currentPos.east();
-                                    x_offset = 1.5;
-                                    z_offset = 0.5;
-                                } else if (direction == 1) {
-                                    newPos = currentPos.south();
-                                    x_offset = 0.5;
-                                    z_offset = 1.5;
-                                } else if (direction == 2) {
-                                    newPos = currentPos.west();
-                                    x_offset = -0.5;
-                                    z_offset = 0.5;
-                                } else {
-                                    newPos = currentPos.north();
-                                    x_offset = 0.5;
-                                    z_offset = -0.5;
+                            if (blockState.getBlock() == ModBlocks.DOOR_BLOCK.get()) {
+                                for (int direction = 0; direction < 4; direction++) {
+                                    BlockPos newPos;
+                                    double x_offset;
+                                    double z_offset;
+                                    if (direction == 0) {
+                                        newPos = currentPos.east();
+                                        x_offset = 1.5;
+                                        z_offset = 0.5;
+                                    } else if (direction == 1) {
+                                        newPos = currentPos.south();
+                                        x_offset = 0.5;
+                                        z_offset = 1.5;
+                                    } else if (direction == 2) {
+                                        newPos = currentPos.west();
+                                        x_offset = -0.5;
+                                        z_offset = 0.5;
+                                    } else {
+                                        newPos = currentPos.north();
+                                        x_offset = 0.5;
+                                        z_offset = -0.5;
+                                    }
+
+                                    if (pLevel.getBlockState(newPos) == Blocks.AIR.defaultBlockState() && pLevel.getBlockState(newPos.above()) == Blocks.AIR.defaultBlockState()) {
+                                        tardisTarget = new Vec3(currentPos.getX() + x_offset, currentPos.getY(), currentPos.getZ() + z_offset);
+                                        break;
+                                    }
                                 }
 
-                                if (pLevel.getBlockState(newPos) == Blocks.AIR.defaultBlockState() && pLevel.getBlockState(newPos.above()) == Blocks.AIR.defaultBlockState()) {
-                                    tardisTarget = new Vec3(currentPos.getX() + x_offset, currentPos.getY(), currentPos.getZ() + z_offset);
-                                    break;
-                                }
+                                found_door = true;
                             }
-
-                            found_door = true;
                         }
                     }
                 }
-            }
-            if (!found_door) {
-                BlockPos doorTarget = new BlockPos((int) (tardisTarget.x - 1.5), (int) tardisTarget.y, (int) (tardisTarget.z - 0.5));
+                if (!found_door) {
+                    BlockPos doorTarget = new BlockPos((int) (tardisTarget.x - 1.5), (int) tardisTarget.y, (int) (tardisTarget.z - 0.5));
 
-                serverLevel.setBlockAndUpdate(doorTarget, ModBlocks.TARDIS_BLOCK.get().defaultBlockState());
-
-                BlockEntity tBlockEntity = serverLevel.getBlockEntity(doorTarget);
-                if (tBlockEntity instanceof TardisBlockEntity tardisBlockEntity) {
-                    tardisBlockEntity.data.set(0, ownerCode);
+                    serverLevel.setBlockAndUpdate(doorTarget, ModBlocks.DOOR_BLOCK.get().defaultBlockState());
                 }
-            }
 
-            nearbyEntity.changeDimension(pLevel, new ModTeleporter(tardisTarget));
+                nearbyEntity.changeDimension(pLevel, new ModTeleporter(tardisTarget));
+            }
         }
     }
 
@@ -1558,64 +1579,82 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private void handleLightningStrikes(Level pLevel, BlockPos targetPosition) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            ClientboundAddEntityPacket entityPacket = new ClientboundAddEntityPacket(new LightningBolt(EntityType.LIGHTNING_BOLT, pLevel), 0, targetPosition);
-            pConnection.send(entityPacket);
+            if (pConnection.isConnected()) {
+                ClientboundAddEntityPacket entityPacket = new ClientboundAddEntityPacket(new LightningBolt(EntityType.LIGHTNING_BOLT, pLevel), 0, targetPosition);
+                pConnection.send(entityPacket);
+            }
         }
     }
 
     private void handleFlightCenterParticles(Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            spawnFlightCenterCylinder(pConnection, pPos);
+            if (pConnection.isConnected()) {
+                spawnFlightCenterCylinder(pConnection, pPos);
+            }
         }
     }
 
     private void handleRematCenterParticles(Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            spawnRematCenterCylinder(pConnection, pPos);
+            if (pConnection.isConnected()) {
+                spawnRematCenterCylinder(pConnection, pPos);
+            }
         }
     }
 
     private void handleDematCenterParticles(Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            spawnDematCenterCylinder(pConnection, pPos);
+            if (pConnection.isConnected()) {
+                spawnDematCenterCylinder(pConnection, pPos);
+            }
         }
     }
 
     private void handleVortexParticles(int size, Level pLevel, BlockPos pPos, BlockPos targetPosition) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            spawnVortexCylinder(pConnection, pPos, targetPosition, size, 100);
+            if (pConnection.isConnected()) {
+                spawnVortexCylinder(pConnection, pPos, targetPosition, size, 100);
+            }
         }
     }
 
     private void handleDematParticles(int size, Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            spawnDematSquare(pConnection, pPos, size);
+            if (pConnection.isConnected()) {
+                spawnDematSquare(pConnection, pPos, size);
+            }
         }
     }
 
     private void handleEucDematParticles(Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            spawnEucDematSquare(pConnection, pPos);
+            if (pConnection.isConnected()) {
+                spawnEucDematSquare(pConnection, pPos);
+            }
         }
     }
 
     private void handleRematParticles(int size, Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            spawnRematSquare(pConnection, pPos, size);
+            if (pConnection.isConnected()) {
+                spawnRematSquare(pConnection, pPos, size);
+            }
         }
     }
 
     private void handleEucRematParticles(Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            spawnEucRematSquare(pConnection, pPos);
+            if (pConnection.isConnected()) {
+                spawnEucRematSquare(pConnection, pPos);
+            }
         }
     }
 

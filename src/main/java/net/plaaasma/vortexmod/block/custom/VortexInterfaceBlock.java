@@ -19,9 +19,7 @@ import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -46,6 +44,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.block.entity.*;
+import net.plaaasma.vortexmod.entities.ModEntities;
+import net.plaaasma.vortexmod.entities.custom.TardisEntity;
 import net.plaaasma.vortexmod.item.ModItems;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
@@ -210,17 +210,17 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
 
                 tardisDimension.setBlockAndUpdate(tardisTarget, ModBlocks.DOOR_BLOCK.get().defaultBlockState());
 
-                serverLevel.setBlockAndUpdate(pPos, ModBlocks.TARDIS_BLOCK.get().defaultBlockState());
+                VortexInterfaceBlockEntity interfaceBlockEntity = (VortexInterfaceBlockEntity) tardisDimension.getBlockEntity(interfacePos);
 
-                BlockEntity tBlockEntity = serverLevel.getBlockEntity(pPos);
-                if (tBlockEntity instanceof TardisBlockEntity tardisBlockEntity) {
-                    tardisBlockEntity.data.set(0, ownerCode);
-                } else {
-                    pPlayer.displayClientMessage(Component.literal("Exterior not found"), false);
-                }
+                TardisEntity tardisMob = ModEntities.TARDIS.get().spawn(serverLevel, pPos, MobSpawnType.NATURAL);
+
+                tardisMob.ownerID = ownerCode;
+                interfaceBlockEntity.exterior_uuid = tardisMob.getUUID();
 
                 ChunkPos chunkPos = tardisDimension.getChunkAt(interfacePos).getPos();
                 ForgeChunkManager.forceChunk(tardisDimension, VortexMod.MODID, interfacePos, chunkPos.x, chunkPos.z, true, true);
+                chunkPos = serverLevel.getChunkAt(pPos).getPos();
+                ForgeChunkManager.forceChunk(serverLevel, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, true, true);
 
                 pPlayer.setItemInHand(pHand, new ItemStack(ModItems.TARDIS_KEY.get(), 1));
 

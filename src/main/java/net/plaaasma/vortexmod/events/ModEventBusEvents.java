@@ -7,6 +7,7 @@ import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.entities.ModEntities;
 import net.plaaasma.vortexmod.entities.custom.DalekEntity;
 import net.plaaasma.vortexmod.entities.custom.LostTravelerEntity;
+import net.plaaasma.vortexmod.entities.custom.TardisEntity;
 
 @Mod.EventBusSubscriber(modid = VortexMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModEventBusEvents {
@@ -21,5 +22,7 @@ public class ModEventBusEvents {
         event.put(ModEntities.SILVER_DALEK.get(), DalekEntity.createAttributes().build());
         event.put(ModEntities.BLACK_DALEK.get(), DalekEntity.createAttributes().build());
         event.put(ModEntities.SILVER_BLACK_DALEK.get(), DalekEntity.createAttributes().build());
+
+        event.put(ModEntities.TARDIS.get(), TardisEntity.createAttributes().build());
     }
 }

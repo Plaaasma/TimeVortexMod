@@ -13,7 +13,6 @@ import java.util.function.Function;
 
 public class ModTeleporter implements ITeleporter {
     public static Vec3 thisPos = Vec3.ZERO;
-    public static Direction thisDir = Direction.EAST;
 
     public ModTeleporter(Vec3 pos) {
         thisPos = pos;
