@@ -11,7 +11,9 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
@@ -25,8 +27,6 @@ public class TardisRenderer extends MobRenderer<TardisEntity, TardisModel<Tardis
 
     @Override
     public void render(TardisEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
-        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Pre<>(pEntity, this, pPartialTicks, pPoseStack, pBuffer, pPackedLight))) return;
-
         pPoseStack.pushPose();
         this.model.attackTime = this.getAttackAnim(pEntity, pPartialTicks);
 
@@ -37,7 +37,7 @@ public class TardisRenderer extends MobRenderer<TardisEntity, TardisModel<Tardis
         float f1 = Mth.rotLerp(pPartialTicks, pEntity.getYRot(), pEntity.getYRot());
         float f2 = f1 - f;
         if (shouldSit && pEntity.getVehicle() instanceof LivingEntity) {
-            LivingEntity livingentity = (LivingEntity)pEntity.getVehicle();
+            LivingEntity livingentity = (LivingEntity) pEntity.getVehicle();
             f = Mth.rotLerp(pPartialTicks, livingentity.getYRot(), livingentity.getYRot());
             f2 = f1 - f;
             float f3 = Mth.wrapDegrees(f2);
@@ -67,7 +67,7 @@ public class TardisRenderer extends MobRenderer<TardisEntity, TardisModel<Tardis
             Direction direction = pEntity.getBedOrientation();
             if (direction != null) {
                 float f4 = pEntity.getEyeHeight(Pose.STANDING) - 0.1F;
-                pPoseStack.translate((float)(-direction.getStepX()) * f4, 0.0F, (float)(-direction.getStepZ()) * f4);
+                pPoseStack.translate((float) (-direction.getStepX()) * f4, 0.0F, (float) (-direction.getStepZ()) * f4);
             }
         }
 
@@ -97,11 +97,10 @@ public class TardisRenderer extends MobRenderer<TardisEntity, TardisModel<Tardis
         if (rendertype != null) {
             VertexConsumer vertexconsumer = pBuffer.getBuffer(rendertype);
             int i = getOverlayCoords(pEntity, this.getWhiteOverlayProgress(pEntity, pPartialTicks));
-            this.model.renderToBuffer(pPoseStack, vertexconsumer, pPackedLight, i, 1.0F, 1.0F, 1.0F, pEntity.alpha);
+            this.model.renderToBuffer(pPoseStack, vertexconsumer, pPackedLight, i, 1.0F, 1.0F, 1.0F, pEntity.getAlpha());
         }
 
         pPoseStack.popPose();
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post<>(pEntity, this, pPartialTicks, pPoseStack, pBuffer, pPackedLight));
     }
 
     @Override

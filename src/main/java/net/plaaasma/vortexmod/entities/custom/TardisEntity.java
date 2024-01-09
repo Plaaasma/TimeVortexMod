@@ -1,11 +1,16 @@
 package net.plaaasma.vortexmod.entities.custom;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -18,6 +23,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.horse.Llama;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Minecart;
@@ -28,6 +34,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.Tags;
+import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.entities.ModEntities;
 import net.plaaasma.vortexmod.item.ModItems;
@@ -36,23 +44,86 @@ import net.plaaasma.vortexmod.mapdata.SecurityMapData;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 import net.plaaasma.vortexmod.worldgen.portal.ModTeleporter;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import javax.sound.midi.SysexMessage;
 import java.util.*;
 
 public class TardisEntity extends Mob {
-    public int ownerID = 0;
-    public boolean locked = false;
-    public boolean has_bio_security = false;
-    public boolean in_flight = false;
-    public boolean demat = false;
-    public boolean remat = false;
-    public int anim_stage = 0;
-    public boolean anim_descending = false;
-    public float alpha = 1.f;
+    private static final EntityDataAccessor<Integer> DATA_OWNERID_ID = SynchedEntityData.defineId(TardisEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> DATA_LOCKED_ID = SynchedEntityData.defineId(TardisEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_HAS_BIO_SECURITY_ID = SynchedEntityData.defineId(TardisEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_IN_FLIGHT_ID = SynchedEntityData.defineId(TardisEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_DEMAT_ID = SynchedEntityData.defineId(TardisEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_REMAT_ID = SynchedEntityData.defineId(TardisEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> DATA_ANIM_STAGE_ID = SynchedEntityData.defineId(TardisEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> DATA_ANIM_DESCENDING_ID = SynchedEntityData.defineId(TardisEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Float> DATA_ALPHA_ID = SynchedEntityData.defineId(TardisEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<String> DATA_LEVEL_ID = SynchedEntityData.defineId(TardisEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<Float> DATA_TARGET_X_ID = SynchedEntityData.defineId(TardisEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> DATA_TARGET_Y_ID = SynchedEntityData.defineId(TardisEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> DATA_TARGET_Z_ID = SynchedEntityData.defineId(TardisEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Integer> DATA_ROTATION_ID = SynchedEntityData.defineId(TardisEntity.class, EntityDataSerializers.INT);
 
     public TardisEntity(EntityType<? extends Mob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag pCompound) {
+        super.addAdditionalSaveData(pCompound);
+        pCompound.putInt("Owner", this.entityData.get(DATA_OWNERID_ID));
+        pCompound.putBoolean("Locked", this.entityData.get(DATA_LOCKED_ID));
+        pCompound.putBoolean("HasBio", this.entityData.get(DATA_HAS_BIO_SECURITY_ID));
+        pCompound.putBoolean("InFlight", this.entityData.get(DATA_IN_FLIGHT_ID));
+        pCompound.putBoolean("Demat", this.entityData.get(DATA_DEMAT_ID));
+        pCompound.putBoolean("Remat", this.entityData.get(DATA_REMAT_ID));
+        pCompound.putInt("AnimStage", this.entityData.get(DATA_ANIM_STAGE_ID));
+        pCompound.putBoolean("AnimDescending", this.entityData.get(DATA_ANIM_DESCENDING_ID));
+        pCompound.putFloat("Alpha", this.entityData.get(DATA_ALPHA_ID));
+        pCompound.putString("Level", this.entityData.get(DATA_LEVEL_ID));
+        pCompound.putFloat("X", this.entityData.get(DATA_TARGET_X_ID));
+        pCompound.putFloat("Y", this.entityData.get(DATA_TARGET_Y_ID));
+        pCompound.putFloat("Z", this.entityData.get(DATA_TARGET_Z_ID));
+        pCompound.putInt("Rotation", this.entityData.get(DATA_ROTATION_ID));
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag pCompound) {
+        super.readAdditionalSaveData(pCompound);
+        this.entityData.set(DATA_OWNERID_ID, pCompound.getInt("Owner"));
+        this.entityData.set(DATA_LOCKED_ID, pCompound.getBoolean("Locked"));
+        this.entityData.set(DATA_HAS_BIO_SECURITY_ID, pCompound.getBoolean("HasBio"));
+        this.entityData.set(DATA_IN_FLIGHT_ID, pCompound.getBoolean("InFlight"));
+        this.entityData.set(DATA_DEMAT_ID, pCompound.getBoolean("Demat"));
+        this.entityData.set(DATA_REMAT_ID, pCompound.getBoolean("Remat"));
+        this.entityData.set(DATA_ANIM_STAGE_ID, pCompound.getInt("AnimStage"));
+        this.entityData.set(DATA_ANIM_DESCENDING_ID, pCompound.getBoolean("AnimDescending"));
+        this.entityData.set(DATA_ALPHA_ID, pCompound.getFloat("Alpha"));
+        this.entityData.set(DATA_LEVEL_ID, pCompound.getString("Level"));
+        this.entityData.set(DATA_TARGET_X_ID, pCompound.getFloat("X"));
+        this.entityData.set(DATA_TARGET_Y_ID, pCompound.getFloat("Y"));
+        this.entityData.set(DATA_TARGET_Z_ID, pCompound.getFloat("Z"));
+        this.entityData.set(DATA_ROTATION_ID, pCompound.getInt("Rotation"));
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DATA_OWNERID_ID, 0);
+        this.entityData.define(DATA_LOCKED_ID, false);
+        this.entityData.define(DATA_HAS_BIO_SECURITY_ID, false);
+        this.entityData.define(DATA_IN_FLIGHT_ID, false);
+        this.entityData.define(DATA_DEMAT_ID, false);
+        this.entityData.define(DATA_REMAT_ID, false);
+        this.entityData.define(DATA_ANIM_STAGE_ID, 0);
+        this.entityData.define(DATA_ANIM_DESCENDING_ID, false);
+        this.entityData.define(DATA_ALPHA_ID, 1f);
+        this.entityData.define(DATA_LEVEL_ID, "fartland");
+        this.entityData.define(DATA_TARGET_X_ID, 0f);
+        this.entityData.define(DATA_TARGET_Y_ID, 0f);
+        this.entityData.define(DATA_TARGET_Z_ID, 0f);
+        this.entityData.define(DATA_ROTATION_ID, 0);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -62,6 +133,86 @@ public class TardisEntity extends Mob {
                 .add(Attributes.MOVEMENT_SPEED, 0)
                 .add(Attributes.FOLLOW_RANGE, 0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, Integer.MAX_VALUE);
+    }
+
+    public void setOwnerID(int ownerID) {
+        this.entityData.set(DATA_OWNERID_ID, ownerID);
+    }
+
+    public void setLocked(boolean locked) {
+        this.entityData.set(DATA_LOCKED_ID, locked);
+    }
+
+    public void setHasBioSecurity(boolean has_bio_security) {
+        this.entityData.set(DATA_HAS_BIO_SECURITY_ID, has_bio_security);
+    }
+
+    public void setInFlight(boolean in_flight) {
+        this.entityData.set(DATA_IN_FLIGHT_ID, in_flight);
+    }
+
+    public void setDemat(boolean demat) {
+        this.entityData.set(DATA_DEMAT_ID, demat);
+        if (this.entityData.get(DATA_DEMAT_ID)) {
+            this.entityData.set(DATA_REMAT_ID, false);
+        }
+    }
+
+    public void setRemat(boolean remat) {
+        this.entityData.set(DATA_REMAT_ID, remat);
+        if (this.entityData.get(DATA_REMAT_ID)) {
+            this.entityData.set(DATA_DEMAT_ID, false);
+        }
+    }
+
+    public void setAlpha(float alpha) {
+        this.entityData.set(DATA_ALPHA_ID, alpha);
+    }
+
+    public void setAnimDescending(boolean anim_descending) {
+        this.entityData.set(DATA_ANIM_DESCENDING_ID, anim_descending);
+    }
+
+    public void setAnimStage(int anim_stage) {
+        this.entityData.set(DATA_ANIM_STAGE_ID, anim_stage);
+    }
+
+    public int getOwnerID() {
+        return this.entityData.get(DATA_OWNERID_ID);
+    }
+
+    public float getAlpha() {
+        return this.entityData.get(DATA_ALPHA_ID);
+    }
+
+    public String getLevel() {
+        return this.entityData.get(DATA_LEVEL_ID);
+    }
+
+    public boolean isInFlight() {
+        return this.entityData.get(DATA_IN_FLIGHT_ID);
+    }
+
+    public boolean isLocked() {
+        return this.entityData.get(DATA_LOCKED_ID);
+    }
+
+    public boolean isDemat() {
+        return this.entityData.get(DATA_DEMAT_ID);
+    }
+
+    public boolean isRemat() {
+        return this.entityData.get(DATA_REMAT_ID);
+    }
+
+    @Override
+    protected boolean shouldDespawnInPeaceful() {
+        return false;
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return false;
     }
 
     @Override
@@ -85,17 +236,17 @@ public class TardisEntity extends Mob {
             ServerLevel overworld = minecraftserver.getLevel(Level.OVERWORLD);
             SecurityMapData security_data = SecurityMapData.get(overworld);
             LocationMapData data = LocationMapData.get(overworld);
-            int ownerCode = this.ownerID;
+            int ownerCode = this.entityData.get(DATA_OWNERID_ID);
             ItemStack heldStack = pPlayer.getItemInHand(pHand);
 
             if (heldStack.is(ModItems.TARDIS_KEY.get())) {
                 if (ownerCode == pPlayer.getScoreboardName().hashCode()) {
-                    if (!this.locked) {
-                        this.locked = true;
+                    if (!this.entityData.get(DATA_LOCKED_ID)) {
+                        this.entityData.set(DATA_LOCKED_ID, true);
                         pPlayer.displayClientMessage(Component.literal("Locking TARDIS").withStyle(ChatFormatting.GREEN), true);
                     }
                     else {
-                        this.locked = false;
+                        this.entityData.set(DATA_LOCKED_ID, false);
                         pPlayer.displayClientMessage(Component.literal("Unlocking TARDIS").withStyle(ChatFormatting.AQUA), true);
                     }
                 }
@@ -104,10 +255,10 @@ public class TardisEntity extends Mob {
                 }
             }
             else {
-                if (!this.locked) {
-                    if (!this.demat && !this.remat) {
-                        if (!this.in_flight) {
-                            boolean hasBioSecurity = this.has_bio_security;
+                if (!this.entityData.get(DATA_LOCKED_ID)) {
+                    if (!this.entityData.get(DATA_DEMAT_ID) && !this.entityData.get(DATA_REMAT_ID)) {
+                        if (!this.entityData.get(DATA_IN_FLIGHT_ID)) {
+                            boolean hasBioSecurity = this.entityData.get(DATA_HAS_BIO_SECURITY_ID);
 
                             List<String> whitelistedCodes = new ArrayList<>();
 
@@ -120,7 +271,15 @@ public class TardisEntity extends Mob {
                             }
 
                             if (pPlayer.getScoreboardName().hashCode() == ownerCode || !hasBioSecurity || whitelistedCodes.contains(pPlayer.getScoreboardName())) {
-                                BlockPos blockTardisTarget = data.getDataMap().get(Integer.toString(ownerCode));
+                                BlockPos blockTardisTarget;
+
+                                if (!data.getDataMap().containsKey(this.getUUID().toString())) {
+                                    blockTardisTarget = data.getDataMap().get(Integer.toString(ownerCode));
+                                    data.getDataMap().put(this.getUUID().toString(), blockTardisTarget);
+                                }
+                                else {
+                                    blockTardisTarget = data.getDataMap().get(this.getUUID().toString());
+                                }
                                 Vec3 tardisTarget = new Vec3(blockTardisTarget.getX() + 1.5, blockTardisTarget.getY(), blockTardisTarget.getZ() + 0.5);
                                 boolean found_door = false;
                                 for (int x = -100; x <= 100 && !found_door; x++) {
@@ -194,115 +353,66 @@ public class TardisEntity extends Mob {
         if (this.level() instanceof ServerLevel serverLevel) {
             float increment = 0.025f;
             float r_increment = 0.02f;
-            if (this.demat) {
-                if (this.anim_descending) {
-                    if (this.alpha >= 0.4 - (this.anim_stage / 10f)) {
-                        this.alpha -= increment;
+            if (this.entityData.get(DATA_DEMAT_ID)) {
+                if (this.entityData.get(DATA_ANIM_DESCENDING_ID)) {
+                    if (this.entityData.get(DATA_ALPHA_ID) >= 0.4 - (this.entityData.get(DATA_ANIM_STAGE_ID) / 10f)) {
+                        this.entityData.set(DATA_ALPHA_ID, this.entityData.get(DATA_ALPHA_ID) - increment);
                     }
                     else {
-                        this.anim_descending = false;
+                        this.entityData.set(DATA_ANIM_DESCENDING_ID, false);
                     }
                 }
                 else {
-                    if (this.alpha <= 1f - (this.anim_stage / 10f)) {
-                        this.alpha += increment;
+                    if (this.entityData.get(DATA_ALPHA_ID) <= 1f - (this.entityData.get(DATA_ANIM_STAGE_ID) / 10f)) {
+                        this.entityData.set(DATA_ALPHA_ID, this.entityData.get(DATA_ALPHA_ID) + increment);
                     }
                     else {
-                        this.anim_stage += 1f;
-                        this.anim_descending = true;
+                        this.entityData.set(DATA_ANIM_STAGE_ID, this.entityData.get(DATA_ANIM_STAGE_ID) + 1);
+                        this.entityData.set(DATA_ANIM_DESCENDING_ID, true);
                     }
                 }
-                if (this.alpha <= 0) {
-                    this.alpha = 0f;
-                    this.demat = false;
-                    this.anim_descending = false;
-                    this.anim_stage = 0;
+                if (this.entityData.get(DATA_ALPHA_ID) <= 0) {
+                    this.entityData.set(DATA_ALPHA_ID, 0f);
+                    this.entityData.set(DATA_DEMAT_ID, false);
+                    this.entityData.set(DATA_ANIM_DESCENDING_ID, false);
+                    this.entityData.set(DATA_ANIM_STAGE_ID, 0);
                 }
             }
-            else if (this.remat) {
-                if (this.anim_descending) {
-                    if (this.alpha >= 0 + (this.anim_stage / 10f)) {
-                        this.alpha -= r_increment;
+            if (this.entityData.get(DATA_REMAT_ID)) {
+                if (this.entityData.get(DATA_ANIM_DESCENDING_ID)) {
+                    if (this.entityData.get(DATA_ALPHA_ID) >= 0 + (this.entityData.get(DATA_ANIM_STAGE_ID) / 10f)) {
+                        this.entityData.set(DATA_ALPHA_ID, this.entityData.get(DATA_ALPHA_ID) - r_increment);
                     }
                     else {
-                        this.anim_descending = false;
+                        this.entityData.set(DATA_ANIM_DESCENDING_ID, false);
                     }
                 }
                 else {
-                    if (this.alpha <= 0.5 + (this.anim_stage / 10f)) {
-                        this.alpha += r_increment;
+                    if (this.entityData.get(DATA_ALPHA_ID) <= 0.5 + (this.entityData.get(DATA_ANIM_STAGE_ID) / 10f)) {
+                        this.entityData.set(DATA_ALPHA_ID, this.entityData.get(DATA_ALPHA_ID) + r_increment);
                     }
                     else {
-                        this.anim_stage += 1;
-                        this.anim_descending = true;
+                        this.entityData.set(DATA_ANIM_STAGE_ID, this.entityData.get(DATA_ANIM_STAGE_ID) + 1);
+                        this.entityData.set(DATA_ANIM_DESCENDING_ID, true);
                     }
                 }
-                if (this.alpha >= 1) {
-                    this.alpha = 1f;
-                    this.remat = false;
-                    this.anim_descending = false;
-                    this.anim_stage = 0;
+                if (this.entityData.get(DATA_ALPHA_ID) >= 1) {
+                    this.entityData.set(DATA_ALPHA_ID, 1f);
+                    this.entityData.set(DATA_REMAT_ID, false);
+                    this.entityData.set(DATA_ANIM_DESCENDING_ID, false);
+                    this.entityData.set(DATA_ANIM_STAGE_ID, 0);
                 }
             }
-
-            List<Float> dataList = new ArrayList<>();
-            dataList.add((float) this.ownerID);
-            if (this.locked) {
-                dataList.add(1.f);
-            }
-            else {
-                dataList.add(0.f);
-            }
-            if (this.has_bio_security) {
-                dataList.add(1.f);
-            }
-            else {
-                dataList.add(0.f);
-            }
-            if (this.demat) {
-                dataList.add(1.f);
-            }
-            else {
-                dataList.add(0.f);
-            }
-            if (this.remat) {
-                dataList.add(1.f);
-            }
-            else {
-                dataList.add(0.f);
-            }
-            dataList.add((float) this.anim_stage);
-            if (this.anim_descending) {
-                dataList.add(1.f);
-            }
-            else {
-                dataList.add(0.f);
-            }
-            dataList.add(this.alpha);
-
-            ModEntities.clientSyncTardisDataMap.put(this.getUUID(), dataList);
-            ModEntities.clientSyncTardisDimMap.put(this.getUUID(), (ServerLevel) this.level());
-            ModEntities.clientSyncTardisLocMap.put(this.getUUID(), this.position());
-            ModEntities.clientSyncTardisRotMap.put(this.getUUID(), (int) this.getYRot());
         }
         else if (this.level() instanceof ClientLevel clientLevel) {
-            if (ModEntities.clientSyncTardisDataMap.containsKey(this.getUUID())) {
-                List<Float> syncDataList = ModEntities.clientSyncTardisDataMap.get(this.getUUID());
-                this.ownerID = syncDataList.get(0).intValue();
-                this.locked = syncDataList.get(1).intValue() == 1;
-                this.has_bio_security = syncDataList.get(2).intValue() == 1;
-                this.demat = syncDataList.get(3).intValue() == 1;
-                this.remat = syncDataList.get(4).intValue() == 1;
-                this.anim_stage = syncDataList.get(5).intValue();
-                this.anim_descending = syncDataList.get(6).intValue() == 1;
-                this.alpha = syncDataList.get(7);
 
-                ServerLevel targetDimension = ModEntities.clientSyncTardisDimMap.get(this.getUUID());
-                Vec3 target = ModEntities.clientSyncTardisLocMap.get(this.getUUID());
-                int rotation_yaw = ModEntities.clientSyncTardisRotMap.get(this.getUUID());
+            if (!Minecraft.getInstance().allowsMultiplayer()) {
+                String targetDimension = this.entityData.get(DATA_LEVEL_ID);
+                Vec3 target = new Vec3(this.entityData.get(DATA_TARGET_X_ID), this.entityData.get(DATA_TARGET_Y_ID), this.entityData.get(DATA_TARGET_Z_ID));
+                int rotation_yaw = this.entityData.get(DATA_ROTATION_ID);
 
                 if (((int) this.getYRot() != rotation_yaw || !(this.position().x == target.x && this.position().y == target.y && this.position().z == target.z)) && !this.isFallFlying()) {
-                    if (this.level().dimension() == targetDimension.dimension()) {
+                    if (this.level().dimension().toString().equals(targetDimension)) {
                         this.setYRot(rotation_yaw);
                         this.moveTo(target.x, target.y, target.z, rotation_yaw, 0);
                     }
@@ -310,7 +420,7 @@ public class TardisEntity extends Mob {
             }
         }
 
-        if (!this.remat) {
+        if (!this.entityData.get(DATA_IN_FLIGHT_ID)) {
             super.tick();
         }
     }

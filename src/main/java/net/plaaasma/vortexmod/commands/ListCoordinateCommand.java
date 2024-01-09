@@ -27,10 +27,11 @@ import java.util.Set;
 public class ListCoordinateCommand {
     public ListCoordinateCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("tardis")
+        .then(Commands.literal("locations")
         .then(Commands.literal("list")
             .executes((command) -> {
                 return listCoords(command.getSource());
-            })));
+            }))));
     }
 
     private int listCoords(CommandSourceStack source) throws CommandSyntaxException {

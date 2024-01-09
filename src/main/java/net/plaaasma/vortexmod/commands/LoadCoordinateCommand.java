@@ -22,11 +22,12 @@ import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 public class LoadCoordinateCommand {
     public LoadCoordinateCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("tardis")
+        .then(Commands.literal("locations")
         .then(Commands.literal("load")
                 .then(Commands.argument("name", MessageArgument.message())
                         .executes((command) -> {
                             return loadCoords(command.getSource(), MessageArgument.getMessage(command, "name"));
-                        }))));
+                        })))));
     }
 
     private int loadCoords(CommandSourceStack source, Component locName) throws CommandSyntaxException {

@@ -73,6 +73,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private int cc_set_z = 0;
     private int cc_set_dim = 0;
     private int is_flying = 0;
+    private int flight_time = 0;
     public final ContainerData data;
     public UUID exterior_uuid = UUID.randomUUID();
 
@@ -102,6 +103,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     case 17 -> VortexInterfaceBlockEntity.this.cc_set_z;
                     case 18 -> VortexInterfaceBlockEntity.this.cc_set_dim;
                     case 19 -> VortexInterfaceBlockEntity.this.is_flying;
+                    case 20 -> VortexInterfaceBlockEntity.this.flight_time;
                     default -> 0;
                 };
             }
@@ -129,12 +131,13 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     case 17 -> VortexInterfaceBlockEntity.this.cc_set_z = pValue;
                     case 18 -> VortexInterfaceBlockEntity.this.cc_set_dim = pValue;
                     case 19 -> VortexInterfaceBlockEntity.this.is_flying = pValue;
+                    case 20 -> VortexInterfaceBlockEntity.this.flight_time = pValue;
                 }
             }
 
             @Override
             public int getCount() {
-                return 20;
+                return 21;
             }
         };
     }
@@ -173,6 +176,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         this.cc_set_z = vortexModData.getInt("cc_set_z");
         this.cc_set_dim = vortexModData.getInt("cc_set_dim");
         this.is_flying = vortexModData.getInt("is_flying");
+        this.flight_time = vortexModData.getInt("flight_time");
         this.exterior_uuid = pTag.getUUID("exterior_uuid");
         super.load(pTag);
     }
@@ -201,6 +205,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         vortexModData.putInt("cc_set_z", this.cc_set_z);
         vortexModData.putInt("cc_set_dim", this.cc_set_dim);
         vortexModData.putInt("is_flying", this.is_flying);
+        vortexModData.putInt("flight_time", this.flight_time);
 
         pTag.put(VortexMod.MODID, vortexModData);
 
@@ -344,6 +349,11 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         return targetState.getBlock().getName().getString();
     }
 
+    @LuaFunction
+    public final Integer getFlightTime() throws LuaException {
+        return this.data.get(20);
+    }
+
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
         if (!pLevel.isClientSide()) {
             MinecraftServer minecraftserver = pLevel.getServer();
@@ -374,6 +384,8 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             ServerLevel currentDimension = overworldDimension;
             ServerLevel targetDimension = overworldDimension;
 
+            TardisEntity tardisEntity = (TardisEntity) currentDimension.getEntity(this.exterior_uuid);
+
             for (ServerLevel cLevel : serverLevels) {
                 if (cLevel.dimension().location().getPath().hashCode() == this.data.get(9)) {
                     currentDimension = cLevel;
@@ -386,7 +398,29 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     this.data.set(10, this.data.get(18));
                     this.data.set(18, 0);
                 }
+                TardisEntity newTardisEntity = (TardisEntity) cLevel.getEntity(this.exterior_uuid);
+
+                if (newTardisEntity != null) {
+                    tardisEntity = newTardisEntity;
+                }
             }
+
+            if (tardisEntity == null) {
+                AABB searchBB = AABB.ofSize(new Vec3(this.data.get(6), this.data.get(7), this.data.get(8)), 8, 8, 8);
+
+                List<Entity> nearbyEntities = currentDimension.getEntitiesOfClass(Entity.class, searchBB, entity -> !(entity instanceof Player));
+                List<TardisEntity> nearbyTardisEntities = new ArrayList<>();
+                for (Entity entity : nearbyEntities) {
+                    if (entity instanceof TardisEntity newTardisEntity) {
+                        nearbyTardisEntities.add(newTardisEntity);
+                    }
+                }
+
+                if (nearbyTardisEntities.size() > 0) {
+                    tardisEntity = nearbyTardisEntities.get(0);
+                }
+            }
+
             if (pLevel == targetDimension) {
                 this.data.set(6, pPos.getX());
                 this.data.set(7, pPos.getY());
@@ -402,14 +436,10 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             boolean auto_ground = false;
             boolean proto = true;
 
-            //System.out.println(this.exterior_uuid);
-
-            TardisEntity tardisEntity = (TardisEntity) currentDimension.getEntity(this.exterior_uuid);
-
             if (pLevel == tardisDimension) {
                 proto = false;
                 if (tardisEntity != null) {
-                    tardisEntity.ownerID = this.data.get(2);
+                    tardisEntity.setOwnerID(this.data.get(2));
                 }
             }
 
@@ -498,7 +528,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             }
 
             if (tardisEntity != null) {
-                tardisEntity.has_bio_security = has_bio_sec;
+                tardisEntity.setHasBioSecurity(has_bio_sec);
             }
 
             this.data.set(3, targetX);
@@ -669,15 +699,29 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     BlockPos target = new BlockPos(targetX, targetY, targetZ);
                     BlockState blockAtTarget = targetDimension.getBlockState(target);
 
-                    if (blockAtTarget.getBlock() == ModBlocks.TARDIS_BLOCK.get()) {
+                    BlockPos exteriorPos = new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8));
+                    double ticks_to_travel = 35 * tickSpeed;
+                    double end_tick = this.data.get(1) + ticks_to_travel;
+                    double demat_time = tickSpeed * 10;
+                    double remat_time = tickSpeed * 10;
+
+//                        if (this.data.get(0) > this.data.get(1) + demat_time) {
+//                            //delete tardis
+//                        }
+                    if (this.data.get(0) > end_tick && this.data.get(0) > this.data.get(1) + remat_time) {
+                        BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
+                        this.data.set(1, this.data.get(0));
+                        handleLandingEntities(targetDimension, tardisDimension, flight_target, this.data.get(2));
+                        //tardisEntity.teleportTo(targetDimension, flight_target.getX(), flight_target.getY(), flight_target.getZ(), RelativeMovement.ALL, rotation_yaw, 0);
+                        this.data.set(6, targetX);
+                        this.data.set(7, targetY);
+                        this.data.set(8, targetZ);
+                        this.data.set(9, targetDimension.dimension().location().getPath().hashCode());
+                        this.data.set(0, 0);
                         for (int x = -size; x <= size; x++) {
-                            for (int y = -1; y <= size + (size - 1); y++) {
+                            for (int y = -1; y <= y_size + (y_size - 1); y++) {
                                 for (int z = -size; z <= size; z++) {
                                     BlockPos currentPos = pPos.offset(x, y, z);
-                                    ServerPlayer player = (ServerPlayer) pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
-                                    if (player != null) {
-                                        player.displayClientMessage(Component.literal("Can't travel there, another TARDIS is at that location already").withStyle(ChatFormatting.RED), true);
-                                    }
                                     var blockEntity = pLevel.getBlockEntity(currentPos);
                                     if (blockEntity instanceof ThrottleBlockEntity throttleBlockEntity) {
                                         throttleBlockEntity.data.set(0, 0);
@@ -685,136 +729,122 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 }
                             }
                         }
-                    } else {
-                        BlockPos exteriorPos = new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8));
-                        double ticks_to_travel = 35 * tickSpeed;
-                        double end_tick = this.data.get(1) + ticks_to_travel;
-                        double demat_time = tickSpeed * 10;
-                        double remat_time = tickSpeed * 10;
-
-//                        if (this.data.get(0) > this.data.get(1) + demat_time) {
-//                            //delete tardis
-//                        }
-                        if (this.data.get(0) > end_tick && this.data.get(0) > this.data.get(1) + remat_time) {
-                            BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
-                            this.data.set(1, this.data.get(0));
-                            handleLandingEntities(targetDimension, tardisDimension, flight_target, this.data.get(2));
-                            //tardisEntity.teleportTo(targetDimension, flight_target.getX(), flight_target.getY(), flight_target.getZ(), RelativeMovement.ALL, rotation_yaw, 0);
-                            this.data.set(6, targetX);
-                            this.data.set(7, targetY);
-                            this.data.set(8, targetZ);
-                            this.data.set(9, targetDimension.dimension().location().getPath().hashCode());
-                            this.data.set(0, 0);
-                            for (int x = -size; x <= size; x++) {
-                                for (int y = -1; y <= y_size + (y_size - 1); y++) {
-                                    for (int z = -size; z <= size; z++) {
-                                        BlockPos currentPos = pPos.offset(x, y, z);
-                                        var blockEntity = pLevel.getBlockEntity(currentPos);
-                                        if (blockEntity instanceof ThrottleBlockEntity throttleBlockEntity) {
-                                            throttleBlockEntity.data.set(0, 0);
-                                        }
-                                    }
-                                }
-                            }
-                            for (int x = -size; x <= size; x++) {
-                                for (int y = -1; y <= y_size + (y_size - 1); y++) {
-                                    for (int z = -size; z <= size; z++) {
-                                        BlockPos currentPos = pPos.offset(x, y, z);
-                                        ServerPlayer player = (ServerPlayer) pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
-                                        if (player != null) {
-                                            player.displayClientMessage(Component.literal("TARDIS Landed at: ").withStyle(ChatFormatting.GRAY).append(Component.literal(targetX + " " + targetY + " " + targetZ)), true);
-                                        }
+                        for (int x = -size; x <= size; x++) {
+                            for (int y = -1; y <= y_size + (y_size - 1); y++) {
+                                for (int z = -size; z <= size; z++) {
+                                    BlockPos currentPos = pPos.offset(x, y, z);
+                                    ServerPlayer player = (ServerPlayer) pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
+                                    if (player != null) {
+                                        player.displayClientMessage(Component.literal("TARDIS Landed at: ").withStyle(ChatFormatting.GRAY).append(Component.literal(targetX + " " + targetY + " " + targetZ)), true);
                                     }
                                 }
                             }
                         }
-                        if (this.data.get(0) <= this.data.get(1) + demat_time && this.data.get(0) - this.data.get(1) > 1 && this.data.get(0) > 0) {
-                            handleDematCenterParticles(tardisDimension, pPos);
-                            //handleEucDematParticles(currentDimension, exteriorPos);
-                            for (int x = -size; x <= size; x++) {
-                                for (int y = -1; y <= y_size + (y_size - 1); y++) {
-                                    for (int z = -size; z <= size; z++) {
-                                        BlockPos currentPos = pPos.offset(x, y, z);
-                                        Player player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
-                                        if (player != null) {
-                                            player.displayClientMessage(Component.literal("Dematerializing").withStyle(ChatFormatting.RED), true);
-                                        }
+                    }
+                    if (this.data.get(0) <= this.data.get(1) + demat_time && this.data.get(0) - this.data.get(1) > 1 && this.data.get(0) > 0) {
+                        this.data.set(20, 0);
+                        if (tardisEntity != null) {
+                            tardisEntity.setInFlight(false);
+                        }
+                        handleDematCenterParticles(tardisDimension, pPos);
+                        //handleEucDematParticles(currentDimension, exteriorPos);
+                        for (int x = -size; x <= size; x++) {
+                            for (int y = -1; y <= y_size + (y_size - 1); y++) {
+                                for (int z = -size; z <= size; z++) {
+                                    BlockPos currentPos = pPos.offset(x, y, z);
+                                    Player player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
+                                    if (player != null) {
+                                        player.displayClientMessage(Component.literal("Dematerializing").withStyle(ChatFormatting.RED), true);
                                     }
                                 }
                             }
-                        } else if (this.data.get(0) > end_tick - remat_time && this.data.get(0) > 0) {
-                            if (!has_equalizer && this.data.get(0) % 100 == 0) {
-                                handleLightningStrikes(targetDimension, new BlockPos(targetX, targetY, targetZ));
-                            }
-                            handleRematCenterParticles(tardisDimension, pPos);
-                            for (int x = -size; x <= size; x++) {
-                                for (int y = -1; y <= y_size + (y_size - 1); y++) {
-                                    for (int z = -size; z <= size; z++) {
-                                        BlockPos currentPos = pPos.offset(x, y, z);
-                                        Player player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
-                                        if (player != null) {
-                                            player.displayClientMessage(Component.literal("Rematerializing").withStyle(ChatFormatting.AQUA), true);
-                                        }
+                        }
+                    } else if (this.data.get(0) > end_tick - remat_time && this.data.get(0) > 0) {
+                        this.data.set(20, 0);
+                        if (tardisEntity != null) {
+                            tardisEntity.setInFlight(false);
+                        }
+                        if (!has_equalizer && this.data.get(0) % 100 == 0) {
+                            handleLightningStrikes(targetDimension, new BlockPos(targetX, targetY, targetZ));
+                        }
+                        handleRematCenterParticles(tardisDimension, pPos);
+                        for (int x = -size; x <= size; x++) {
+                            for (int y = -1; y <= y_size + (y_size - 1); y++) {
+                                for (int z = -size; z <= size; z++) {
+                                    BlockPos currentPos = pPos.offset(x, y, z);
+                                    Player player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
+                                    if (player != null) {
+                                        player.displayClientMessage(Component.literal("Rematerializing").withStyle(ChatFormatting.AQUA), true);
                                     }
                                 }
                             }
-                        } else if (this.data.get(0) > 0) {
-                            tardisEntity.in_flight = true;
-                            double time_remaining = (end_tick - remat_time - this.data.get(0)) / tickSpeed;
-                            if (this.data.get(0) == this.data.get(1) + demat_time + 1) {
-                                pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
-                            }
-                            for (int x = -size; x <= size; x++) {
-                                for (int y = -1; y <= y_size + (y_size - 1); y++) {
-                                    for (int z = -size; z <= size; z++) {
-                                        BlockPos currentPos = pPos.offset(x, y, z);
-                                        Player player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
-                                        if (player != null) {
-                                            player.displayClientMessage(Component.literal("Flight time remaining: ").withStyle(ChatFormatting.GRAY).append(Component.literal(String.format("%.2f", time_remaining)).withStyle(ChatFormatting.GOLD)), true);
-                                        }
+                        }
+                    } else if (this.data.get(0) > 0 && this.data.get(0) > this.data.get(1) + demat_time) {
+                        if (tardisEntity != null) {
+                            tardisEntity.setInFlight(true);
+                            tardisEntity.setNoGravity(true);
+                            BlockPos dummyTarget = new BlockPos(0, 500, 0);
+                            ChunkPos chunkPos = currentDimension.getChunkAt(dummyTarget).getPos();
+                            ForgeChunkManager.forceChunk(currentDimension, VortexMod.MODID, dummyTarget, chunkPos.x, chunkPos.z, true, true);
+                            tardisEntity.teleportTo(0, 500, 0);
+                        }
+                        double time_remaining = (end_tick - remat_time - this.data.get(0)) / tickSpeed;
+                        this.data.set(20, (int) time_remaining);
+                        if (this.data.get(0) == this.data.get(1) + demat_time + 1) {
+                            pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                        }
+                        for (int x = -size; x <= size; x++) {
+                            for (int y = -1; y <= y_size + (y_size - 1); y++) {
+                                for (int z = -size; z <= size; z++) {
+                                    BlockPos currentPos = pPos.offset(x, y, z);
+                                    Player player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
+                                    if (player != null) {
+                                        player.displayClientMessage(Component.literal("Flight time remaining: ").withStyle(ChatFormatting.GRAY).append(Component.literal(String.format("%.2f", time_remaining)).withStyle(ChatFormatting.GOLD)), true);
                                     }
                                 }
                             }
-                            handleFlightCenterParticles(tardisDimension, pPos);
                         }
-                        else {
-                            tardisEntity.in_flight = false;
-                        }
-                        if (this.data.get(0) == end_tick - remat_time && this.data.get(0) > 0) {
-                            BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
-                            ChunkPos chunkPos = targetDimension.getChunkAt(flight_target).getPos();
-                            ForgeChunkManager.forceChunk(targetDimension, VortexMod.MODID, flight_target, chunkPos.x, chunkPos.z, true, true);
-                            tardisEntity.teleportTo(targetDimension, flight_target.getX(), flight_target.getY(), flight_target.getZ(), RelativeMovement.ALL, rotation_yaw, 0);
-                            tardisEntity.setYRot(rotation_yaw);
-                            chunkPos = vortexDimension.getChunkAt(exteriorPos).getPos();
-                            ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, exteriorPos, chunkPos.x, chunkPos.z, false, true);
-                            tardisEntity.remat = true;
-                        }
-                        if (this.data.get(0) <= this.data.get(1) + demat_time && this.data.get(0) - this.data.get(1) <= 1 && this.data.get(0) > 0) {
-                            currentDimension.playSeededSound(null, exteriorPos.getX(), exteriorPos.getY(), exteriorPos.getZ(), ModSounds.DEMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
-                            pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.DEMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
-                            tardisEntity.demat = true;
-                        }
-                        if (this.data.get(0) == end_tick - (remat_time + (5 * tickSpeed)) && this.data.get(0) > 0) {
-                            targetDimension.playSeededSound(null, targetX, targetY, targetZ, ModSounds.REMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
-                            pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.REMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                        handleFlightCenterParticles(tardisDimension, pPos);
+                    }
+                    else {
+                        tardisEntity.setInFlight(false);
+                    }
+                    if (this.data.get(0) == end_tick - remat_time && this.data.get(0) > 0) {
+                        tardisEntity.setRemat(true);
+                    }
+                    if (this.data.get(0) == end_tick - remat_time && this.data.get(0) > 0) {
+                        BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
+                        ChunkPos chunkPos = targetDimension.getChunkAt(flight_target).getPos();
+                        ForgeChunkManager.forceChunk(targetDimension, VortexMod.MODID, flight_target, chunkPos.x, chunkPos.z, true, true);
+                        tardisEntity.setYRot(rotation_yaw);
+                        tardisEntity.setNoGravity(false);
+                        tardisEntity.teleportTo(targetDimension, flight_target.getX(), flight_target.getY(), flight_target.getZ(), RelativeMovement.ALL, rotation_yaw, 0);
+                        chunkPos = vortexDimension.getChunkAt(exteriorPos).getPos();
+                        ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, exteriorPos, chunkPos.x, chunkPos.z, false, true);
+                    }
+                    if (this.data.get(0) <= this.data.get(1) + demat_time && this.data.get(0) - this.data.get(1) <= 1 && this.data.get(0) > 0) {
+                        currentDimension.playSeededSound(null, exteriorPos.getX(), exteriorPos.getY(), exteriorPos.getZ(), ModSounds.DEMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                        pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.DEMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                        tardisEntity.setDemat(true);
+                    }
+                    if (this.data.get(0) == end_tick - (remat_time + (5 * tickSpeed)) && this.data.get(0) > 0) {
+                        targetDimension.playSeededSound(null, targetX, targetY, targetZ, ModSounds.REMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                        pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.REMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                    }
+                }
+                else {
+                    if (tardisEntity != null) {
+                        tardisEntity.setInFlight(false);
+                        if (tardisEntity.isDemat()) {
+                            tardisEntity.setDemat(false);
+                            tardisEntity.setAlpha(1);
+                            tardisEntity.setAnimDescending(false);
+                            tardisEntity.setAnimStage(0);
                         }
                     }
                 }
             }
             setChanged(pLevel, pPos, pState);
-        }
-    }
-
-    public static void handleClientTardisTeleport(Level pLevel, TardisEntity tardisEntity) {
-        // Create the teleport packet with the buffer
-        ClientboundTeleportEntityPacket teleportEntityPacket = new ClientboundTeleportEntityPacket(tardisEntity);
-
-        List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
-        for (Connection pConnection : connectionList) {
-            if (pConnection.isConnected()) {
-                pConnection.send(teleportEntityPacket);
-            }
         }
     }
 

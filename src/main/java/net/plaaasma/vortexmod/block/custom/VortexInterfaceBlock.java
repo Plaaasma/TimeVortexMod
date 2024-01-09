@@ -127,7 +127,6 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                 localBlockEntity.data.set(8, pPos.getZ());
 
                 BlockPos tardisTarget = new BlockPos(greatest_x_coordinate + 10000, -128, greatest_z_coordinate + 10000);
-                data.getDataMap().put(Integer.toString(ownerCode), tardisTarget);
 
                 int size = 1;
 
@@ -214,8 +213,9 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
 
                 TardisEntity tardisMob = ModEntities.TARDIS.get().spawn(serverLevel, pPos, MobSpawnType.NATURAL);
 
-                tardisMob.ownerID = ownerCode;
+                tardisMob.setOwnerID(ownerCode);
                 interfaceBlockEntity.exterior_uuid = tardisMob.getUUID();
+                data.getDataMap().put(tardisMob.getUUID().toString(), tardisTarget);
 
                 ChunkPos chunkPos = tardisDimension.getChunkAt(interfacePos).getPos();
                 ForgeChunkManager.forceChunk(tardisDimension, VortexMod.MODID, interfacePos, chunkPos.x, chunkPos.z, true, true);

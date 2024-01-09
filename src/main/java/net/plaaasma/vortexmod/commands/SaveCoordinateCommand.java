@@ -24,11 +24,12 @@ import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 public class SaveCoordinateCommand {
     public SaveCoordinateCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("tardis")
+        .then(Commands.literal("locations")
         .then(Commands.literal("save")
                 .then(Commands.argument("name", MessageArgument.message())
                         .executes((command) -> {
                             return setCoords(command.getSource(), MessageArgument.getMessage(command, "name"));
-                        }))));
+                        })))));
     }
 
     private int setCoords(CommandSourceStack source, Component locName) throws CommandSyntaxException {

@@ -88,32 +88,37 @@ public class DoorBlock extends Block {
                                 TardisEntity tardisEntity = (TardisEntity) targetDimension.getEntity(vortexInterfaceBlockEntity.exterior_uuid);
                                 if (tardisEntity != null) {
                                     if (heldStack.is(ModItems.TARDIS_KEY.get())) {
-                                        int ownerCode = tardisEntity.ownerID;
+                                        int ownerCode = tardisEntity.getOwnerID();
                                         if (ownerCode == pPlayer.getScoreboardName().hashCode()) {
-                                            if (!tardisEntity.locked) {
-                                                tardisEntity.locked = true;
+                                            if (!tardisEntity.isLocked()) {
+                                                tardisEntity.setLocked(true);
                                                 pPlayer.displayClientMessage(Component.literal("Locking TARDIS").withStyle(ChatFormatting.GREEN), true);
                                             } else {
-                                                tardisEntity.locked = false;
+                                                tardisEntity.setLocked(false);
                                                 pPlayer.displayClientMessage(Component.literal("Unlocking TARDIS").withStyle(ChatFormatting.AQUA), true);
                                             }
                                         } else {
                                             pPlayer.displayClientMessage(Component.literal("This TARDIS is not yours.").withStyle(ChatFormatting.RED), true);
                                         }
                                     } else {
-                                        int yaw = (int) tardisEntity.getYRot();
-                                        Vec3 exitPosition;
+                                        if (!tardisEntity.isRemat() && !tardisEntity.isInFlight()) {
+                                            int yaw = (int) tardisEntity.getYRot();
+                                            Vec3 exitPosition;
 
-                                        double distance = 1.4; // Distance from the root position
+                                            double distance = 1.4; // Distance from the root position
 
-                                        double yawRadians = Math.toRadians(yaw);
+                                            double yawRadians = Math.toRadians(yaw);
 
-                                        double newX = blockExitPos.getX() + distance * Math.sin(yawRadians);
-                                        double newZ = blockExitPos.getZ() - distance * Math.cos(yawRadians);
+                                            double newX = blockExitPos.getX() + distance * Math.sin(yawRadians);
+                                            double newZ = blockExitPos.getZ() - distance * Math.cos(yawRadians);
 
-                                        exitPosition = new Vec3(newX, blockExitPos.getY(), newZ);
+                                            exitPosition = new Vec3(newX, blockExitPos.getY(), newZ);
 
-                                        pPlayer.changeDimension(targetDimension, new ModTeleporter(exitPosition));
+                                            pPlayer.changeDimension(targetDimension, new ModTeleporter(exitPosition));
+                                        }
+                                        else {
+                                            pPlayer.displayClientMessage(Component.literal("You cannot exit while in flight.").withStyle(ChatFormatting.RED), true);
+                                        }
                                     }
                                 }
                                 else {

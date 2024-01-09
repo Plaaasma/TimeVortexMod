@@ -17,11 +17,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class ModEntities {
-    public static HashMap<UUID, List<Float>> clientSyncTardisDataMap = new HashMap<>();
-    public static HashMap<UUID, ServerLevel> clientSyncTardisDimMap = new HashMap<>();
-    public static HashMap<UUID, Vec3> clientSyncTardisLocMap = new HashMap<>();
-    public static HashMap<UUID, Integer> clientSyncTardisRotMap = new HashMap<>();
-
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
             DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, VortexMod.MODID);
 
