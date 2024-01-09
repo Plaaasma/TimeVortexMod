@@ -5,10 +5,16 @@
   "item.vortexmod.vortex_core": "Vortex Core",
   "item.vortexmod.tardis_key": "TARDIS Key",
   "item.vortexmod.wrench": "Space Time Wrench",
+
   "item.vortexmod.blue_trader_spawn_egg": "Blue Trading Traveler Spawn Egg",
   "item.vortexmod.orange_trader_spawn_egg": "Orange Trading Traveler Spawn Egg",
   "item.vortexmod.purple_trader_spawn_egg": "Purple Trading Traveler Spawn Egg",
   "item.vortexmod.black_trader_spawn_egg": "Black Trading Traveler Spawn Egg",
+
+  "item.vortexmod.gold_dalek_spawn_egg": "Gold Dalek Spawn Egg",
+  "item.vortexmod.silver_dalek_spawn_egg": "Silver Dalek Spawn Egg",
+  "item.vortexmod.black_dalek_spawn_egg": "Black Dalek Spawn Egg",
+  "item.vortexmod.silver_black_dalek_spawn_egg": "Silver-Black Dalek Spawn Egg",
 
   "block.vortexmod.throttle_block": "Throttle Module",
   "block.vortexmod.interface_block": "Time Vortex Interface Module",
@@ -26,6 +32,13 @@
   "entity.vortexmod.orange_trader": "Trading Traveler",
   "entity.vortexmod.purple_trader": "Trading Traveler",
   "entity.vortexmod.black_trader": "Trading Traveler",
+
+  "entity.vortexmod.gold_dalek": "Gold Dalek",
+  "entity.vortexmod.silver_dalek": "Silver Dalek",
+  "entity.vortexmod.black_dalek": "Black Dalek",
+  "entity.vortexmod.silver_black_dalek": "Silver-Black Dalek",
+
+  "entity.vortexmod.laser": "Laser",
 
   "sounds.vortexmod.flight_sound": "TARDIS Flight Sound",
   "sounds.vortexmod.demat_sound": "TARDIS Dematerialization Sound",

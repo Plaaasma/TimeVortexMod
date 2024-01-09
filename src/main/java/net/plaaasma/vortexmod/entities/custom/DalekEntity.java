@@ -2,11 +2,12 @@ package net.plaaasma.vortexmod.entities.custom;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.nbt.NbtUtils;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.stats.Stats;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -16,19 +17,17 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.horse.Llama;
 import net.minecraft.world.entity.monster.*;
-import net.minecraft.world.entity.npc.AbstractVillager;
-import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.trading.MerchantOffer;
-import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.Vec3;
-import net.plaaasma.vortexmod.entities.ModEntities;
+import net.plaaasma.vortexmod.sound.ModSounds;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -39,6 +38,10 @@ public class DalekEntity extends Monster implements RangedAttackMob {
 
     public DalekUtils.DalekType dalekType;
 
+    private int attackCooldown = 0;
+
+    private boolean didShoot;
+
     @Nullable
     private BlockPos wanderTarget;
 
@@ -48,14 +51,30 @@ public class DalekEntity extends Monster implements RangedAttackMob {
         this.dalekType = dalekType;
     }
 
+    public int getAttackCooldown() {
+        return attackCooldown;
+    }
+
+    public void setAttackCooldown(int attackCooldown) {
+        this.attackCooldown = attackCooldown;
+    }
+
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 1000000D)
-                .add(Attributes.FOLLOW_RANGE, 24D)
+                .add(Attributes.MAX_HEALTH, 100D)
+                .add(Attributes.FOLLOW_RANGE, 18D)
                 .add(Attributes.MOVEMENT_SPEED, 0.5D)
-                .add(Attributes.ARMOR_TOUGHNESS, 1000000f)
+                .add(Attributes.ARMOR_TOUGHNESS, 10f)
                 .add(Attributes.ATTACK_KNOCKBACK, 0.5f)
                 .add(Attributes.ATTACK_DAMAGE, 1000000f);
+    }
+
+    @Override
+    public void moveTo(double pX, double pY, double pZ, float pYRot, float pXRot) {
+        this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(),
+                ModSounds.DALEK_MOVE_SOUND.get(),
+                this.getSoundSource(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
+        super.moveTo(pX, pY, pZ, pYRot, pXRot);
     }
 
     @Override
@@ -72,17 +91,24 @@ public class DalekEntity extends Monster implements RangedAttackMob {
     protected void registerGoals() {
 
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.targetSelector.addGoal(1, new DalekHurtByTargetGoal(this));
 
-        this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Zombie.class, 6.0F, 0.5D, 0.5D));
-        this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Vex.class, 8.0F, 0.5D, 0.5D));
-        this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Creeper.class, 8.0F, 0.5D, 0.5D));
-        this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Raider.class, 11.0F, 0.5D, 0.5D));
-        this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Zoglin.class, 8.0F, 0.5D, 0.5D));
+        this.goalSelector.addGoal(1, new RangedAttackGoal(this, 1.25D, 20, 18.0f));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 8, true, false,
+                (mob) ->
+                        (
+                                !(mob instanceof NeutralMob) &&
+                                !(mob instanceof Animal)     &&
+                                !(mob instanceof DalekEntity)
+                        )
+                        || mob instanceof Player
+                ));
+
+        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Mob.class, 8.0F));
 
         this.goalSelector.addGoal(4, new MoveToGoal(this, 2.0D, 0.35D));
         this.goalSelector.addGoal(5, new MoveTowardsRestrictionGoal(this, 0.35D));
         this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.35D));
-        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
     }
 
     @Override
@@ -113,7 +139,7 @@ public class DalekEntity extends Monster implements RangedAttackMob {
         return false;
     }
 
-    @Override
+    /*@Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
         return SoundEvents.WANDERING_TRADER_HURT;
     }
@@ -127,7 +153,7 @@ public class DalekEntity extends Monster implements RangedAttackMob {
     protected SoundEvent getDrinkingSound(ItemStack stack) {
         Item item = stack.getItem();
         return item == Items.MILK_BUCKET ? SoundEvents.WANDERING_TRADER_DRINK_MILK : SoundEvents.WANDERING_TRADER_DRINK_POTION;
-    }
+    }*/
 
     public void setWanderTarget(@Nullable BlockPos pos) {
         this.wanderTarget = pos;
@@ -152,9 +178,55 @@ public class DalekEntity extends Monster implements RangedAttackMob {
         return amount;
     }
 
-    @Override
-    public void performRangedAttack(LivingEntity pTarget, float pVelocity) {
+    private void shootLaser(LivingEntity pTarget) {
+        LaserEntity laserEntity = new LaserEntity(this.level(), this);
+        double d0 = pTarget.getX() - this.getX();
+        double d1 = pTarget.getY(0.3333333333333333D) - laserEntity.getY();
+        double d2 = pTarget.getZ() - this.getZ();
+        double d3 = Math.sqrt(d0 * d0 + d2 * d2) * (double)0.2F;
+        laserEntity.shoot(d0, d1 + d3, d2, 1.5F, 1.0F);
+        if (!this.isSilent()) {
+            this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), ModSounds.DALEK_SHOOT_SOUND.get(), this.getSoundSource(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
+        }
 
+        this.level().addFreshEntity(laserEntity);
+        this.didShoot = true;
+    }
+
+
+
+    void setDidShoot(boolean pDidShoot) {
+        this.didShoot = pDidShoot;
+    }
+
+    @Override
+    public void performRangedAttack(LivingEntity pTarget, float pDistanceFactor) {
+        this.shootLaser(pTarget);
+    }
+
+    static class DalekHurtByTargetGoal extends HurtByTargetGoal {
+        public DalekHurtByTargetGoal(DalekEntity pDalek) {
+            super(pDalek);
+        }
+
+        /**
+         * Returns whether an in-progress EntityAIBase should continue executing
+         */
+        public boolean canContinueToUse() {
+            if (this.mob instanceof DalekEntity) {
+                DalekEntity dalek = (DalekEntity) this.mob;
+                if (dalek.didShoot) {
+                    dalek.setDidShoot(false);
+                    return false;
+                }
+            }
+
+            return super.canContinueToUse();
+        }
+    }
+
+    public static boolean canSpawn(EntityType<DalekEntity> entityType, LevelAccessor level, MobSpawnType spawnType, BlockPos position, RandomSource random) {
+        return Mob.checkMobSpawnRules(entityType, level, spawnType, position, random);
     }
 
     class MoveToGoal extends Goal {
@@ -181,11 +253,14 @@ public class DalekEntity extends Monster implements RangedAttackMob {
             return blockpos != null && this.isTooFarAway(blockpos, this.stopDistance);
         }
 
+
+
         @Override
         public void tick() {
 
             BlockPos blockpos = this.trader.getWanderTarget();
             if (blockpos != null && DalekEntity.this.navigation.isDone()) {
+
                 if (this.isTooFarAway(blockpos, 10.0D)) {
                     Vec3 vector3d = (new Vec3(blockpos.getX() - this.trader.getX(), blockpos.getY() - this.trader.getY(), blockpos.getZ() - this.trader.getZ())).normalize();
                     Vec3 vector3d1 = vector3d.scale(10.0D).add(this.trader.getX(), this.trader.getY(), this.trader.getZ());

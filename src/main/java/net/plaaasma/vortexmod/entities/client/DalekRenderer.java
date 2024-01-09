@@ -5,9 +5,11 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.entities.custom.DalekEntity;
-
+@OnlyIn(Dist.CLIENT)
 public class DalekRenderer extends MobRenderer<DalekEntity, DalekModel<DalekEntity>> {
     public DalekRenderer(EntityRendererProvider.Context pContext) {
         super(pContext, new DalekModel<>(pContext.bakeLayer(ModModelLayers.DALEK_LAYER)), 0.5f);
