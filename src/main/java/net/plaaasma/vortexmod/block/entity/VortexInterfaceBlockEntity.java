@@ -186,8 +186,6 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         this.is_flying = vortexModData.getInt("is_flying");
         this.flight_time = vortexModData.getInt("flight_time");
 
-        //test
-
         if (vortexModData.contains("exterior_uuid")) {
             this.exterior_uuid = vortexModData.getUUID("exterior_uuid");
         }
