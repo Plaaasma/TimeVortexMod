@@ -96,7 +96,7 @@ public class ScannerBlock extends HorizontalBaseEntityBlock {
                             }
 
                             BlockPos blockExitPos = new BlockPos(vortexInterfaceBlockEntity.data.get(6), vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8));
-                            TardisEntity tardisEntity = (TardisEntity) targetDimension.getEntity(vortexInterfaceBlockEntity.exterior_uuid);
+                            TardisEntity tardisEntity = (TardisEntity) targetDimension.getEntity(vortexInterfaceBlockEntity.getExtUUID());
                             if (tardisEntity != null) {
                                 int yaw = (int) tardisEntity.getYRot();
 

@@ -85,7 +85,7 @@ public class DoorBlock extends Block {
                                 }
 
                                 BlockPos blockExitPos = new BlockPos(vortexInterfaceBlockEntity.data.get(6), vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8));
-                                TardisEntity tardisEntity = (TardisEntity) targetDimension.getEntity(vortexInterfaceBlockEntity.exterior_uuid);
+                                TardisEntity tardisEntity = (TardisEntity) targetDimension.getEntity(vortexInterfaceBlockEntity.getExtUUID());
                                 if (tardisEntity != null) {
                                     if (heldStack.is(ModItems.TARDIS_KEY.get())) {
                                         int ownerCode = tardisEntity.getOwnerID();

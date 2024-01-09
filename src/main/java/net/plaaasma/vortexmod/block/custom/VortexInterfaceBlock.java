@@ -214,7 +214,7 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                 TardisEntity tardisMob = ModEntities.TARDIS.get().spawn(serverLevel, pPos, MobSpawnType.NATURAL);
 
                 tardisMob.setOwnerID(ownerCode);
-                interfaceBlockEntity.exterior_uuid = tardisMob.getUUID();
+                interfaceBlockEntity.setExtUUID(tardisMob.getUUID());
                 data.getDataMap().put(tardisMob.getUUID().toString(), tardisTarget);
 
                 ChunkPos chunkPos = tardisDimension.getChunkAt(interfacePos).getPos();

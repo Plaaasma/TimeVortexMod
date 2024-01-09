@@ -74,8 +74,8 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private int cc_set_dim = 0;
     private int is_flying = 0;
     private int flight_time = 0;
+    private UUID exterior_uuid = UUID.randomUUID();
     public final ContainerData data;
-    public UUID exterior_uuid = UUID.randomUUID();
 
     public VortexInterfaceBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.VORTEX_INTERFACE_BE.get(), pPos, pBlockState);
@@ -142,6 +142,14 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         };
     }
 
+    public void setExtUUID(UUID uuidToSet) {
+        this.exterior_uuid = uuidToSet;
+    }
+
+    public UUID getExtUUID() {
+        return this.exterior_uuid;
+    }
+
     @Override
     public void onLoad() {
         super.onLoad();
@@ -177,7 +185,11 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         this.cc_set_dim = vortexModData.getInt("cc_set_dim");
         this.is_flying = vortexModData.getInt("is_flying");
         this.flight_time = vortexModData.getInt("flight_time");
-        this.exterior_uuid = pTag.getUUID("exterior_uuid");
+
+        if (vortexModData.contains("exterior_uuid")) {
+            this.exterior_uuid = vortexModData.getUUID("exterior_uuid");
+        }
+
         super.load(pTag);
     }
 
@@ -206,10 +218,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         vortexModData.putInt("cc_set_dim", this.cc_set_dim);
         vortexModData.putInt("is_flying", this.is_flying);
         vortexModData.putInt("flight_time", this.flight_time);
-
+        vortexModData.putUUID("exterior_uuid", this.exterior_uuid);
         pTag.put(VortexMod.MODID, vortexModData);
 
-        pTag.putUUID("exterior_uuid", this.exterior_uuid);
         super.saveAdditional(pTag);
     }
 
