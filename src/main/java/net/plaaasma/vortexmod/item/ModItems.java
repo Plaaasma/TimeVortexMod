@@ -32,25 +32,24 @@ public class ModItems {
             () -> new TardisKey(new Item.Properties().stacksTo(1)));
 
     public static final RegistryObject<Item> BLUE_TRADER_SPAWN_EGG = ITEMS.register("blue_trader_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.BLUE_TRADER, 0x7e9680, 0xc5d1c5, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(ModEntities.BLUE_TRADER, 0x0d3f8f, 0xa67f46, new Item.Properties()));
 
     public static final RegistryObject<Item> ORANGE_TRADER_SPAWN_EGG = ITEMS.register("orange_trader_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.ORANGE_TRADER, 0x7e9680, 0xc5d1c5, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(ModEntities.ORANGE_TRADER, 0xc77e0a, 0xa67f46, new Item.Properties()));
 
     public static final RegistryObject<Item> PURPLE_TRADER_SPAWN_EGG = ITEMS.register("purple_trader_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.PURPLE_TRADER, 0x7e9680, 0xc5d1c5, new Item.Properties()));
-
+            () -> new ForgeSpawnEggItem(ModEntities.PURPLE_TRADER, 0x690ac7, 0xa67f46, new Item.Properties()));
     public static final RegistryObject<Item> BLACK_TRADER_SPAWN_EGG = ITEMS.register("black_trader_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.BLACK_TRADER, 0x7e9680, 0xc5d1c5, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(ModEntities.BLACK_TRADER, 0x3e3d40, 0xa67f46, new Item.Properties()));
 
     public static final RegistryObject<Item> GOLD_DALEK_SPAWN_EGG = ITEMS.register("gold_dalek_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.GOLD_DALEK, 0x7e9680, 0xc5d1c5, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(ModEntities.GOLD_DALEK, 0xc49943, 0x403f3f, new Item.Properties()));
     public static final RegistryObject<Item> SILVER_DALEK_SPAWN_EGG = ITEMS.register("silver_dalek_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.SILVER_DALEK, 0x7e9680, 0xc5d1c5, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(ModEntities.SILVER_DALEK, 0x82807d, 0x403f3f, new Item.Properties()));
     public static final RegistryObject<Item> BLACK_DALEK_SPAWN_EGG = ITEMS.register("black_dalek_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.BLACK_DALEK, 0x7e9680, 0xc5d1c5, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(ModEntities.BLACK_DALEK, 0x3e3d40, 0x403f3f, new Item.Properties()));
     public static final RegistryObject<Item> SILVER_BLACK_DALEK_SPAWN_EGG = ITEMS.register("silver_black_dalek_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.SILVER_BLACK_DALEK, 0x7e9680, 0xc5d1c5, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(ModEntities.SILVER_BLACK_DALEK, 0x262626, 0x403f3f, new Item.Properties()));
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);

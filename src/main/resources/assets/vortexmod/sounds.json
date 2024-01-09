@@ -16,5 +16,17 @@
     "sounds": [
       "vortexmod:remat_sound"
     ]
+  },
+  "dalek_move_sound": {
+    "subtitle": "sounds.vortexmod.dalek_move_sound",
+    "sounds": [
+      "vortexmod:dalek_move_sound"
+    ]
+  },
+  "dalek_shoot_sound": {
+    "subtitle": "sounds.vortexmod.dalek_shoot_sound",
+    "sounds": [
+      "vortexmod:dalek_shoot_sound"
+    ]
   }
 }
