@@ -4,6 +4,8 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -19,14 +21,17 @@ import net.plaaasma.vortexmod.entities.ModEntities;
 import net.plaaasma.vortexmod.entities.client.DalekRenderer;
 import net.plaaasma.vortexmod.entities.client.LaserRenderer;
 import net.plaaasma.vortexmod.entities.client.LostTravelerRenderer;
+import net.plaaasma.vortexmod.entities.client.TardisRenderer;
 import net.plaaasma.vortexmod.item.ModCreativeModeTabs;
 import net.plaaasma.vortexmod.item.ModItems;
 import net.plaaasma.vortexmod.sound.ModSounds;
 import net.plaaasma.vortexmod.screen.ModMenuTypes;
 import net.plaaasma.vortexmod.screen.custom.screen.SizeManipulatorScreen;
-import org.slf4j.Logger;
+import org.slf4j.Logger;;
 
-import java.util.regex.Pattern;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(VortexMod.MODID)
@@ -35,9 +40,8 @@ public class VortexMod {
     public static final String MODID = "vortexmod";
 
     // Directly reference a slf4j logger
+    public static final Logger P_LOGGER = LogUtils.getLogger();
     private static final Logger LOGGER = LogUtils.getLogger();
-
-    private final Pattern pattern = Pattern.compile("^TC:\\s*(-?\\d+(\\.\\d+)?\\s+){2}-?\\d+(\\.\\d+)?$");
 
     public VortexMod() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -92,6 +96,8 @@ public class VortexMod {
             EntityRenderers.register(ModEntities.SILVER_BLACK_DALEK.get(), DalekRenderer::new);
 
             EntityRenderers.register(ModEntities.LASER_ENTITY.get(), LaserRenderer::new);
+
+            EntityRenderers.register(ModEntities.TARDIS.get(), TardisRenderer::new);
 
             MenuScreens.register(ModMenuTypes.SIZE_MANIPULATOR_MENU.get(), SizeManipulatorScreen::new);
         }

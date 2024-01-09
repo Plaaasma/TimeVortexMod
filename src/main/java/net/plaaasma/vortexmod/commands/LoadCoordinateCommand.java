@@ -4,7 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.ComponentArgument;
+import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -22,11 +22,12 @@ import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 public class LoadCoordinateCommand {
     public LoadCoordinateCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("tardis")
+        .then(Commands.literal("locations")
         .then(Commands.literal("load")
-                .then(Commands.argument("name", ComponentArgument.textComponent())
+                .then(Commands.argument("name", MessageArgument.message())
                         .executes((command) -> {
-                            return loadCoords(command.getSource(), ComponentArgument.getComponent(command, "name"));
-                        }))));
+                            return loadCoords(command.getSource(), MessageArgument.getMessage(command, "name"));
+                        })))));
     }
 
     private int loadCoords(CommandSourceStack source, Component locName) throws CommandSyntaxException {

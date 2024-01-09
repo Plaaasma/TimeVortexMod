@@ -5,11 +5,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.ComponentArgument;
-import net.minecraft.commands.arguments.DimensionArgument;
-import net.minecraft.commands.arguments.StringRepresentableArgument;
-import net.minecraft.commands.arguments.coordinates.Coordinates;
-import net.minecraft.commands.arguments.coordinates.Vec3Argument;
+import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Position;
 import net.minecraft.network.chat.Component;
@@ -28,11 +24,12 @@ import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 public class SaveCoordinateCommand {
     public SaveCoordinateCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("tardis")
+        .then(Commands.literal("locations")
         .then(Commands.literal("save")
-                .then(Commands.argument("name", ComponentArgument.textComponent())
+                .then(Commands.argument("name", MessageArgument.message())
                         .executes((command) -> {
-                            return setCoords(command.getSource(), ComponentArgument.getComponent(command, "name"));
-                        }))));
+                            return setCoords(command.getSource(), MessageArgument.getMessage(command, "name"));
+                        })))));
     }
 
     private int setCoords(CommandSourceStack source, Component locName) throws CommandSyntaxException {

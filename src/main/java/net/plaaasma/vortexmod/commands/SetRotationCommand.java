@@ -27,13 +27,14 @@ import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 public class SetRotationCommand {
     public SetRotationCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("tardis")
+        .then(Commands.literal("target")
         .then(Commands.literal("set")
         .then(Commands.literal("rotation")
         .then(Commands.argument("yaw", IntegerArgumentType.integer())
             .executes((command) -> {
                 return setRotation(command.getSource(), IntegerArgumentType.getInteger(command, "yaw"));
             }))
-        )));
+        ))));
     }
 
     private int setRotation(CommandSourceStack source, Integer targetRot) throws CommandSyntaxException {

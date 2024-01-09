@@ -11,4 +11,6 @@ public class ModModelLayers {
             new ResourceLocation(VortexMod.MODID, "dalek_layer"), "main");
     public static final ModelLayerLocation LASER_LAYER = new ModelLayerLocation(
             new ResourceLocation(VortexMod.MODID, "laser_layer"), "main");
+    public static final ModelLayerLocation TARDIS_LAYER = new ModelLayerLocation(
+            new ResourceLocation(VortexMod.MODID, "tardis_layer"), "main");
 }

@@ -32,6 +32,7 @@ import net.plaaasma.vortexmod.block.entity.KeypadBlockEntity;
 import net.plaaasma.vortexmod.block.entity.ModBlockEntities;
 import net.plaaasma.vortexmod.block.entity.ScannerBlockEntity;
 import net.plaaasma.vortexmod.block.entity.VortexInterfaceBlockEntity;
+import net.plaaasma.vortexmod.entities.custom.TardisEntity;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 import net.plaaasma.vortexmod.worldgen.portal.ModTeleporter;
 import org.jetbrains.annotations.Nullable;
@@ -95,9 +96,19 @@ public class ScannerBlock extends HorizontalBaseEntityBlock {
                             }
 
                             BlockPos blockExitPos = new BlockPos(vortexInterfaceBlockEntity.data.get(6), vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8));
-                            if (targetDimension.getBlockState(blockExitPos).getBlock() == ModBlocks.TARDIS_BLOCK.get()) {
-                                targetExit = new Vec3(vortexInterfaceBlockEntity.data.get(6) + 0.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) + 1.5);
-                                blockTargetExit = new BlockPos(vortexInterfaceBlockEntity.data.get(6), vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) + 1);
+                            TardisEntity tardisEntity = (TardisEntity) targetDimension.getEntity(vortexInterfaceBlockEntity.exterior_uuid);
+                            if (tardisEntity != null) {
+                                int yaw = (int) tardisEntity.getYRot();
+
+                                double distance = 1.4; // Distance from the root position
+
+                                double yawRadians = Math.toRadians(yaw);
+
+                                double newX = blockExitPos.getX() + distance * Math.sin(yawRadians);
+                                double newZ = blockExitPos.getZ() - distance * Math.cos(yawRadians);
+
+                                targetExit = new Vec3(newX, blockExitPos.getY(), newZ);
+                                blockTargetExit = new BlockPos((int) newX, blockExitPos.getY(), (int) newZ);
                                 decidedDimension = targetDimension;
                             } else {
                                 decidedDimension = vortexDimension;

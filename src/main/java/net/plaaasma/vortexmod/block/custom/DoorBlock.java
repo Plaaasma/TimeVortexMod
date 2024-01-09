@@ -30,6 +30,7 @@ import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.block.entity.ModBlockEntities;
 import net.plaaasma.vortexmod.block.entity.TardisBlockEntity;
 import net.plaaasma.vortexmod.block.entity.VortexInterfaceBlockEntity;
+import net.plaaasma.vortexmod.entities.custom.TardisEntity;
 import net.plaaasma.vortexmod.item.ModItems;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 import net.plaaasma.vortexmod.worldgen.portal.ModTeleporter;
@@ -84,53 +85,55 @@ public class DoorBlock extends Block {
                                 }
 
                                 BlockPos blockExitPos = new BlockPos(vortexInterfaceBlockEntity.data.get(6), vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8));
-                                BlockState targetBlockState = targetDimension.getBlockState(blockExitPos);
-                                if (targetBlockState.getBlock() == ModBlocks.TARDIS_BLOCK.get()) {
+                                TardisEntity tardisEntity = (TardisEntity) targetDimension.getEntity(vortexInterfaceBlockEntity.exterior_uuid);
+                                if (tardisEntity != null) {
                                     if (heldStack.is(ModItems.TARDIS_KEY.get())) {
-                                        TardisBlockEntity tardisBlockEntity = (TardisBlockEntity) targetDimension.getBlockEntity(blockExitPos);
-
-                                        int ownerCode = tardisBlockEntity.data.get(0);
+                                        int ownerCode = tardisEntity.getOwnerID();
                                         if (ownerCode == pPlayer.getScoreboardName().hashCode()) {
-                                            if (tardisBlockEntity.data.get(1) == 0) {
-                                                tardisBlockEntity.data.set(1, 1);
+                                            if (!tardisEntity.isLocked()) {
+                                                tardisEntity.setLocked(true);
                                                 pPlayer.displayClientMessage(Component.literal("Locking TARDIS").withStyle(ChatFormatting.GREEN), true);
-                                            }
-                                            else {
-                                                tardisBlockEntity.data.set(1, 0);
+                                            } else {
+                                                tardisEntity.setLocked(false);
                                                 pPlayer.displayClientMessage(Component.literal("Unlocking TARDIS").withStyle(ChatFormatting.AQUA), true);
                                             }
-                                        }
-                                        else {
+                                        } else {
                                             pPlayer.displayClientMessage(Component.literal("This TARDIS is not yours.").withStyle(ChatFormatting.RED), true);
                                         }
-                                    }
-                                    else {
-                                        Vec3 exitPosition;
-                                        if (targetBlockState.getValue(BlockStateProperties.HORIZONTAL_FACING) == Direction.NORTH) {
-                                            exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) + 0.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) + 1.5);
-                                        } else if (targetBlockState.getValue(BlockStateProperties.HORIZONTAL_FACING) == Direction.EAST) {
-                                            exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) - 0.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) + 0.5);
-                                        } else if (targetBlockState.getValue(BlockStateProperties.HORIZONTAL_FACING) == Direction.SOUTH) {
-                                            exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) + 0.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) - 0.5);
-                                        } else {
-                                            exitPosition = new Vec3(vortexInterfaceBlockEntity.data.get(6) + 1.5, vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8) + 0.5);
-                                        }
-                                        pPlayer.changeDimension(targetDimension, new ModTeleporter(exitPosition));
-                                    }
-                                } else {
-                                    pPlayer.changeDimension(vortexDimension, new ModTeleporter(new Vec3(random.nextInt(1000000) - 500000, -100, random.nextInt(1000000) - 500000)));
-                                }
+                                    } else {
+                                        if (!tardisEntity.isRemat() && !tardisEntity.isInFlight()) {
+                                            int yaw = (int) tardisEntity.getYRot();
+                                            Vec3 exitPosition;
 
+                                            double distance = 1.4; // Distance from the root position
+
+                                            double yawRadians = Math.toRadians(yaw);
+
+                                            double newX = blockExitPos.getX() + distance * Math.sin(yawRadians);
+                                            double newZ = blockExitPos.getZ() - distance * Math.cos(yawRadians);
+
+                                            exitPosition = new Vec3(newX, blockExitPos.getY(), newZ);
+
+                                            pPlayer.changeDimension(targetDimension, new ModTeleporter(exitPosition));
+                                        }
+                                        else {
+                                            pPlayer.displayClientMessage(Component.literal("You cannot exit while in flight.").withStyle(ChatFormatting.RED), true);
+                                        }
+                                    }
+                                }
+                                else {
+                                    System.out.println("Cannot find TARDIS entity");
+                                }
                                 return InteractionResult.CONSUME;
                             }
                         }
                     }
                 }
-            } else {
+            }
+            else {
                 pPlayer.displayClientMessage(Component.literal("Door is not in the TARDIS dimension.").withStyle(ChatFormatting.DARK_RED), true);
             }
         }
-
         return InteractionResult.CONSUME;
     }
 

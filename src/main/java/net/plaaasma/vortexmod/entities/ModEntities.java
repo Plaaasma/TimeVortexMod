@@ -1,18 +1,25 @@
 package net.plaaasma.vortexmod.entities;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.entities.custom.*;
+import net.plaaasma.vortexmod.entities.custom.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 public class ModEntities {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
             DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, VortexMod.MODID);
-
 
     // LOST TRAVELERS
     public static final RegistryObject<EntityType<LostTravelerEntity>> BLUE_TRADER =
@@ -77,6 +84,10 @@ public class ModEntities {
                     .updateInterval(1)
                     .build("laser_entity"));
 
+    // TARDIS
+    public static final RegistryObject<EntityType<TardisEntity>> TARDIS =
+            ENTITY_TYPES.register("tardis", () -> EntityType.Builder.of(TardisEntity::new, MobCategory.CREATURE)
+                    .sized(1.8f, 3.5f).build("tardis"));
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
