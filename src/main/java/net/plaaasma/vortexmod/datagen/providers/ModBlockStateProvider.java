@@ -56,6 +56,10 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 new ModelFile.UncheckedModelFile(modLoc("block/biometric_module")));
         simpleBlockItem(ModBlocks.BIOMETRIC_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/biometric_module")));
+        horizontalBlock(ModBlocks.TARDIS_SIGN_BLOCK.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/tardis_sign_block")));
+        simpleBlockItem(ModBlocks.TARDIS_SIGN_BLOCK.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/tardis_sign_block")));
     }
 
     private void blockWithItem(RegistryObject<Block> blockRegistryObject) {

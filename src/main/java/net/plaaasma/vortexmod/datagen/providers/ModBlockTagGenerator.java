@@ -29,7 +29,8 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
                 .add(ModBlocks.DOOR_BLOCK.get())
                 .add(ModBlocks.SCANNER_BLOCK.get())
                 .add(ModBlocks.GROUNDING_BLOCK.get())
-                .add(ModBlocks.BIOMETRIC_BLOCK.get());
+                .add(ModBlocks.BIOMETRIC_BLOCK.get())
+                .add(ModBlocks.TARDIS_SIGN_BLOCK.get());
 
         this.tag(BlockTags.MINEABLE_WITH_AXE)
                 .add(ModBlocks.THROTTLE_BLOCK.get())
@@ -39,7 +40,8 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
                 .add(ModBlocks.DOOR_BLOCK.get())
                 .add(ModBlocks.SCANNER_BLOCK.get())
                 .add(ModBlocks.GROUNDING_BLOCK.get())
-                .add(ModBlocks.BIOMETRIC_BLOCK.get());
+                .add(ModBlocks.BIOMETRIC_BLOCK.get())
+                .add(ModBlocks.TARDIS_SIGN_BLOCK.get());
 
         this.tag(BlockTags.NEEDS_IRON_TOOL)
                 .add(ModBlocks.THROTTLE_BLOCK.get())
@@ -50,6 +52,7 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
                 .add(ModBlocks.DOOR_BLOCK.get())
                 .add(ModBlocks.SCANNER_BLOCK.get())
                 .add(ModBlocks.GROUNDING_BLOCK.get())
-                .add(ModBlocks.BIOMETRIC_BLOCK.get());
+                .add(ModBlocks.BIOMETRIC_BLOCK.get())
+                .add(ModBlocks.TARDIS_SIGN_BLOCK.get());
     }
 }

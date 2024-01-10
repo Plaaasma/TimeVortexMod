@@ -226,6 +226,16 @@ public class TardisEntity extends Mob {
     }
 
     @Override
+    public boolean isInvulnerable() {
+        return true;
+    }
+
+    @Override
+    protected boolean isAffectedByFluids() {
+        return false;
+    }
+
+    @Override
     public InteractionResult interactAt(Player pPlayer, Vec3 pVec, InteractionHand pHand) {
         Level playerLevel = pPlayer.level();
 

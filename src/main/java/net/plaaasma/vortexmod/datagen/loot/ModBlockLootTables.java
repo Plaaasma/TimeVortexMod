@@ -24,6 +24,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(ModBlocks.EQUALIZER_BLOCK.get());
         this.dropSelf(ModBlocks.TARDIS_BLOCK.get());
         this.dropSelf(ModBlocks.DOOR_BLOCK.get());
+        this.dropSelf(ModBlocks.TARDIS_SIGN_BLOCK.get());
         this.dropSelf(ModBlocks.SCANNER_BLOCK.get());
         this.dropSelf(ModBlocks.GROUNDING_BLOCK.get());
         this.dropSelf(ModBlocks.BIOMETRIC_BLOCK.get());

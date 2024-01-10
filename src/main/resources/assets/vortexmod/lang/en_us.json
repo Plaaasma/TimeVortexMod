@@ -24,6 +24,7 @@
   "block.vortexmod.equalizer_block": "Artron Equalizer",
   "block.vortexmod.tardis_block": "TARDIS",
   "block.vortexmod.door_block": "TARDIS Interior Door",
+  "block.vortexmod.tardis_sign_block": "TARDIS Sign",
   "block.vortexmod.scanner_block": "Exterior Scanner",
   "block.vortexmod.grounding_block": "Auto Grounding Module",
   "block.vortexmod.biometric_module": "Bio Security Module",
@@ -60,6 +61,8 @@
   "tooltip.vortexmod.scanner_block.tooltip": "Meant of the interior of a euclidean TARDIS, gives information about the outside world such as if there's ground below the exit point.",
   "tooltip.vortexmod.grounding_block.tooltip": "Will ensure that you land on the ground if you were set to be in the air.",
   "tooltip.vortexmod.biometric_module.tooltip": "Allows you to blacklist people from entering your TARDIS with commands. This is only functional in a euclidean TARDIS. (Right click for tutorial).",
+  "tooltip.vortexmod.tardis_sign_block.tooltip": "Allows you to blacklist people from entering your TARDIS with commands. This is only functional in a euclidean TARDIS. (Right click for tutorial).",
+
 
   "creativetab.vortex_tab": "Time Vortex"
 }

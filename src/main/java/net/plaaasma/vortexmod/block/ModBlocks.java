@@ -41,6 +41,8 @@ public class ModBlocks {
             () -> new GroundingBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
     public static final RegistryObject<Block> BIOMETRIC_BLOCK = registerBlock("biometric_module",
             () -> new BiometricBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
+    public static final RegistryObject<Block> TARDIS_SIGN_BLOCK = registerBlock("tardis_sign_block",
+            () -> new TardisSignBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
@@ -49,7 +51,7 @@ public class ModBlocks {
     }
 
     private static <T extends Block>RegistryObject<Item> registerBlockItem(String name, RegistryObject<T> block) {
-        if (name.equals("door_block")) {
+        if (name.equals("door_block") || name.equals("tardis_sign_block")) {
             return ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
         } else {
             return ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties().stacksTo(1)));
