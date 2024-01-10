@@ -2,6 +2,7 @@ package net.plaaasma.vortexmod.block.custom;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -239,6 +240,17 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
             ClientboundAddEntityPacket entityPacket = new ClientboundAddEntityPacket(new LightningBolt(EntityType.LIGHTNING_BOLT, pLevel), 0, targetPosition);
             pConnection.send(entityPacket);
         }
+    }
+
+    @Override
+    public int getSignal(BlockState pState, BlockGetter pLevel, BlockPos pPos, Direction pDirection) {
+        VortexInterfaceBlockEntity localBlockEntity = (VortexInterfaceBlockEntity) pLevel.getBlockEntity(pPos);
+        return localBlockEntity.data.get(21);
+    }
+
+    @Override
+    public boolean isSignalSource(BlockState pState) {
+        return true;
     }
 
     @Override

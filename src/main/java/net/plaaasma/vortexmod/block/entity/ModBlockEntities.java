@@ -21,10 +21,6 @@ public class ModBlockEntities {
             BLOCK_ENTITIES.register("coordinate_designator_be", () ->
                     BlockEntityType.Builder.of(CoordinateDesignatorBlockEntity::new,
                             ModBlocks.COORDINATE_BLOCK.get()).build(null));
-    public static final RegistryObject<BlockEntityType<ThrottleBlockEntity>> VORTEX_THROTTLE_BE =
-            BLOCK_ENTITIES.register("vortex_throttle_be", () ->
-                    BlockEntityType.Builder.of(ThrottleBlockEntity::new,
-                            ModBlocks.THROTTLE_BLOCK.get()).build(null));
     public static final RegistryObject<BlockEntityType<KeypadBlockEntity>> TARDIS_KEYPAD_BE =
             BLOCK_ENTITIES.register("tardis_keypad_be", () ->
                     BlockEntityType.Builder.of(KeypadBlockEntity::new,
