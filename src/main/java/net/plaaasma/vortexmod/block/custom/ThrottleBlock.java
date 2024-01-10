@@ -101,6 +101,24 @@ public class ThrottleBlock extends FaceAttachedHorizontalDirectionalBlock {
     }
 
     @Override
+    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
+        for(Direction direction : pContext.getNearestLookingDirections()) {
+            BlockState blockstate;
+            if (direction.getAxis() == Direction.Axis.Y) {
+                blockstate = this.defaultBlockState().setValue(FACE, direction == Direction.UP ? AttachFace.CEILING : AttachFace.FLOOR).setValue(FACING, pContext.getHorizontalDirection());
+            } else {
+                blockstate = this.defaultBlockState().setValue(FACE, AttachFace.WALL).setValue(FACING, direction.getOpposite());
+            }
+
+            if (blockstate.canSurvive(pContext.getLevel(), pContext.getClickedPos())) {
+                return blockstate;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (pLevel.isClientSide) {
             BlockState blockstate1 = pState.cycle(POWERED);
@@ -111,6 +129,11 @@ public class ThrottleBlock extends FaceAttachedHorizontalDirectionalBlock {
         } else {
             BlockState blockstate = this.pull(pState, pLevel, pPos);
             pLevel.gameEvent(pPlayer, blockstate.getValue(POWERED) ? GameEvent.BLOCK_ACTIVATE : GameEvent.BLOCK_DEACTIVATE, pPos);
+            if (blockstate.getValue(POWERED)) {
+                pPlayer.displayClientMessage(Component.literal("Throttle Enabled"), true);
+            } else {
+                pPlayer.displayClientMessage(Component.literal("Throttle Disabled"), true);
+            }
             return InteractionResult.CONSUME;
         }
     }
