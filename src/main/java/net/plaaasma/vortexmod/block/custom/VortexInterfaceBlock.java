@@ -7,9 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.resources.ResourceKey;
@@ -29,10 +27,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -53,7 +49,6 @@ import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 import org.apache.logging.log4j.core.jmx.Server;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.function.Predicate;
 
 public class VortexInterfaceBlock extends BaseEntityBlock {
@@ -161,6 +156,7 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                 int door_distance = 10 + size;
 
                 BlockPos interfacePos = null;
+                List<BlockPos> toBeRemoved = new ArrayList<>();
 
                 for (int x = -size; x <= size; x++) {
                     for (int y = -1; y <= y_size + (y_size - 1); y++) {
@@ -192,10 +188,22 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                                 }
                             }
 
-                            serverLevel.removeBlock(currentPos, false);
-                            serverLevel.removeBlockEntity(currentPos);
+                            if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock) {
+                                serverLevel.removeBlock(currentPos, false);
+                                serverLevel.removeBlockEntity(currentPos);
+                            }
+                            else {
+                                if (currentPos != pPos) {
+                                    toBeRemoved.add(currentPos);
+                                }
+                            }
                         }
                     }
+                }
+
+                for (BlockPos positionToBeRemoved : toBeRemoved) {
+                    serverLevel.removeBlock(positionToBeRemoved, false);
+                    serverLevel.removeBlockEntity(positionToBeRemoved);
                 }
 
                 for (int x = -1; x < door_distance; x++) {
