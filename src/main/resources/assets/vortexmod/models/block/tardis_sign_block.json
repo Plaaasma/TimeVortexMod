@@ -1,0 +1,62 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+		"0": "vortexmod:block/tardis_sign_texture",
+		"particle": "vortexmod:block/tardis_sign_texture"
+	},
+	"elements": [
+		{
+			"name": "sign",
+			"from": [-1, 0, 14.8],
+			"to": [17, 3, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 0, 8]},
+			"faces": {
+				"north": {"uv": [0, 1.5, 9, 3], "texture": "#0"},
+				"east": {"uv": [1.5, 6, 2.625, 7.5], "texture": "#0"},
+				"south": {"uv": [0, 0, 9, 1.5], "texture": "#0"},
+				"west": {"uv": [0, 6, 1.125, 7.5], "texture": "#0"},
+				"up": {"uv": [9, 4.125, 0, 3], "rotation": 180, "texture": "#0"},
+				"down": {"uv": [9, 4.5, 0, 5.625], "rotation": 180, "texture": "#0"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [0, 180, 0],
+			"translation": [0, 4, 4.25],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [0, 180, 0],
+			"translation": [0, 4, 4.25],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 180, 0],
+			"translation": [-2.75, 8.5, 10],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, 180, 0],
+			"translation": [-2.75, 8.5, 10],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"ground": {
+			"translation": [0, 5, -5.25],
+			"scale": [0.75, 0.75, 0.75]
+		},
+		"gui": {
+			"rotation": [21, 144, 0],
+			"translation": [-2, 2, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"head": {
+			"translation": [0, 26, -21],
+			"scale": [0.77, 4, 1.87]
+		},
+		"fixed": {
+			"translation": [0, 6.5, -6.5]
+		}
+	}
+}
