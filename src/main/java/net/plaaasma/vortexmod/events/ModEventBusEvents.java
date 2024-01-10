@@ -12,9 +12,13 @@ import net.plaaasma.vortexmod.entities.custom.DalekEntity;
 import net.plaaasma.vortexmod.entities.custom.LaserEntity;
 import net.plaaasma.vortexmod.entities.custom.LostTravelerEntity;
 import net.plaaasma.vortexmod.entities.custom.TardisEntity;
+import oshi.util.tuples.Pair;
+
+import java.util.ArrayList;
 
 @Mod.EventBusSubscriber(modid = VortexMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModEventBusEvents {
+
     @SubscribeEvent
     public static void registerAttributes(EntityAttributeCreationEvent event) {
         event.put(ModEntities.BLUE_TRADER.get(), LostTravelerEntity.createAttributes().build());

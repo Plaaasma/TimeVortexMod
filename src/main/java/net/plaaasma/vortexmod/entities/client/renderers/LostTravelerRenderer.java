@@ -1,4 +1,4 @@
-package net.plaaasma.vortexmod.entities.client;
+package net.plaaasma.vortexmod.entities.client.renderers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -6,6 +6,8 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.plaaasma.vortexmod.VortexMod;
+import net.plaaasma.vortexmod.entities.client.models.LostTravelerModel;
+import net.plaaasma.vortexmod.entities.client.ModModelLayers;
 import net.plaaasma.vortexmod.entities.custom.LostTravelerEntity;
 
 public class LostTravelerRenderer extends MobRenderer<LostTravelerEntity, LostTravelerModel<LostTravelerEntity>> {

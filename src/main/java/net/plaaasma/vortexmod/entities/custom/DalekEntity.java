@@ -6,28 +6,20 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.nbt.NbtUtils;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.horse.Llama;
 import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.raid.Raider;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import net.plaaasma.vortexmod.sound.ModSounds;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -35,13 +27,9 @@ import java.util.EnumSet;
 public class DalekEntity extends Monster implements RangedAttackMob {
 
     public final AnimationState idleAnimationState = new AnimationState();
-
     public DalekUtils.DalekType dalekType;
-
     private int attackCooldown = 0;
-
     private boolean didShoot;
-
     @Nullable
     private BlockPos wanderTarget;
 
@@ -61,7 +49,7 @@ public class DalekEntity extends Monster implements RangedAttackMob {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 100D)
+                .add(Attributes.MAX_HEALTH, 200D)
                 .add(Attributes.FOLLOW_RANGE, 18D)
                 .add(Attributes.MOVEMENT_SPEED, 0.5D)
                 .add(Attributes.ARMOR_TOUGHNESS, 10f)
@@ -80,9 +68,8 @@ public class DalekEntity extends Monster implements RangedAttackMob {
     @Override
     public void tick() {
 
-        if (level().isClientSide()){
+        if (level().isClientSide())
             this.idleAnimationState.animateWhen(!isInWaterOrBubble() && !this.walkAnimation.isMoving(), this.tickCount);
-        }
 
         super.tick();
     }
@@ -112,13 +99,7 @@ public class DalekEntity extends Monster implements RangedAttackMob {
     }
 
     @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
-
-        return super.mobInteract(player, hand);
-    }
-
-    @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         if (this.wanderTarget != null) {
             compound.put("WanderTarget", NbtUtils.writeBlockPos(this.wanderTarget));
@@ -126,7 +107,7 @@ public class DalekEntity extends Monster implements RangedAttackMob {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
 
         if (compound.contains("WanderTarget")) {
@@ -165,17 +146,25 @@ public class DalekEntity extends Monster implements RangedAttackMob {
     }
 
     @Override
-    protected float getDamageAfterMagicAbsorb(DamageSource source, float amount) {
+    protected float getDamageAfterMagicAbsorb(@NotNull DamageSource source, float amount) {
         amount = super.getDamageAfterMagicAbsorb(source, amount);
         if (source.getEntity() == this) {
             amount = 0.0F;
         }
         //explosion resistant!
         if (source.is(DamageTypeTags.IS_EXPLOSION)) {
-            amount = (float) (amount * 0.2D);
+            amount = 0.0f;
         }
 
         return amount;
+    }
+
+    @Override
+    public boolean hurt(DamageSource pSource, float pAmount) {
+        if (!(pSource.getEntity() instanceof DalekEntity)) {
+            return super.hurt(pSource, pAmount);
+        }
+        return false;
     }
 
     private void shootLaser(LivingEntity pTarget) {
@@ -183,12 +172,12 @@ public class DalekEntity extends Monster implements RangedAttackMob {
         double d0 = pTarget.getX() - this.getX();
         double d1 = pTarget.getY(0.3333333333333333D) - laserEntity.getY();
         double d2 = pTarget.getZ() - this.getZ();
-        double d3 = Math.sqrt(d0 * d0 + d2 * d2) * (double)0.2F;
-        laserEntity.shoot(d0, d1 + d3, d2, 1.5F, 1.0F);
-        if (!this.isSilent()) {
-            this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), ModSounds.DALEK_SHOOT_SOUND.get(), this.getSoundSource(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
-        }
+        double d3 = Math.sqrt(d0 * d0 + d2 * d2);
+        laserEntity.shoot(d0, d1 + d3 * (double)0.2F, d2, 1.6F, 0f);
 
+
+        this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), ModSounds.DALEK_SHOOT_SOUND.get(),
+                this.getSoundSource(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
         this.level().addFreshEntity(laserEntity);
         this.didShoot = true;
     }
@@ -200,7 +189,7 @@ public class DalekEntity extends Monster implements RangedAttackMob {
     }
 
     @Override
-    public void performRangedAttack(LivingEntity pTarget, float pDistanceFactor) {
+    public void performRangedAttack(@NotNull LivingEntity pTarget, float pDistanceFactor) {
         this.shootLaser(pTarget);
     }
 
@@ -213,8 +202,7 @@ public class DalekEntity extends Monster implements RangedAttackMob {
          * Returns whether an in-progress EntityAIBase should continue executing
          */
         public boolean canContinueToUse() {
-            if (this.mob instanceof DalekEntity) {
-                DalekEntity dalek = (DalekEntity) this.mob;
+            if (this.mob instanceof DalekEntity dalek) {
                 if (dalek.didShoot) {
                     dalek.setDidShoot(false);
                     return false;
