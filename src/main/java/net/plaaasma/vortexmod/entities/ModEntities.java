@@ -79,7 +79,7 @@ public class ModEntities {
     public static final RegistryObject<EntityType<LaserEntity>> LASER_ENTITY =
             ENTITY_TYPES.register("laser_entity", () -> EntityType.Builder.<LaserEntity>of(LaserEntity::new,
                     MobCategory.MISC)
-                    .sized(0.25f, 0.25f)
+                    .sized(1f, 1f)
                     .clientTrackingRange(10)
                     .updateInterval(1)
                     .build("laser_entity"));

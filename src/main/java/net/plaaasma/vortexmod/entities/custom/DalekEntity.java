@@ -61,7 +61,7 @@ public class DalekEntity extends Monster implements RangedAttackMob {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 100D)
+                .add(Attributes.MAX_HEALTH, 200D)
                 .add(Attributes.FOLLOW_RANGE, 18D)
                 .add(Attributes.MOVEMENT_SPEED, 0.5D)
                 .add(Attributes.ARMOR_TOUGHNESS, 10f)
@@ -172,10 +172,18 @@ public class DalekEntity extends Monster implements RangedAttackMob {
         }
         //explosion resistant!
         if (source.is(DamageTypeTags.IS_EXPLOSION)) {
-            amount = (float) (amount * 0.2D);
+            amount = 0.0f;
         }
 
         return amount;
+    }
+
+    @Override
+    public boolean hurt(DamageSource pSource, float pAmount) {
+        if (!(pSource.getEntity() instanceof DalekEntity)) {
+            return super.hurt(pSource, pAmount);
+        }
+        return false;
     }
 
     private void shootLaser(LivingEntity pTarget) {
@@ -183,12 +191,12 @@ public class DalekEntity extends Monster implements RangedAttackMob {
         double d0 = pTarget.getX() - this.getX();
         double d1 = pTarget.getY(0.3333333333333333D) - laserEntity.getY();
         double d2 = pTarget.getZ() - this.getZ();
-        double d3 = Math.sqrt(d0 * d0 + d2 * d2) * (double)0.2F;
-        laserEntity.shoot(d0, d1 + d3, d2, 1.5F, 1.0F);
-        if (!this.isSilent()) {
-            this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), ModSounds.DALEK_SHOOT_SOUND.get(), this.getSoundSource(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
-        }
+        double d3 = Math.sqrt(d0 * d0 + d2 * d2);
+        laserEntity.shoot(d0, d1 + d3 * (double)0.2F, d2, 1.6F, 0f);
 
+
+        this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), ModSounds.DALEK_SHOOT_SOUND.get(),
+                this.getSoundSource(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
         this.level().addFreshEntity(laserEntity);
         this.didShoot = true;
     }
