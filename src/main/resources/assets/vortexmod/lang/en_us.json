@@ -61,7 +61,7 @@
   "tooltip.vortexmod.scanner_block.tooltip": "Meant of the interior of a euclidean TARDIS, gives information about the outside world such as if there's ground below the exit point.",
   "tooltip.vortexmod.grounding_block.tooltip": "Will ensure that you land on the ground if you were set to be in the air.",
   "tooltip.vortexmod.biometric_module.tooltip": "Allows you to blacklist people from entering your TARDIS with commands. This is only functional in a euclidean TARDIS. (Right click for tutorial).",
-  "tooltip.vortexmod.tardis_sign_block.tooltip": "Allows you to blacklist people from entering your TARDIS with commands. This is only functional in a euclidean TARDIS. (Right click for tutorial).",
+  "tooltip.vortexmod.tardis_sign_block.tooltip": "Just a decorative block for your interiors or anything really.",
 
 
   "creativetab.vortex_tab": "Time Vortex"
