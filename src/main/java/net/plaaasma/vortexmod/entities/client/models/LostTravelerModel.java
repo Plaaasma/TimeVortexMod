@@ -1,4 +1,4 @@
-package net.plaaasma.vortexmod.entities.client;
+package net.plaaasma.vortexmod.entities.client.models;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

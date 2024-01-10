@@ -1,23 +1,19 @@
-package net.plaaasma.vortexmod.entities.client;
+package net.plaaasma.vortexmod.entities.client.renderers;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.plaaasma.vortexmod.VortexMod;
+import net.plaaasma.vortexmod.entities.client.ModModelLayers;
+import net.plaaasma.vortexmod.entities.client.models.TardisModel;
 import net.plaaasma.vortexmod.entities.custom.TardisEntity;
 
 public class TardisRenderer extends MobRenderer<TardisEntity, TardisModel<TardisEntity>> {

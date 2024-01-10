@@ -1,4 +1,4 @@
-package net.plaaasma.vortexmod.entities.client;
+package net.plaaasma.vortexmod.entities.client.renderers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -8,6 +8,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.plaaasma.vortexmod.VortexMod;
+import net.plaaasma.vortexmod.entities.client.models.DalekModel;
+import net.plaaasma.vortexmod.entities.client.ModModelLayers;
 import net.plaaasma.vortexmod.entities.custom.DalekEntity;
 @OnlyIn(Dist.CLIENT)
 public class DalekRenderer extends MobRenderer<DalekEntity, DalekModel<DalekEntity>> {

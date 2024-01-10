@@ -1,5 +1,6 @@
 package net.plaaasma.vortexmod.entities;
 
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
@@ -10,16 +11,26 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.plaaasma.vortexmod.VortexMod;
+import net.plaaasma.vortexmod.entities.client.ModModelLayers;
+import net.plaaasma.vortexmod.entities.client.models.LaserModel;
+import net.plaaasma.vortexmod.entities.client.renderers.LaserRenderer;
 import net.plaaasma.vortexmod.entities.custom.*;
 import net.plaaasma.vortexmod.entities.custom.*;
+import net.plaaasma.vortexmod.events.ModEventBusClientEvents;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class ModEntities {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
             DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, VortexMod.MODID);
+
+    // PLACES TO REGISTER TO //
+    /*
+    ModEventBusClientEvents
+    ModModelLayers
+    ModEventBusEvents
+    VortexMod
+    */
 
     // LOST TRAVELERS
     public static final RegistryObject<EntityType<LostTravelerEntity>> BLUE_TRADER =
@@ -74,17 +85,17 @@ public class ModEntities {
                     .sized(2f, 2.5f)
                     .build("silver_black_dalek"));
 
-    // Projectiles
 
     public static final RegistryObject<EntityType<LaserEntity>> LASER_ENTITY =
             ENTITY_TYPES.register("laser_entity", () -> EntityType.Builder.<LaserEntity>of(LaserEntity::new,
-                    MobCategory.MISC)
+                            MobCategory.MISC)
                     .sized(1f, 1f)
                     .clientTrackingRange(10)
                     .updateInterval(1)
                     .build("laser_entity"));
 
     // TARDIS
+
     public static final RegistryObject<EntityType<TardisEntity>> TARDIS =
             ENTITY_TYPES.register("tardis", () -> EntityType.Builder.of(TardisEntity::new, MobCategory.CREATURE)
                     .sized(1.3f, 2.9f).build("tardis"));
