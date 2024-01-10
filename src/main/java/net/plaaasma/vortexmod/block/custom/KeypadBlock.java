@@ -61,7 +61,7 @@ public class KeypadBlock extends HorizontalBaseEntityBlock {
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (!pLevel.isClientSide()) {
-            pPlayer.displayClientMessage(Component.literal("Use the '/tardis set coords (x) (y) (z)' to set the target coordinates or '/tardis set dim (dimension)' to set the target dimension").withStyle(ChatFormatting.AQUA), false);
+            pPlayer.displayClientMessage(Component.literal("Use the '/tardis target set coords (x) (y) (z)' to set the target coordinates or '/tardis target set dim (dimension)' to set the target dimension. You can also do '/tardis locations save (name)' and '/tardis locations load (name)'").withStyle(ChatFormatting.AQUA), false);
         }
 
         return InteractionResult.SUCCESS;

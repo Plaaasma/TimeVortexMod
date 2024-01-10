@@ -57,7 +57,7 @@ public class BiometricBlock extends HorizontalBaseEntityBlock {
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (!pLevel.isClientSide()) {
-            pPlayer.displayClientMessage(Component.literal("Use the '/tardis blacklist (player)' and '/tardis whitelist (player)' commands to add and remove people from the whitelist.").withStyle(ChatFormatting.AQUA), false);
+            pPlayer.displayClientMessage(Component.literal("Use the '/tardis security blacklist (player)' and '/tardis security whitelist (player)' commands to add and remove people from the whitelist.").withStyle(ChatFormatting.AQUA), false);
         }
 
         return InteractionResult.SUCCESS;
