@@ -105,6 +105,7 @@ public class TardisEntity extends Mob {
         this.entityData.set(DATA_TARGET_Y_ID, pCompound.getFloat("Y"));
         this.entityData.set(DATA_TARGET_Z_ID, pCompound.getFloat("Z"));
         this.entityData.set(DATA_ROTATION_ID, pCompound.getInt("Rotation"));
+        this.setYRot(pCompound.getInt("Rotation"));
     }
 
     @Override
@@ -304,10 +305,11 @@ public class TardisEntity extends Mob {
                                     blockTardisTarget = data.getDataMap().get(this.getUUID().toString());
                                 }
                                 Vec3 tardisTarget = new Vec3(blockTardisTarget.getX() + 1.5, blockTardisTarget.getY(), blockTardisTarget.getZ() + 0.5);
+                                int playerRotation = 0;
                                 boolean found_door = false;
-                                for (int x = -100; x <= 100 && !found_door; x++) {
-                                    for (int y = -1; y <= 100 && !found_door; y++) {
-                                        for (int z = -100; z <= 100 && !found_door; z++) {
+                                for (int x = -64; x <= 64 && !found_door; x++) {
+                                    for (int y = -64; y <= 64 && !found_door; y++) {
+                                        for (int z = -64; z <= 64 && !found_door; z++) {
                                             BlockPos currentPos = blockTardisTarget.offset(x, y, z);
 
                                             BlockState blockState = dimension.getBlockState(currentPos);
@@ -321,18 +323,22 @@ public class TardisEntity extends Mob {
                                                         newPos = currentPos.east();
                                                         x_offset = 1.5;
                                                         z_offset = 0.5;
+                                                        playerRotation = -90;
                                                     } else if (direction == 1) {
                                                         newPos = currentPos.south();
                                                         x_offset = 0.5;
                                                         z_offset = 1.5;
+                                                        playerRotation = 0;
                                                     } else if (direction == 2) {
                                                         newPos = currentPos.west();
                                                         x_offset = -0.5;
                                                         z_offset = 0.5;
+                                                        playerRotation = 90;
                                                     } else {
                                                         newPos = currentPos.north();
                                                         x_offset = 0.5;
                                                         z_offset = -0.5;
+                                                        playerRotation = 180;
                                                     }
 
                                                     if (dimension.getBlockState(newPos) == Blocks.AIR.defaultBlockState() && dimension.getBlockState(newPos.above()) == Blocks.AIR.defaultBlockState()) {
@@ -352,6 +358,7 @@ public class TardisEntity extends Mob {
                                     serverLevel.setBlockAndUpdate(doorTarget, ModBlocks.DOOR_BLOCK.get().defaultBlockState());
                                 }
 
+                                pPlayer.setYRot(playerRotation);
                                 pPlayer.changeDimension(dimension, new ModTeleporter(tardisTarget));
                             } else {
                                 pPlayer.displayClientMessage(Component.literal("You are not whitelisted in this TARDIS").withStyle(ChatFormatting.RED), true);
@@ -426,20 +433,27 @@ public class TardisEntity extends Mob {
                     this.entityData.set(DATA_ANIM_STAGE_ID, 0);
                 }
             }
+
+            this.entityData.set(DATA_LEVEL_ID, this.level().dimension().toString());
+            this.entityData.set(DATA_TARGET_X_ID, (float) this.position().x);
+            this.entityData.set(DATA_TARGET_Y_ID, (float) this.position().y);
+            this.entityData.set(DATA_TARGET_Z_ID, (float) this.position().z);
+            this.entityData.set(DATA_ROTATION_ID, (int) this.getYRot());
         }
         else if (this.level() instanceof ClientLevel clientLevel) {
-
-            if (!Minecraft.getInstance().allowsMultiplayer()) {
+            if (Minecraft.getInstance().isSingleplayer()) {
                 String targetDimension = this.entityData.get(DATA_LEVEL_ID);
                 Vec3 target = new Vec3(this.entityData.get(DATA_TARGET_X_ID), this.entityData.get(DATA_TARGET_Y_ID), this.entityData.get(DATA_TARGET_Z_ID));
                 int rotation_yaw = this.entityData.get(DATA_ROTATION_ID);
 
-                if (((int) this.getYRot() != rotation_yaw || !(this.position().x == target.x && this.position().y == target.y && this.position().z == target.z)) && !this.isFallFlying()) {
+                if ((!(this.position().x == target.x && this.position().y == target.y && this.position().z == target.z)) && !this.isFallFlying()) {
                     if (this.level().dimension().toString().equals(targetDimension)) {
-                        this.setYRot(rotation_yaw);
                         this.moveTo(target.x, target.y, target.z, rotation_yaw, 0);
                     }
                 }
+//                if ((int) this.getYRot() != rotation_yaw) {
+//                    this.setYRot(rotation_yaw);
+//                }
             }
         }
 

@@ -114,6 +114,7 @@ public class DoorBlock extends Block {
 
                                             exitPosition = new Vec3(newX, blockExitPos.getY(), newZ);
 
+                                            pPlayer.setYRot(yaw + 180f);
                                             pPlayer.changeDimension(targetDimension, new ModTeleporter(exitPosition));
                                         }
                                         else {
