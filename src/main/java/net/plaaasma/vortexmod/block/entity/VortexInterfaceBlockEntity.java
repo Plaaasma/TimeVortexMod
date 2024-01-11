@@ -515,6 +515,13 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                             else {
                                 throttle_on = 0;
                             }
+                            if (this.data.get(13) == 1) {
+                                throttle_on = 1;
+                                if (!blockState.getValue(BlockStateProperties.POWERED)) {
+                                    ((ThrottleBlock) blockState.getBlock()).pull(blockState, pLevel, currentPos);
+                                }
+                                this.data.set(13, 0);
+                            }
                         }
 
                         var blockEntity = pLevel.getBlockEntity(currentPos);
