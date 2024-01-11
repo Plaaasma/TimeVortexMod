@@ -236,6 +236,19 @@ public class TardisEntity extends Mob {
     }
 
     @Override
+    public boolean isPushedByFluid() {
+        return false;
+    }
+
+    @Override
+    protected void pushEntities() { }
+
+    @Override
+    public boolean canBeCollidedWith() {
+        return !this.entityData.get(DATA_IN_FLIGHT_ID) && !this.entityData.get(DATA_REMAT_ID);
+    }
+
+    @Override
     public InteractionResult interactAt(Player pPlayer, Vec3 pVec, InteractionHand pHand) {
         Level playerLevel = pPlayer.level();
 

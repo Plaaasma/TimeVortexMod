@@ -723,7 +723,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     if (this.data.get(0) > end_tick && this.data.get(0) > this.data.get(1) + remat_time) {
                         BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
                         this.data.set(1, this.data.get(0));
-                        handleLandingEntities(targetDimension, tardisDimension, flight_target, this.data.get(2));
+                        handleLandingEntities(targetDimension, tardisDimension, flight_target, this.getExtUUID());
                         //tardisEntity.teleportTo(targetDimension, flight_target.getX(), flight_target.getY(), flight_target.getZ(), RelativeMovement.ALL, rotation_yaw, 0);
                         this.data.set(6, targetX);
                         this.data.set(7, targetY);
@@ -864,13 +864,13 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         }
     }
 
-    public static void handleLandingEntities(ServerLevel serverLevel, ServerLevel pLevel, BlockPos target, int ownerCode) {
+    public static void handleLandingEntities(ServerLevel serverLevel, ServerLevel pLevel, BlockPos target, UUID uuid) {
         Entity player = serverLevel.getNearestPlayer(target.getX(), target.getY(), target.getZ(), 1, false);
         if (player != null) {
             MinecraftServer minecraftserver = pLevel.getServer();
             ServerLevel overworld = minecraftserver.getLevel(Level.OVERWORLD);
             LocationMapData data = LocationMapData.get(overworld);
-            BlockPos blockTardisTarget = data.getDataMap().get(Integer.toString(ownerCode));
+            BlockPos blockTardisTarget = data.getDataMap().get(uuid.toString());
             Vec3 tardisTarget = new Vec3(blockTardisTarget.getX() + 1.5, blockTardisTarget.getY(), blockTardisTarget.getZ() + 0.5);
             boolean found_door = false;
             for (int x = -100; x <= 100 && !found_door; x++) {
@@ -932,7 +932,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 MinecraftServer minecraftserver = pLevel.getServer();
                 ServerLevel overworld = minecraftserver.getLevel(Level.OVERWORLD);
                 LocationMapData data = LocationMapData.get(overworld);
-                BlockPos blockTardisTarget = data.getDataMap().get(Integer.toString(ownerCode));
+                BlockPos blockTardisTarget = data.getDataMap().get(uuid.toString());
                 Vec3 tardisTarget = new Vec3(blockTardisTarget.getX() + 1.5, blockTardisTarget.getY(), blockTardisTarget.getZ() + 0.5);
                 boolean found_door = false;
                 for (int x = -100; x <= 100 && !found_door; x++) {
