@@ -459,6 +459,8 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 }
             }
 
+            AABB overrideAABB = null;
+
             for (int x = -size; x <= size; x++) {
                 for (int y = -1; y <= size; y++) {
                     for (int z = -size; z <= size; z++) {
@@ -471,9 +473,33 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
                         if (blockEntity instanceof SizeManipulatorBlockEntity sizeManipulatorBlockEntity) {
                             size += sizeManipulatorBlockEntity.data.get(0);
+                            if ((sizeManipulatorBlockEntity.getAlphaPos() != null && sizeManipulatorBlockEntity.getBetaPos() != null)) {
+                                overrideAABB = new AABB(sizeManipulatorBlockEntity.getAlphaPos(), sizeManipulatorBlockEntity.getBetaPos());
+                                if (overrideAABB.getSize() == 0) {
+                                    overrideAABB = null;
+                                }
+                            }
                         }
                     }
                 }
+            }
+            if (overrideAABB != null) {
+                int biggestDifference;
+                int xDif = (int) (overrideAABB.maxX - overrideAABB.minX);
+                int yDif = (int) (overrideAABB.maxY - overrideAABB.minY);
+                int zDif = (int) (overrideAABB.maxZ - overrideAABB.minZ);
+
+                if (xDif > yDif && xDif > zDif) {
+                    biggestDifference = xDif;
+                }
+                else if (yDif > xDif && yDif > zDif) {
+                    biggestDifference = yDif;
+                }
+                else {
+                    biggestDifference = zDif;
+                }
+
+                size = biggestDifference;
             }
 
             if (size <= 0) {
@@ -491,59 +517,115 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 y_size = 16;
             }
 
-            for (int x = -size; x <= size; x++) {
-                for (int y = -1; y <= y_size + (y_size - 1); y++) {
-                    for (int z = -size; z <= size; z++) {
-                        BlockPos currentPos = pPos.offset(x, y, z);
-                        if (currentPos == pPos) {
-                            continue;
-                        }
-
-                        BlockState blockState = pLevel.getBlockState(currentPos);
-                        Block block = blockState.getBlock();
-
-                        if (block == ModBlocks.GROUNDING_BLOCK.get()) {
-                            auto_ground = true;
-                        }
-                        else if (block == ModBlocks.EQUALIZER_BLOCK.get()) {
-                            has_equalizer = true;
-                        }
-                        else if (block == ModBlocks.THROTTLE_BLOCK.get()) {
-                            if (blockState.getValue(BlockStateProperties.POWERED)) {
-                                throttle_on = 1;
+            if (overrideAABB == null || !proto) {
+                for (int x = -size; x <= size; x++) {
+                    for (int y = -1; y <= y_size + (y_size - 1); y++) {
+                        for (int z = -size; z <= size; z++) {
+                            BlockPos currentPos = pPos.offset(x, y, z);
+                            if (currentPos == pPos) {
+                                continue;
                             }
-                            else {
-                                throttle_on = 0;
-                            }
-                            if (this.data.get(13) == 1) {
-                                throttle_on = 1;
-                                if (!blockState.getValue(BlockStateProperties.POWERED)) {
-                                    ((ThrottleBlock) blockState.getBlock()).pull(blockState, pLevel, currentPos);
+
+                            BlockState blockState = pLevel.getBlockState(currentPos);
+                            Block block = blockState.getBlock();
+
+                            if (block == ModBlocks.GROUNDING_BLOCK.get()) {
+                                auto_ground = true;
+                            } else if (block == ModBlocks.EQUALIZER_BLOCK.get()) {
+                                has_equalizer = true;
+                            } else if (block == ModBlocks.THROTTLE_BLOCK.get()) {
+                                if (blockState.getValue(BlockStateProperties.POWERED)) {
+                                    throttle_on = 1;
+                                } else {
+                                    throttle_on = 0;
                                 }
-                                this.data.set(13, 0);
-                            }
-                        }
-
-                        var blockEntity = pLevel.getBlockEntity(currentPos);
-
-                        if (blockEntity != null) {
-                            if (blockEntity instanceof CoordinateDesignatorBlockEntity designatorBlockEntity) {
-                                targetX = designatorBlockEntity.data.get(0);
-                                targetY = designatorBlockEntity.data.get(1);
-                                targetZ = designatorBlockEntity.data.get(2);
-                                if (this.data.get(14) == 1) {
-                                    targetX = this.data.get(15);
-                                    targetY = this.data.get(16);
-                                    targetZ = this.data.get(17);
-                                    designatorBlockEntity.data.set(0, targetX);
-                                    designatorBlockEntity.data.set(1, targetY);
-                                    designatorBlockEntity.data.set(2, targetZ);
-                                    this.data.set(14, 0);
+                                if (this.data.get(13) == 1) {
+                                    throttle_on = 1;
+                                    if (!blockState.getValue(BlockStateProperties.POWERED)) {
+                                        ((ThrottleBlock) blockState.getBlock()).pull(blockState, pLevel, currentPos);
+                                    }
+                                    this.data.set(13, 0);
                                 }
                             }
 
-                            if (blockEntity instanceof BiometricBlockEntity) {
-                                has_bio_sec = true;
+                            var blockEntity = pLevel.getBlockEntity(currentPos);
+
+                            if (blockEntity != null) {
+                                if (blockEntity instanceof CoordinateDesignatorBlockEntity designatorBlockEntity) {
+                                    targetX = designatorBlockEntity.data.get(0);
+                                    targetY = designatorBlockEntity.data.get(1);
+                                    targetZ = designatorBlockEntity.data.get(2);
+                                    if (this.data.get(14) == 1) {
+                                        targetX = this.data.get(15);
+                                        targetY = this.data.get(16);
+                                        targetZ = this.data.get(17);
+                                        designatorBlockEntity.data.set(0, targetX);
+                                        designatorBlockEntity.data.set(1, targetY);
+                                        designatorBlockEntity.data.set(2, targetZ);
+                                        this.data.set(14, 0);
+                                    }
+                                }
+
+                                if (blockEntity instanceof BiometricBlockEntity) {
+                                    has_bio_sec = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else {
+                for (int x = (int) overrideAABB.minX; x <= (int) overrideAABB.maxX; x++) {
+                    for (int y = (int) overrideAABB.minY; y <= (int) overrideAABB.maxY; y++) {
+                        for (int z = (int) overrideAABB.minZ; z <= (int) overrideAABB.maxZ; z++) {
+                            BlockPos currentPos = pPos.offset(x, y, z);
+                            if (currentPos == pPos) {
+                                continue;
+                            }
+
+                            BlockState blockState = pLevel.getBlockState(currentPos);
+                            Block block = blockState.getBlock();
+
+                            if (block == ModBlocks.GROUNDING_BLOCK.get()) {
+                                auto_ground = true;
+                            } else if (block == ModBlocks.EQUALIZER_BLOCK.get()) {
+                                has_equalizer = true;
+                            } else if (block == ModBlocks.THROTTLE_BLOCK.get()) {
+                                if (blockState.getValue(BlockStateProperties.POWERED)) {
+                                    throttle_on = 1;
+                                } else {
+                                    throttle_on = 0;
+                                }
+                                if (this.data.get(13) == 1) {
+                                    throttle_on = 1;
+                                    if (!blockState.getValue(BlockStateProperties.POWERED)) {
+                                        ((ThrottleBlock) blockState.getBlock()).pull(blockState, pLevel, currentPos);
+                                    }
+                                    this.data.set(13, 0);
+                                }
+                            }
+
+                            var blockEntity = pLevel.getBlockEntity(currentPos);
+
+                            if (blockEntity != null) {
+                                if (blockEntity instanceof CoordinateDesignatorBlockEntity designatorBlockEntity) {
+                                    targetX = designatorBlockEntity.data.get(0);
+                                    targetY = designatorBlockEntity.data.get(1);
+                                    targetZ = designatorBlockEntity.data.get(2);
+                                    if (this.data.get(14) == 1) {
+                                        targetX = this.data.get(15);
+                                        targetY = this.data.get(16);
+                                        targetZ = this.data.get(17);
+                                        designatorBlockEntity.data.set(0, targetX);
+                                        designatorBlockEntity.data.set(1, targetY);
+                                        designatorBlockEntity.data.set(2, targetZ);
+                                        this.data.set(14, 0);
+                                    }
+                                }
+
+                                if (blockEntity instanceof BiometricBlockEntity) {
+                                    has_bio_sec = true;
+                                }
                             }
                         }
                     }
@@ -604,9 +686,14 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             targetX = temp_target.getX();
             targetY = temp_target.getY();
             targetZ = temp_target.getZ();
-
-            if (targetY >= (targetDimension.dimensionType().minY() + targetDimension.dimensionType().height()) - (y_size + (y_size - 1))) {
-                targetY = (targetDimension.dimensionType().minY() + targetDimension.dimensionType().height()) - (y_size + (y_size - 1)) - 1;
+            if (overrideAABB != null) {
+                if (targetY >= (targetDimension.dimensionType().minY() + targetDimension.dimensionType().height()) - (overrideAABB.maxY + 16)) {
+                    targetY = (int) ((targetDimension.dimensionType().minY() + targetDimension.dimensionType().height()) - (overrideAABB.maxY + 16));
+                }
+            } else {
+                if (targetY >= (targetDimension.dimensionType().minY() + targetDimension.dimensionType().height()) - (y_size + (y_size - 1))) {
+                    targetY = (targetDimension.dimensionType().minY() + targetDimension.dimensionType().height()) - (y_size + (y_size - 1)) - 1;
+                }
             }
             if (targetY <= targetDimension.dimensionType().minY() + 1) {
                 targetY = targetDimension.dimensionType().minY() + 2;
@@ -626,15 +713,6 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
             if (proto) { // Proto TARDIS Logic
                 BlockPos exteriorPos = new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8));
-                Entity closestPlayer = pLevel.getNearestPlayer(pPos.getX(), pPos.getY(), pPos.getZ(), size + 1, false);
-                if (closestPlayer == null) {
-                    closestPlayer = vortexDimension.getNearestPlayer(pPos.getX(), pPos.getY(), pPos.getZ(), size + 1, false);
-                }
-                if (closestPlayer != null) {
-                    if (closestPlayer.position().y() < pPos.getY() - 1) {
-                        closestPlayer = null;
-                    }
-                }
 
                 if (throttle_on == 1) {
                     this.data.set(21, 15);
@@ -642,26 +720,26 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         BlockPos realTargetPos = new BlockPos(targetX, targetY, targetZ);
                         BlockPos vortexTargetPos = findNewVortexPosition(exteriorPos, pPos, realTargetPos, size);
                         vortexTargetPos = new BlockPos(vortexTargetPos.getX(), -100, vortexTargetPos.getZ());
-                        if (Math.sqrt(exteriorPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 1000) {
-                            this.data.set(6, this.data.get(6) + 1000);
-                            this.data.set(8, this.data.get(8) + 1000);
-                            vortexTargetPos = vortexTargetPos.offset(1000, 0, 1000);
+                        if (Math.sqrt(exteriorPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 10000) {
+                            this.data.set(6, this.data.get(6) + 10000);
+                            this.data.set(8, this.data.get(8) + 10000);
+                            vortexTargetPos = vortexTargetPos.offset(10000, 0, 10000);
                         }
 
                         this.data.set(1, this.data.get(0));
                         ChunkPos chunkPos = vortexDimension.getChunkAt(vortexTargetPos).getPos();
                         ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, vortexTargetPos, chunkPos.x, chunkPos.z, true, true);
-                        handleVortexTeleports(size, pLevel, pPos, vortexTargetPos);
+                        handleVortexTeleports(size, overrideAABB, pLevel, pPos, vortexTargetPos);
                         chunkPos = currentDimension.getChunkAt(pPos).getPos();
                         ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, false, true);
                         vortexDimension.playSeededSound(null, vortexTargetPos.getX(), vortexTargetPos.getY(), vortexTargetPos.getZ(), ModSounds.FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
-                    } else if (pLevel == vortexDimension && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 0.05 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ)) && closestPlayer != null) {
+                    } else if (pLevel == vortexDimension && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 0.05 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ))) {
                         BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
                         this.data.set(1, this.data.get(0));
                         this.data.set(11, 0);
                         ChunkPos chunkPos = targetDimension.getChunkAt(flight_target).getPos();
                         ForgeChunkManager.forceChunk(targetDimension, VortexMod.MODID, flight_target, chunkPos.x, chunkPos.z, true, true);
-                        handleTeleports(size, vortexDimension, targetDimension, pPos, flight_target);
+                        handleTeleports(size, overrideAABB, vortexDimension, targetDimension, pPos, flight_target);
                         chunkPos = currentDimension.getChunkAt(pPos).getPos();
                         ForgeChunkManager.forceChunk(currentDimension, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, false, true);
                         this.data.set(6, targetX);
@@ -673,24 +751,24 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         if (this.data.get(0) == this.data.get(1) + 1) {
                             pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.DEMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
                         }
-                        handleDematParticles(size, pLevel, pPos);
+                        handleDematParticles(size, overrideAABB, pLevel, pPos);
                     }
                     if (pLevel == vortexDimension && this.data.get(0) > 0) {
                         if (Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 0.3 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ)) && this.data.get(11) == 0) {
                             targetDimension.playSeededSound(null, targetX, targetY, targetZ, ModSounds.REMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
                             this.data.set(11, 1);
                         }
-                        if (this.data.get(0) % (4 * tickSpeed) == 0 && this.data.get(0) > this.data.get(1) + (4 * tickSpeed) && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) > 0.05 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ)) && closestPlayer != null) {
+                        if (this.data.get(0) % (4 * tickSpeed) == 0 && this.data.get(0) > this.data.get(1) + (4 * tickSpeed) && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) > 0.05 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ))) {
                             BlockPos newTarget = findNewVortexPosition(exteriorPos, pPos, new BlockPos(targetX, targetY, targetZ), size);
                             ChunkPos chunkPos = vortexDimension.getChunkAt(newTarget).getPos();
                             ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, newTarget, chunkPos.x, chunkPos.z, true, true);
-                            handleVortex2VortexTeleports(size, pLevel, pPos, newTarget);
-                            chunkPos = vortexDimension.getChunkAt(pPos).getPos();
-                            ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, false, true);
+                            handleVortex2VortexTeleports(size, overrideAABB, pLevel, pPos, newTarget);
+//                            chunkPos = vortexDimension.getChunkAt(pPos).getPos();
+//                            ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, false, true);
                             vortexDimension.playSeededSound(null, newTarget.getX(), newTarget.getY(), newTarget.getZ(), ModSounds.FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
                         }
                         if (Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 0.3 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ))) {
-                            handleRematParticles(size, targetDimension, new BlockPos(targetX, targetY, targetZ));
+                            handleRematParticles(size, overrideAABB, targetDimension, new BlockPos(targetX, targetY, targetZ));
                             if (this.data.get(0) % (4 * tickSpeed) == 0) {
                                 if (!has_equalizer) {
                                     handleLightningStrikes(targetDimension, new BlockPos(targetX, targetY, targetZ));
@@ -1205,7 +1283,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         }
     }
 
-    public static void spawnDematSquare(Connection pConnection, BlockPos center, double radius) {
+    public static void spawnDematSquare(Connection pConnection, BlockPos center, double radius, AABB overrideAABB) {
         radius = radius + 1;
 
         double y_radius = 10;
@@ -1218,157 +1296,183 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
         Random random = new Random();
 
-        // Calculate the number of particles per edge
-        int particlesPerEdge = (int) Math.pow(particleCount, 1.0/2);
+        if (overrideAABB == null) {
+            // Calculate the number of particles per edge
+            int particlesPerEdge = (int) Math.pow(particleCount, 1.0 / 2);
 
-        for (int face = 0; face < 6; face++) { // 6 faces on a cube
-            for (int i = 0; i < particlesPerEdge; i++) {
-                for (int j = 0; j < particlesPerEdge; j++) {
-                    // Normalize the coordinates to be between 0 and 1
-                    double normalizedI = i / (double) (particlesPerEdge - 1);
-                    double normalizedJ = j / (double) (particlesPerEdge - 1);
+            for (int face = 0; face < 6; face++) { // 6 faces on a cube
+                for (int i = 0; i < particlesPerEdge; i++) {
+                    for (int j = 0; j < particlesPerEdge; j++) {
+                        // Normalize the coordinates to be between 0 and 1
+                        double normalizedI = i / (double) (particlesPerEdge - 1);
+                        double normalizedJ = j / (double) (particlesPerEdge - 1);
 
-                    // Calculate positions based on the face
-                    double x = 0, y = 0, z = 0;
-                    switch (face) {
-                        case 0: x = normalizedI * 2 - 1; y = 1; z = normalizedJ * 2 - 1; break; // Top face
-                        case 1: x = normalizedI * 2 - 1; y = -1; z = normalizedJ * 2 - 1; break; // Bottom face
-                        case 2: x = 1; y = normalizedI * 2 - 1; z = normalizedJ * 2 - 1; break; // Right face
-                        case 3: x = -1; y = normalizedI * 2 - 1; z = normalizedJ * 2 - 1; break; // Left face
-                        case 4: x = normalizedI * 2 - 1; y = normalizedJ * 2 - 1; z = 1; break; // Front face
-                        case 5: x = normalizedI * 2 - 1; y = normalizedJ * 2 - 1; z = -1; break; // Back face
-                    }
+                        // Calculate positions based on the face
+                        double x = 0, y = 0, z = 0;
+                        switch (face) {
+                            case 0:
+                                x = normalizedI * 2 - 1;
+                                y = 1;
+                                z = normalizedJ * 2 - 1;
+                                break; // Top face
+                            case 1:
+                                x = normalizedI * 2 - 1;
+                                y = -1;
+                                z = normalizedJ * 2 - 1;
+                                break; // Bottom face
+                            case 2:
+                                x = 1;
+                                y = normalizedI * 2 - 1;
+                                z = normalizedJ * 2 - 1;
+                                break; // Right face
+                            case 3:
+                                x = -1;
+                                y = normalizedI * 2 - 1;
+                                z = normalizedJ * 2 - 1;
+                                break; // Left face
+                            case 4:
+                                x = normalizedI * 2 - 1;
+                                y = normalizedJ * 2 - 1;
+                                z = 1;
+                                break; // Front face
+                            case 5:
+                                x = normalizedI * 2 - 1;
+                                y = normalizedJ * 2 - 1;
+                                z = -1;
+                                break; // Back face
+                        }
 
-                    float randomFloat = random.nextFloat();
+                        float randomFloat = random.nextFloat();
 
-                    ParticleOptions particle = ParticleTypes.ENCHANT; // Or your custom particle
+                        ParticleOptions particle = ParticleTypes.ENCHANT; // Or your custom particle
 
-                    if (randomFloat > 0.33 && randomFloat < 0.66) {
-                        particle = ParticleTypes.DRAGON_BREATH;
-                    } else if (randomFloat > 0.66) {
-                        particle = ParticleTypes.GLOW;
-                    }
+                        if (randomFloat > 0.33 && randomFloat < 0.66) {
+                            particle = ParticleTypes.DRAGON_BREATH;
+                        } else if (randomFloat > 0.66) {
+                            particle = ParticleTypes.GLOW;
+                        }
 
-                    int xVel = 0;
-                    int yVel = 0;
-                    int zVel = 0;
+                        int xVel = 0;
+                        int yVel = 0;
+                        int zVel = 0;
 
-                    switch (face) {
-                        case 0:
-                        case 1:
-                            xVel = random.nextInt(3) - 1; zVel = random.nextInt(3) - 1; yVel = 0; break; // Top face
+                        switch (face) {
+                            case 0:
+                            case 1:
+                                xVel = random.nextInt(3) - 1;
+                                zVel = random.nextInt(3) - 1;
+                                yVel = 0;
+                                break; // Top face
 // Bottom face
-                        case 2:
-                        case 3:
-                            yVel = random.nextInt(3) - 1; zVel = random.nextInt(3) - 1; xVel = 0; break; // Right face
+                            case 2:
+                            case 3:
+                                yVel = random.nextInt(3) - 1;
+                                zVel = random.nextInt(3) - 1;
+                                xVel = 0;
+                                break; // Right face
 // Left face
-                        case 4:
-                        case 5:
-                            yVel = random.nextInt(3) - 1; xVel = random.nextInt(3) - 1; zVel = 0; break; // Front face
+                            case 4:
+                            case 5:
+                                yVel = random.nextInt(3) - 1;
+                                xVel = random.nextInt(3) - 1;
+                                zVel = 0;
+                                break; // Front face
 // Back face
+                        }
+
+                        double newX = center.getX() + (radius * x);
+                        double newY = (center.getY() - 1) + ((y_radius + 2) * y);
+                        double newZ = center.getZ() + (radius * z);
+
+                        if (newY < center.getY() - 1) {
+                            newY = center.getY() - 1;
+                        }
+
+                        ClientboundLevelParticlesPacket particlesPacket = new ClientboundLevelParticlesPacket(
+                                particle, false,
+                                newX + 0.5,
+                                newY,
+                                newZ + 0.5,
+                                xVel, yVel, zVel, 0, 1
+                        );
+                        pConnection.send(particlesPacket);
                     }
+                }
+            }
+        }
+        else {
+            BlockPos corner1 = new BlockPos(center.getX() + (int) overrideAABB.minX, center.getY()+ (int) overrideAABB.minY, center.getZ() + (int) overrideAABB.minZ);
+            BlockPos corner2 = new BlockPos(center.getX() + (int) overrideAABB.maxX, center.getY() + (int) overrideAABB.maxY, center.getZ() + (int) overrideAABB.maxZ);
 
-                    double newX = center.getX() + (radius * x);
-                    double newY = (center.getY() - 1) + ((y_radius + 2) * y);
-                    double newZ = center.getZ() + (radius * z);
+            int xLength = Math.abs(corner1.getX() - corner2.getX());
+            int yLength = Math.abs(corner1.getY() - corner2.getY());
+            int zLength = Math.abs(corner1.getZ() - corner2.getZ());
 
-                    if (newY < center.getY() - 1) {
-                        newY = center.getY() - 1;
+            // Determine the minimum corner for iteration
+            BlockPos minCorner = new BlockPos(
+                    Math.min(corner1.getX(), corner2.getX()),
+                    Math.min(corner1.getY(), corner2.getY()),
+                    Math.min(corner1.getZ(), corner2.getZ())
+            );
+            // Iterate over the edges of the cuboid
+            for (int x = 0; x <= xLength + 1; x++) {
+                for (int y = 0; y <= yLength + 1; y++) {
+                    for (int z = 0; z <= zLength + 1; z++) {
+                        // Check if the current point is on the edge of the cuboid
+                        if (x == 0 || x == xLength + 1 || y == 0 || y == yLength + 1 || z == 0 || z == zLength + 1) {
+                            float randomFloat = random.nextFloat();
+
+                            ParticleOptions particle = ParticleTypes.ENCHANT; // Or your custom particle
+
+                            if (randomFloat > 0.33 && randomFloat < 0.66) {
+                                particle = ParticleTypes.DRAGON_BREATH;
+                            } else if (randomFloat > 0.66) {
+                                particle = ParticleTypes.GLOW;
+                            }
+
+                            int xVel = 0;
+                            int yVel = 0;
+                            int zVel = 0;
+
+                            if (y == yLength) {
+                                // Top face
+                                xVel = random.nextInt(3) - 1;
+                                zVel = random.nextInt(3) - 1;
+                                yVel = 0;
+                            } else if (y == 0) {
+                                // Bottom face
+                            } else if (x == 0) {
+                                // Left face
+                            } else if (x == xLength) {
+                                // Right face
+                                yVel = random.nextInt(3) - 1;
+                                zVel = random.nextInt(3) - 1;
+                                xVel = 0;
+                            } else if (z == 0) {
+                                // Front face
+                                yVel = random.nextInt(3) - 1;
+                                xVel = random.nextInt(3) - 1;
+                                zVel = 0;
+                            } else if (z == zLength) {
+                                // Back face
+                            }
+
+                            ClientboundLevelParticlesPacket particlesPacket = new ClientboundLevelParticlesPacket(
+                                    particle, false,
+                                    minCorner.getX() + x,
+                                    minCorner.getY() + y,
+                                    minCorner.getZ() + z,
+                                    xVel, yVel, zVel, 0, 1
+                            );
+                            pConnection.send(particlesPacket);
+                        }
                     }
-
-                    ClientboundLevelParticlesPacket particlesPacket = new ClientboundLevelParticlesPacket(
-                            particle, false,
-                            newX + 0.5,
-                            newY,
-                            newZ + 0.5,
-                            xVel, yVel, zVel, 0, 1
-                    );
-                    pConnection.send(particlesPacket);
                 }
             }
         }
     }
 
-    public static void spawnEucDematSquare(Connection pConnection, BlockPos center) {
-        int particleCount = 100;
-
-        Random random = new Random();
-
-        // Calculate the number of particles per edge
-        int particlesPerEdge = (int) Math.pow(particleCount, 1.0/2);
-
-        for (int face = 0; face < 6; face++) { // 6 faces on a cube
-            for (int i = 0; i < particlesPerEdge; i++) {
-                for (int j = 0; j < particlesPerEdge; j++) {
-                    // Normalize the coordinates to be between 0 and 1
-                    double normalizedI = i / (double) (particlesPerEdge - 1);
-                    double normalizedJ = j / (double) (particlesPerEdge - 1);
-
-                    // Calculate positions based on the face
-                    double x = 0, y = 0, z = 0;
-                    switch (face) {
-                        case 0: x = normalizedI * 2 - 1; y = 1; z = normalizedJ * 2 - 1; break; // Top face
-                        case 1: x = normalizedI * 2 - 1; y = -1; z = normalizedJ * 2 - 1; break; // Bottom face
-                        case 2: x = 1; y = normalizedI * 2 - 1; z = normalizedJ * 2 - 1; break; // Right face
-                        case 3: x = -1; y = normalizedI * 2 - 1; z = normalizedJ * 2 - 1; break; // Left face
-                        case 4: x = normalizedI * 2 - 1; y = normalizedJ * 2 - 1; z = 1; break; // Front face
-                        case 5: x = normalizedI * 2 - 1; y = normalizedJ * 2 - 1; z = -1; break; // Back face
-                    }
-
-                    float randomFloat = random.nextFloat();
-
-                    ParticleOptions particle = ParticleTypes.ENCHANT; // Or your custom particle
-
-                    if (randomFloat > 0.33 && randomFloat < 0.66) {
-                        particle = ParticleTypes.DRAGON_BREATH;
-                    } else if (randomFloat > 0.66) {
-                        particle = ParticleTypes.GLOW;
-                    }
-
-                    int xVel = 0;
-                    int yVel = 0;
-                    int zVel = 0;
-
-                    switch (face) {
-                        case 0:
-                        case 1:
-                            xVel = random.nextInt(3) - 1; zVel = random.nextInt(3) - 1; yVel = 0; break; // Top face
-// Bottom face
-                        case 2:
-                        case 3:
-                            yVel = random.nextInt(3) - 1; zVel = random.nextInt(3) - 1; xVel = 0; break; // Right face
-// Left face
-                        case 4:
-                        case 5:
-                            yVel = random.nextInt(3) - 1; xVel = random.nextInt(3) - 1; zVel = 0; break; // Front face
-// Back face
-                    }
-
-                    double radius = 0.75;
-                    double y_radius = 1.25;
-
-                    double newX = center.getX() + (radius * x);
-                    double newY = (center.getY() - 1) + ((y_radius + 2) * y);
-                    double newZ = center.getZ() + (radius * z);
-
-                    if (newY < center.getY() - 1) {
-                        newY = center.getY() - 1;
-                    }
-
-                    ClientboundLevelParticlesPacket particlesPacket = new ClientboundLevelParticlesPacket(
-                            particle, false,
-                            newX + 0.5,
-                            newY,
-                            newZ + 0.5,
-                            0, yVel / 4f, 0, 0, 1
-                    );
-                    pConnection.send(particlesPacket);
-                }
-            }
-        }
-    }
-
-    public static void spawnRematSquare(Connection pConnection, BlockPos center, double radius) {
+    public static void spawnRematSquare(Connection pConnection, BlockPos center, double radius, AABB overrideAABB) {
         radius = radius + 1;
 
         double y_radius = 10;
@@ -1383,139 +1487,175 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
         Random random = new Random();
 
-        // Calculate the number of particles per edge
-        int particlesPerEdge = (int) Math.pow(particleCount, 1.0/2);
+        if (overrideAABB == null) {
+            // Calculate the number of particles per edge
+            int particlesPerEdge = (int) Math.pow(particleCount, 1.0 / 2);
 
-        for (int face = 0; face < 6; face++) { // 6 faces on a cube
-            for (int i = 0; i < particlesPerEdge; i++) {
-                for (int j = 0; j < particlesPerEdge; j++) {
-                    // Normalize the coordinates to be between 0 and 1
-                    double normalizedI = i / (double) (particlesPerEdge - 1);
-                    double normalizedJ = j / (double) (particlesPerEdge - 1);
+            for (int face = 0; face < 6; face++) { // 6 faces on a cube
+                for (int i = 0; i < particlesPerEdge; i++) {
+                    for (int j = 0; j < particlesPerEdge; j++) {
+                        // Normalize the coordinates to be between 0 and 1
+                        double normalizedI = i / (double) (particlesPerEdge - 1);
+                        double normalizedJ = j / (double) (particlesPerEdge - 1);
 
-                    // Calculate positions based on the face
-                    double x = 0, y = 0, z = 0;
-                    switch (face) {
-                        case 0: x = normalizedI * 2 - 1; y = 1; z = normalizedJ * 2 - 1; break; // Top face
-                        case 1: x = normalizedI * 2 - 1; y = -1; z = normalizedJ * 2 - 1; break; // Bottom face
-                        case 2: x = 1; y = normalizedI * 2 - 1; z = normalizedJ * 2 - 1; break; // Right face
-                        case 3: x = -1; y = normalizedI * 2 - 1; z = normalizedJ * 2 - 1; break; // Left face
-                        case 4: x = normalizedI * 2 - 1; y = normalizedJ * 2 - 1; z = 1; break; // Front face
-                        case 5: x = normalizedI * 2 - 1; y = normalizedJ * 2 - 1; z = -1; break; // Back face
+                        // Calculate positions based on the face
+                        double x = 0, y = 0, z = 0;
+                        switch (face) {
+                            case 0:
+                                x = normalizedI * 2 - 1;
+                                y = 1;
+                                z = normalizedJ * 2 - 1;
+                                break; // Top face
+                            case 1:
+                                x = normalizedI * 2 - 1;
+                                y = -1;
+                                z = normalizedJ * 2 - 1;
+                                break; // Bottom face
+                            case 2:
+                                x = 1;
+                                y = normalizedI * 2 - 1;
+                                z = normalizedJ * 2 - 1;
+                                break; // Right face
+                            case 3:
+                                x = -1;
+                                y = normalizedI * 2 - 1;
+                                z = normalizedJ * 2 - 1;
+                                break; // Left face
+                            case 4:
+                                x = normalizedI * 2 - 1;
+                                y = normalizedJ * 2 - 1;
+                                z = 1;
+                                break; // Front face
+                            case 5:
+                                x = normalizedI * 2 - 1;
+                                y = normalizedJ * 2 - 1;
+                                z = -1;
+                                break; // Back face
+                        }
+
+                        float randomFloat = random.nextFloat();
+
+                        ParticleOptions particle = ParticleTypes.ENCHANT; // Or your custom particle
+
+                        if (randomFloat > 0.5) {
+                            particle = ParticleTypes.CHERRY_LEAVES;
+                        }
+                        int xVel = 0;
+                        int yVel = 0;
+                        int zVel = 0;
+
+                        switch (face) {
+                            case 0:
+                            case 1:
+                                xVel = random.nextInt(3) - 1;
+                                zVel = random.nextInt(3) - 1;
+                                break; // Top face // Bottom face
+                            case 2:
+                            case 3:
+                                yVel = random.nextInt(3) - 1;
+                                zVel = random.nextInt(3) - 1;
+                                break; // Right face // Left face
+                            case 4:
+                            case 5:
+                                yVel = random.nextInt(3) - 1;
+                                xVel = random.nextInt(3) - 1;
+                                break; // Front face // Back face
+                        }
+
+                        double newX = center.getX() + radius * x;
+                        double newY = (center.getY() - 1) + (y_radius + 2) * y;
+                        double newZ = center.getZ() + radius * z;
+
+                        if (newY < center.getY() - 1) {
+                            newY = center.getY() - 1;
+                        }
+
+                        ClientboundLevelParticlesPacket particlesPacket = new ClientboundLevelParticlesPacket(
+                                particle, false,
+                                newX + 0.5,
+                                newY,
+                                newZ + 0.5,
+                                xVel, yVel, zVel, 0, 1
+                        );
+                        pConnection.send(particlesPacket);
                     }
-
-                    float randomFloat = random.nextFloat();
-
-                    ParticleOptions particle = ParticleTypes.ENCHANT; // Or your custom particle
-
-                    if (randomFloat > 0.5) {
-                        particle = ParticleTypes.CHERRY_LEAVES;
-                    }
-                    int xVel = 0;
-                    int yVel = 0;
-                    int zVel = 0;
-
-                    switch (face) {
-                        case 0:
-                        case 1:
-                            xVel = random.nextInt(3) - 1; zVel = random.nextInt(3) - 1; break; // Top face // Bottom face
-                        case 2:
-                        case 3:
-                            yVel = random.nextInt(3) - 1; zVel = random.nextInt(3) - 1; break; // Right face // Left face
-                        case 4:
-                        case 5:
-                            yVel = random.nextInt(3) - 1; xVel = random.nextInt(3) - 1; break; // Front face // Back face
-                    }
-
-                    double newX = center.getX() + radius * x;
-                    double newY = (center.getY() - 1) + (y_radius + 2) * y;
-                    double newZ = center.getZ() + radius * z;
-
-                    if (newY < center.getY() - 1) {
-                        newY = center.getY() - 1;
-                    }
-
-                    ClientboundLevelParticlesPacket particlesPacket = new ClientboundLevelParticlesPacket(
-                            particle, false,
-                            newX + 0.5,
-                            newY,
-                            newZ + 0.5,
-                            xVel, yVel, zVel, 0, 1
-                    );
-                    pConnection.send(particlesPacket);
                 }
             }
         }
-    }
+        else {
+            BlockPos corner1 = new BlockPos(center.getX() + (int) overrideAABB.minX, center.getY()+ (int) overrideAABB.minY, center.getZ() + (int) overrideAABB.minZ);
+            BlockPos corner2 = new BlockPos(center.getX() + (int) overrideAABB.maxX, center.getY() + (int) overrideAABB.maxY, center.getZ() + (int) overrideAABB.maxZ);
 
-    public static void spawnEucRematSquare(Connection pConnection, BlockPos center) {
-        int particleCount = 100;
+            int xLength = Math.abs(corner1.getX() - corner2.getX());
+            int yLength = Math.abs(corner1.getY() - corner2.getY());
+            int zLength = Math.abs(corner1.getZ() - corner2.getZ());
 
-        Random random = new Random();
+            // Determine the minimum corner for iteration
+            BlockPos minCorner = new BlockPos(
+                    Math.min(corner1.getX(), corner2.getX()),
+                    Math.min(corner1.getY(), corner2.getY()),
+                    Math.min(corner1.getZ(), corner2.getZ())
+            );
+            // Iterate over the edges of the cuboid
+            for (int x = 0; x <= xLength + 1; x++) {
+                for (int y = 0; y <= yLength + 1; y++) {
+                    for (int z = 0; z <= zLength + 1; z++) {
+                        // Check if the current point is on the edge of the cuboid
+                        if (x == 0 || x == xLength + 1 || y == 0 || y == yLength + 1 || z == 0 || z == zLength + 1) {
+                            float randomFloat = random.nextFloat();
 
-        // Calculate the number of particles per edge
-        int particlesPerEdge = (int) Math.pow(particleCount, 1.0/2);
+                            ParticleOptions particle = ParticleTypes.ENCHANT; // Or your custom particle
 
-        for (int face = 0; face < 6; face++) { // 6 faces on a cube
-            for (int i = 0; i < particlesPerEdge; i++) {
-                for (int j = 0; j < particlesPerEdge; j++) {
-                    // Normalize the coordinates to be between 0 and 1
-                    double normalizedI = i / (double) (particlesPerEdge - 1);
-                    double normalizedJ = j / (double) (particlesPerEdge - 1);
+                            if (randomFloat > 0.5) {
+                                particle = ParticleTypes.CHERRY_LEAVES;
+                            }
 
-                    // Calculate positions based on the face
-                    double x = 0, y = 0, z = 0;
-                    switch (face) {
-                        case 0: x = normalizedI * 2 - 1; y = 1; z = normalizedJ * 2 - 1; break; // Top face
-                        case 1: x = normalizedI * 2 - 1; y = -1; z = normalizedJ * 2 - 1; break; // Bottom face
-                        case 2: x = 1; y = normalizedI * 2 - 1; z = normalizedJ * 2 - 1; break; // Right face
-                        case 3: x = -1; y = normalizedI * 2 - 1; z = normalizedJ * 2 - 1; break; // Left face
-                        case 4: x = normalizedI * 2 - 1; y = normalizedJ * 2 - 1; z = 1; break; // Front face
-                        case 5: x = normalizedI * 2 - 1; y = normalizedJ * 2 - 1; z = -1; break; // Back face
+                            int xVel = 0;
+                            int yVel = 0;
+                            int zVel = 0;
+
+                            if (y == yLength) {
+                                // Top face
+                                xVel = random.nextInt(3) - 1;
+                                zVel = random.nextInt(3) - 1;
+                                yVel = 0;
+                            } else if (y == 0) {
+                                // Bottom face
+                                xVel = random.nextInt(3) - 1;
+                                zVel = random.nextInt(3) - 1;
+                                yVel = 0;
+                            } else if (x == 0) {
+                                // Left face
+                                yVel = random.nextInt(3) - 1;
+                                zVel = random.nextInt(3) - 1;
+                                xVel = 0;
+                            } else if (x == xLength) {
+                                // Right face
+                                yVel = random.nextInt(3) - 1;
+                                zVel = random.nextInt(3) - 1;
+                                xVel = 0;
+                            } else if (z == 0) {
+                                // Front face
+                                yVel = random.nextInt(3) - 1;
+                                xVel = random.nextInt(3) - 1;
+                                zVel = 0;
+                            } else if (z == zLength) {
+                                // Back face
+                                yVel = random.nextInt(3) - 1;
+                                xVel = random.nextInt(3) - 1;
+                                zVel = 0;
+                            }
+
+                            ClientboundLevelParticlesPacket particlesPacket = new ClientboundLevelParticlesPacket(
+                                    particle, false,
+                                    minCorner.getX() + x,
+                                    minCorner.getY() + y,
+                                    minCorner.getZ() + z,
+                                    xVel, yVel, zVel, 0, 1
+                            );
+                            pConnection.send(particlesPacket);
+                        }
                     }
-
-                    float randomFloat = random.nextFloat();
-
-                    ParticleOptions particle = ParticleTypes.ENCHANT; // Or your custom particle
-
-                    if (randomFloat > 0.5) {
-                        particle = ParticleTypes.CHERRY_LEAVES;
-                    }
-                    int xVel = 0;
-                    int yVel = 0;
-                    int zVel = 0;
-
-                    switch (face) {
-                        case 0:
-                        case 1:
-                            xVel = random.nextInt(3) - 1; zVel = random.nextInt(3) - 1; break; // Top face // Bottom face
-                        case 2:
-                        case 3:
-                            yVel = random.nextInt(3) - 1; zVel = random.nextInt(3) - 1; break; // Right face // Left face
-                        case 4:
-                        case 5:
-                            yVel = random.nextInt(3) - 1; xVel = random.nextInt(3) - 1; break; // Front face // Back face
-                    }
-
-                    double radius = 0.75;
-                    double y_radius = 1.25;
-
-                    double newX = center.getX() + radius * x;
-                    double newY = (center.getY() - 1) + (y_radius + 2) * y;
-                    double newZ = center.getZ() + radius * z;
-
-                    if (newY < center.getY() - 1) {
-                        newY = center.getY() - 1;
-                    }
-
-                    ClientboundLevelParticlesPacket particlesPacket = new ClientboundLevelParticlesPacket(
-                            particle, false,
-                            newX + 0.5,
-                            newY,
-                            newZ + 0.5,
-                            0, yVel / 4f, 0, 0, 1
-                    );
-                    pConnection.send(particlesPacket);
                 }
             }
         }
@@ -1675,43 +1815,25 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         }
     }
 
-    private void handleDematParticles(int size, Level pLevel, BlockPos pPos) {
+    private void handleDematParticles(int size, AABB overrideAABB, Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
             if (pConnection.isConnected()) {
-                spawnDematSquare(pConnection, pPos, size);
+                spawnDematSquare(pConnection, pPos, size, overrideAABB);
             }
         }
     }
 
-    private void handleEucDematParticles(Level pLevel, BlockPos pPos) {
+    private void handleRematParticles(int size, AABB overrideAABB, Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
             if (pConnection.isConnected()) {
-                spawnEucDematSquare(pConnection, pPos);
+                spawnRematSquare(pConnection, pPos, size, overrideAABB);
             }
         }
     }
 
-    private void handleRematParticles(int size, Level pLevel, BlockPos pPos) {
-        List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
-        for (Connection pConnection : connectionList) {
-            if (pConnection.isConnected()) {
-                spawnRematSquare(pConnection, pPos, size);
-            }
-        }
-    }
-
-    private void handleEucRematParticles(Level pLevel, BlockPos pPos) {
-        List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
-        for (Connection pConnection : connectionList) {
-            if (pConnection.isConnected()) {
-                spawnEucRematSquare(pConnection, pPos);
-            }
-        }
-    }
-
-    private void handleVortex2VortexTeleports(int size, Level pLevel, BlockPos pPos, BlockPos vortexTargetPos) {
+    private void handleVortex2VortexTeleports(int size, AABB overrideAABB, Level pLevel, BlockPos pPos, BlockPos vortexTargetPos) {
         int y_size = 5;
 
         if (size < 5) {
@@ -1719,52 +1841,101 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         }
 
         List<TeleportationDetails> toBeTeleported = new ArrayList<>();
+        List<BlockPos> toBeRemoved = new ArrayList<>();
 
-        for (int x = -size; x <= size; x++) {
-            for (int y = -1; y <= y_size + (y_size - 1); y++) {
-                for (int z = -size; z <= size; z++) {
-                    BlockPos currentPos = pPos.offset(x, y, z);
-                    if (currentPos == pPos) {
+        if (overrideAABB == null) {
+            for (int x = -size; x <= size; x++) {
+                for (int y = -1; y <= y_size + (y_size - 1); y++) {
+                    for (int z = -size; z <= size; z++) {
+                        BlockPos currentPos = pPos.offset(x, y, z);
+                        if (currentPos == pPos) {
+                            handleBlockTeleportVortex2Vortex(pLevel, currentPos, vortexTargetPos, x, y, z);
+                            continue;
+                        }
+                        Entity player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
+                        if (player != null) {
+                            TeleportationDetails details = new TeleportationDetails(player, vortexTargetPos, player.position().x() - pPos.getX(), player.position().y() - pPos.getY(), player.position().z() - pPos.getZ());
+                            toBeTeleported.add(details);
+                        }
+
+                        AABB searchBB = new AABB(currentPos.getX() - 1, currentPos.getY() - 1, currentPos.getZ() - 1, currentPos.getX() + 1, currentPos.getY() + 1, currentPos.getZ() + 1);
+
+                        List<Entity> nearbyEntities = pLevel.getEntitiesOfClass(Entity.class, searchBB, entity -> !(entity instanceof Player));
+
+                        for (Entity nearbyEntity : nearbyEntities) {
+                            TeleportationDetails details = new TeleportationDetails(nearbyEntity, vortexTargetPos, nearbyEntity.position().x() - pPos.getX(), nearbyEntity.position().y() - pPos.getY(), nearbyEntity.position().z() - pPos.getZ());
+                            toBeTeleported.add(details);
+                        }
+
                         handleBlockTeleportVortex2Vortex(pLevel, currentPos, vortexTargetPos, x, y, z);
-                        continue;
                     }
-                    Entity player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
-                    if (player != null) {
-                        TeleportationDetails details = new TeleportationDetails(player, vortexTargetPos, player.position().x() - pPos.getX(), player.position().y() - pPos.getY(), player.position().z() - pPos.getZ());
-                        toBeTeleported.add(details);
+                }
+            }
+
+            for (TeleportationDetails tpDetails : toBeTeleported) {
+                handlePlayerTeleportVortex2Vortex(tpDetails.player, tpDetails.targetPos, tpDetails.x, tpDetails.y, tpDetails.z);
+            }
+
+            for (int x = -size; x <= size; x++) {
+                for (int y = -1; y <= y_size + (y_size - 1); y++) {
+                    for (int z = -size; z <= size; z++) {
+                        BlockPos currentPos = pPos.offset(x, y, z);
+
+                        if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock) {
+                            handleBlockRemoval(pLevel, currentPos);
+                        } else {
+                            if (currentPos != pPos) {
+                                toBeRemoved.add(currentPos);
+                            }
+                        }
                     }
-
-                    AABB searchBB = new AABB(currentPos.getX() - 1, currentPos.getY() - 1, currentPos.getZ() - 1, currentPos.getX() + 1, currentPos.getY() + 1, currentPos.getZ() + 1);
-
-                    List<Entity> nearbyEntities = pLevel.getEntitiesOfClass(Entity.class, searchBB, entity -> !(entity instanceof Player));
-
-                    for (Entity nearbyEntity : nearbyEntities) {
-                        TeleportationDetails details = new TeleportationDetails(nearbyEntity, vortexTargetPos, nearbyEntity.position().x() - pPos.getX(), nearbyEntity.position().y() - pPos.getY(), nearbyEntity.position().z() - pPos.getZ());
-                        toBeTeleported.add(details);
-                    }
-
-                    handleBlockTeleportVortex2Vortex(pLevel, currentPos, vortexTargetPos, x, y, z);
                 }
             }
         }
+        else {
+            for (int x = (int) overrideAABB.minX; x <= (int) overrideAABB.maxX; x++) {
+                for (int y = (int) overrideAABB.minY; y <= (int) overrideAABB.maxY; y++) {
+                    for (int z = (int) overrideAABB.minZ; z <= (int) overrideAABB.maxZ; z++) {
+                        BlockPos currentPos = pPos.offset(x, y, z);
+                        if (currentPos == pPos) {
+                            handleBlockTeleportVortex2Vortex(pLevel, currentPos, vortexTargetPos, x, y, z);
+                            continue;
+                        }
+                        Entity player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
+                        if (player != null) {
+                            TeleportationDetails details = new TeleportationDetails(player, vortexTargetPos, player.position().x() - pPos.getX(), player.position().y() - pPos.getY(), player.position().z() - pPos.getZ());
+                            toBeTeleported.add(details);
+                        }
 
-        for (TeleportationDetails tpDetails : toBeTeleported) {
-            handlePlayerTeleportVortex2Vortex(tpDetails.player, tpDetails.targetPos, tpDetails.x, tpDetails.y, tpDetails.z);
-        }
+                        AABB searchBB = new AABB(currentPos.getX() - 1, currentPos.getY() - 1, currentPos.getZ() - 1, currentPos.getX() + 1, currentPos.getY() + 1, currentPos.getZ() + 1);
 
-        List<BlockPos> toBeRemoved = new ArrayList<>();
+                        List<Entity> nearbyEntities = pLevel.getEntitiesOfClass(Entity.class, searchBB, entity -> !(entity instanceof Player));
 
-        for (int x = -size; x <= size; x++) {
-            for (int y = -1; y <= y_size + (y_size - 1); y++) {
-                for (int z = -size; z <= size; z++) {
-                    BlockPos currentPos = pPos.offset(x, y, z);
+                        for (Entity nearbyEntity : nearbyEntities) {
+                            TeleportationDetails details = new TeleportationDetails(nearbyEntity, vortexTargetPos, nearbyEntity.position().x() - pPos.getX(), nearbyEntity.position().y() - pPos.getY(), nearbyEntity.position().z() - pPos.getZ());
+                            toBeTeleported.add(details);
+                        }
 
-                    if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock) {
-                        handleBlockRemoval(pLevel, currentPos);
+                        handleBlockTeleportVortex2Vortex(pLevel, currentPos, vortexTargetPos, x, y, z);
                     }
-                    else {
-                        if (currentPos != pPos) {
-                            toBeRemoved.add(currentPos);
+                }
+            }
+
+            for (TeleportationDetails tpDetails : toBeTeleported) {
+                handlePlayerTeleportVortex2Vortex(tpDetails.player, tpDetails.targetPos, tpDetails.x, tpDetails.y, tpDetails.z);
+            }
+
+            for (int x = (int) overrideAABB.minX; x <= (int) overrideAABB.maxX; x++) {
+                for (int y = (int) overrideAABB.minY; y <= (int) overrideAABB.maxY; y++) {
+                    for (int z = (int) overrideAABB.minZ; z <= (int) overrideAABB.maxZ; z++) {
+                        BlockPos currentPos = pPos.offset(x, y, z);
+
+                        if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock) {
+                            handleBlockRemoval(pLevel, currentPos);
+                        } else {
+                            if (currentPos != pPos) {
+                                toBeRemoved.add(currentPos);
+                            }
                         }
                     }
                 }
@@ -1778,7 +1949,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         handleBlockRemoval(pLevel, pPos);
     }
 
-    private void handleVortexTeleports(int size, Level pLevel, BlockPos pPos, BlockPos vortexTargetPos) {
+    private void handleVortexTeleports(int size, AABB overrideAABB, Level pLevel, BlockPos pPos, BlockPos vortexTargetPos) {
         int y_size = 5;
 
         if (size < 5) {
@@ -1786,52 +1957,102 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         }
 
         List<TeleportationDetails> toBeTeleported = new ArrayList<>();
+        List<BlockPos> toBeRemoved = new ArrayList<>();
 
-        for (int x = -size; x <= size; x++) {
-            for (int y = -1; y <= y_size + (y_size - 1); y++) {
-                for (int z = -size; z <= size; z++) {
-                    BlockPos currentPos = pPos.offset(x, y, z);
-                    if (currentPos == pPos) {
+        if (overrideAABB == null) {
+            for (int x = -size; x <= size; x++) {
+                for (int y = -1; y <= y_size + (y_size - 1); y++) {
+                    for (int z = -size; z <= size; z++) {
+                        BlockPos currentPos = pPos.offset(x, y, z);
+                        if (currentPos == pPos) {
+                            handleBlockTeleportVortex(pLevel, currentPos, vortexTargetPos, x, y, z);
+                            continue;
+                        }
+                        Entity player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
+                        if (player != null) {
+                            TeleportationDetails details = new TeleportationDetails(player, vortexTargetPos, player.position().x() - pPos.getX(), player.position().y() - pPos.getY(), player.position().z() - pPos.getZ());
+                            toBeTeleported.add(details);
+                        }
+
+                        AABB searchBB = new AABB(currentPos.getX() - 1, currentPos.getY() - 1, currentPos.getZ() - 1, currentPos.getX() + 1, currentPos.getY() + 1, currentPos.getZ() + 1);
+
+                        List<Entity> nearbyEntities = pLevel.getEntitiesOfClass(Entity.class, searchBB, entity -> !(entity instanceof Player));
+
+                        for (Entity nearbyEntity : nearbyEntities) {
+                            TeleportationDetails details = new TeleportationDetails(nearbyEntity, vortexTargetPos, nearbyEntity.position().x() - pPos.getX(), nearbyEntity.position().y() - pPos.getY(), nearbyEntity.position().z() - pPos.getZ());
+                            toBeTeleported.add(details);
+                        }
+
                         handleBlockTeleportVortex(pLevel, currentPos, vortexTargetPos, x, y, z);
-                        continue;
                     }
-                    Entity player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
-                    if (player != null) {
-                        TeleportationDetails details = new TeleportationDetails(player, vortexTargetPos, player.position().x() - pPos.getX(), player.position().y() - pPos.getY(), player.position().z() - pPos.getZ());
-                        toBeTeleported.add(details);
+                }
+            }
+
+            for (TeleportationDetails tpDetails : toBeTeleported) {
+                handlePlayerTeleportVortex(tpDetails.player, tpDetails.targetPos, tpDetails.x, tpDetails.y, tpDetails.z);
+            }
+
+            for (int x = -size; x <= size; x++) {
+                for (int y = -1; y <= y_size + (y_size - 1); y++) {
+                    for (int z = -size; z <= size; z++) {
+                        BlockPos currentPos = pPos.offset(x, y, z);
+
+                        if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock) {
+                            handleBlockRemoval(pLevel, currentPos);
+                        } else {
+                            if (currentPos != pPos) {
+                                toBeRemoved.add(currentPos);
+                            }
+                        }
                     }
-
-                    AABB searchBB = new AABB(currentPos.getX() - 1, currentPos.getY() - 1, currentPos.getZ() - 1, currentPos.getX() + 1, currentPos.getY() + 1, currentPos.getZ() + 1);
-
-                    List<Entity> nearbyEntities = pLevel.getEntitiesOfClass(Entity.class, searchBB, entity -> !(entity instanceof Player));
-
-                    for (Entity nearbyEntity : nearbyEntities) {
-                        TeleportationDetails details = new TeleportationDetails(nearbyEntity, vortexTargetPos, nearbyEntity.position().x() - pPos.getX(), nearbyEntity.position().y() - pPos.getY(), nearbyEntity.position().z() - pPos.getZ());
-                        toBeTeleported.add(details);
-                    }
-
-                    handleBlockTeleportVortex(pLevel, currentPos, vortexTargetPos, x, y, z);
                 }
             }
         }
+        else {
+            for (int x = (int) overrideAABB.minX; x <= (int) overrideAABB.maxX; x++) {
+                for (int y = (int) overrideAABB.minY; y <= (int) overrideAABB.maxY; y++) {
+                    for (int z = (int) overrideAABB.minZ; z <= (int) overrideAABB.maxZ; z++) {
+                        BlockPos currentPos = pPos.offset(x, y, z);
+                        if (currentPos == pPos) {
+                            handleBlockTeleportVortex(pLevel, currentPos, vortexTargetPos, x, y, z);
+                            continue;
+                        }
+                        Entity player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
+                        if (player != null) {
+                            TeleportationDetails details = new TeleportationDetails(player, vortexTargetPos, player.position().x() - pPos.getX(), player.position().y() - pPos.getY(), player.position().z() - pPos.getZ());
+                            toBeTeleported.add(details);
+                        }
 
-        for (TeleportationDetails tpDetails : toBeTeleported) {
-            handlePlayerTeleportVortex(tpDetails.player, tpDetails.targetPos, tpDetails.x, tpDetails.y, tpDetails.z);
-        }
+                        AABB searchBB = new AABB(currentPos.getX() - 1, currentPos.getY() - 1, currentPos.getZ() - 1, currentPos.getX() + 1, currentPos.getY() + 1, currentPos.getZ() + 1);
 
-        List<BlockPos> toBeRemoved = new ArrayList<>();
+                        List<Entity> nearbyEntities = pLevel.getEntitiesOfClass(Entity.class, searchBB, entity -> !(entity instanceof Player));
 
-        for (int x = -size; x <= size; x++) {
-            for (int y = -1; y <= y_size + (y_size - 1); y++) {
-                for (int z = -size; z <= size; z++) {
-                    BlockPos currentPos = pPos.offset(x, y, z);
+                        for (Entity nearbyEntity : nearbyEntities) {
+                            TeleportationDetails details = new TeleportationDetails(nearbyEntity, vortexTargetPos, nearbyEntity.position().x() - pPos.getX(), nearbyEntity.position().y() - pPos.getY(), nearbyEntity.position().z() - pPos.getZ());
+                            toBeTeleported.add(details);
+                        }
 
-                    if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock) {
-                        handleBlockRemoval(pLevel, currentPos);
+                        handleBlockTeleportVortex(pLevel, currentPos, vortexTargetPos, x, y, z);
                     }
-                    else {
-                        if (currentPos != pPos) {
-                            toBeRemoved.add(currentPos);
+                }
+            }
+
+            for (TeleportationDetails tpDetails : toBeTeleported) {
+                handlePlayerTeleportVortex(tpDetails.player, tpDetails.targetPos, tpDetails.x, tpDetails.y, tpDetails.z);
+            }
+
+            for (int x = (int) overrideAABB.minX; x <= (int) overrideAABB.maxX; x++) {
+                for (int y = (int) overrideAABB.minY; y <= (int) overrideAABB.maxY; y++) {
+                    for (int z = (int) overrideAABB.minZ; z <= (int) overrideAABB.maxZ; z++) {
+                        BlockPos currentPos = pPos.offset(x, y, z);
+
+                        if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock) {
+                            handleBlockRemoval(pLevel, currentPos);
+                        }
+                        else {
+                            if (currentPos != pPos) {
+                                toBeRemoved.add(currentPos);
+                            }
                         }
                     }
                 }
@@ -1845,7 +2066,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         handleBlockRemoval(pLevel, pPos);
     }
 
-    private void handleTeleports(int size, Level pLevel, ServerLevel targetDimension, BlockPos pPos, BlockPos targetPos) {
+    private void handleTeleports(int size, AABB overrideAABB, Level pLevel, ServerLevel targetDimension, BlockPos pPos, BlockPos targetPos) {
         int y_size = 5;
 
         if (size < 5) {
@@ -1853,48 +2074,93 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         }
 
         List<TeleportationDetails> toBeTeleported = new ArrayList<>();
+        List<BlockPos> toBeRemoved = new ArrayList<>();
 
-        for (int x = -size; x <= size; x++) {
-            for (int y = -1; y <= y_size + (y_size - 1); y++) {
-                for (int z = -size; z <= size; z++) {
-                    BlockPos currentPos = pPos.offset(x, y, z);
-                    Entity player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
-                    if (player != null) {
-                        TeleportationDetails details = new TeleportationDetails(player, targetPos, player.position().x() - pPos.getX(), player.position().y() - pPos.getY(), player.position().z() - pPos.getZ());
-                        toBeTeleported.add(details);
+        if (overrideAABB == null) {
+            for (int x = -size; x <= size; x++) {
+                for (int y = -1; y <= y_size + (y_size - 1); y++) {
+                    for (int z = -size; z <= size; z++) {
+                        BlockPos currentPos = pPos.offset(x, y, z);
+                        Entity player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
+                        if (player != null) {
+                            TeleportationDetails details = new TeleportationDetails(player, targetPos, player.position().x() - pPos.getX(), player.position().y() - pPos.getY(), player.position().z() - pPos.getZ());
+                            toBeTeleported.add(details);
+                        }
+
+                        AABB searchBB = new AABB(currentPos.getX() - 1, currentPos.getY() - 1, currentPos.getZ() - 1, currentPos.getX() + 1, currentPos.getY() + 1, currentPos.getZ() + 1);
+
+                        List<Entity> nearbyEntities = pLevel.getEntitiesOfClass(Entity.class, searchBB, entity -> !(entity instanceof Player));
+
+                        for (Entity nearbyEntity : nearbyEntities) {
+                            TeleportationDetails details = new TeleportationDetails(nearbyEntity, targetPos, nearbyEntity.position().x() - pPos.getX(), nearbyEntity.position().y() - pPos.getY(), nearbyEntity.position().z() - pPos.getZ());
+                            toBeTeleported.add(details);
+                        }
+
+                        handleBlockTeleport(pLevel, currentPos, targetPos, x, y, z, targetDimension);
                     }
+                }
+            }
 
-                    AABB searchBB = new AABB(currentPos.getX() - 1, currentPos.getY() - 1, currentPos.getZ() - 1, currentPos.getX() + 1, currentPos.getY() + 1, currentPos.getZ() + 1);
+            for (TeleportationDetails tpDetails : toBeTeleported) {
+                handlePlayerTeleport(tpDetails.player, tpDetails.targetPos, tpDetails.x, tpDetails.y, tpDetails.z, targetDimension);
+            }
 
-                    List<Entity> nearbyEntities = pLevel.getEntitiesOfClass(Entity.class, searchBB, entity -> !(entity instanceof Player));
+            for (int x = -size; x <= size; x++) {
+                for (int y = -1; y <= y_size + (y_size - 1); y++) {
+                    for (int z = -size; z <= size; z++) {
+                        BlockPos currentPos = pPos.offset(x, y, z);
 
-                    for (Entity nearbyEntity : nearbyEntities) {
-                        TeleportationDetails details = new TeleportationDetails(nearbyEntity, targetPos, nearbyEntity.position().x() - pPos.getX(), nearbyEntity.position().y() - pPos.getY(), nearbyEntity.position().z() - pPos.getZ());
-                        toBeTeleported.add(details);
+                        if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock) {
+                            handleBlockRemoval(pLevel, currentPos);
+                        } else {
+                            if (currentPos != pPos) {
+                                toBeRemoved.add(currentPos);
+                            }
+                        }
                     }
-
-                    handleBlockTeleport(pLevel, currentPos, targetPos, x, y, z, targetDimension);
                 }
             }
         }
+        else {
+            for (int x = (int) overrideAABB.minX; x <= (int) overrideAABB.maxX; x++) {
+                for (int y = (int) overrideAABB.minY; y <= (int) overrideAABB.maxY; y++) {
+                    for (int z = (int) overrideAABB.minZ; z <= (int) overrideAABB.maxZ; z++) {
+                        BlockPos currentPos = pPos.offset(x, y, z);
+                        Entity player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
+                        if (player != null) {
+                            TeleportationDetails details = new TeleportationDetails(player, targetPos, player.position().x() - pPos.getX(), player.position().y() - pPos.getY(), player.position().z() - pPos.getZ());
+                            toBeTeleported.add(details);
+                        }
 
-        for (TeleportationDetails tpDetails : toBeTeleported) {
-            handlePlayerTeleport(tpDetails.player, tpDetails.targetPos, tpDetails.x, tpDetails.y, tpDetails.z, targetDimension);
-        }
+                        AABB searchBB = new AABB(currentPos.getX() - 1, currentPos.getY() - 1, currentPos.getZ() - 1, currentPos.getX() + 1, currentPos.getY() + 1, currentPos.getZ() + 1);
 
-        List<BlockPos> toBeRemoved = new ArrayList<>();
+                        List<Entity> nearbyEntities = pLevel.getEntitiesOfClass(Entity.class, searchBB, entity -> !(entity instanceof Player));
 
-        for (int x = -size; x <= size; x++) {
-            for (int y = -1; y <= y_size + (y_size - 1); y++) {
-                for (int z = -size; z <= size; z++) {
-                    BlockPos currentPos = pPos.offset(x, y, z);
+                        for (Entity nearbyEntity : nearbyEntities) {
+                            TeleportationDetails details = new TeleportationDetails(nearbyEntity, targetPos, nearbyEntity.position().x() - pPos.getX(), nearbyEntity.position().y() - pPos.getY(), nearbyEntity.position().z() - pPos.getZ());
+                            toBeTeleported.add(details);
+                        }
 
-                    if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock) {
-                        handleBlockRemoval(pLevel, currentPos);
+                        handleBlockTeleport(pLevel, currentPos, targetPos, x, y, z, targetDimension);
                     }
-                    else {
-                        if (currentPos != pPos) {
-                            toBeRemoved.add(currentPos);
+                }
+            }
+
+            for (TeleportationDetails tpDetails : toBeTeleported) {
+                handlePlayerTeleport(tpDetails.player, tpDetails.targetPos, tpDetails.x, tpDetails.y, tpDetails.z, targetDimension);
+            }
+
+            for (int x = (int) overrideAABB.minX; x <= (int) overrideAABB.maxX; x++) {
+                for (int y = (int) overrideAABB.minY; y <= (int) overrideAABB.maxY; y++) {
+                    for (int z = (int) overrideAABB.minZ; z <= (int) overrideAABB.maxZ; z++) {
+                        BlockPos currentPos = pPos.offset(x, y, z);
+
+                        if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock) {
+                            handleBlockRemoval(pLevel, currentPos);
+                        } else {
+                            if (currentPos != pPos) {
+                                toBeRemoved.add(currentPos);
+                            }
                         }
                     }
                 }
@@ -1905,15 +2171,33 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             handleBlockRemoval(pLevel, positionToBeRemoved);
         }
 
-        for (int __x = -size; __x <= size; __x++) {
-            for (int __y = -1; __y <= y_size + (y_size - 1); __y++) {
-                for (int __z = -size; __z <= size; __z++) {
-                    BlockPos updatedCurrentPos = targetPos.offset(__x, __y, __z);
+        if (overrideAABB == null) {
+            for (int __x = -size; __x <= size; __x++) {
+                for (int __y = -1; __y <= y_size + (y_size - 1); __y++) {
+                    for (int __z = -size; __z <= size; __z++) {
+                        BlockPos updatedCurrentPos = targetPos.offset(__x, __y, __z);
 
-                    BlockState updatedBlockState = pLevel.getBlockState(updatedCurrentPos);
-                    if (updatedBlockState.getBlock() instanceof ThrottleBlock) {
-                        if (updatedBlockState.getValue(BlockStateProperties.POWERED)) {
-                            ((ThrottleBlock) updatedBlockState.getBlock()).pull(updatedBlockState, pLevel, updatedCurrentPos);
+                        BlockState updatedBlockState = pLevel.getBlockState(updatedCurrentPos);
+                        if (updatedBlockState.getBlock() instanceof ThrottleBlock) {
+                            if (updatedBlockState.getValue(BlockStateProperties.POWERED)) {
+                                ((ThrottleBlock) updatedBlockState.getBlock()).pull(updatedBlockState, pLevel, updatedCurrentPos);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            for (int __x = (int) overrideAABB.minX; __x <= (int) overrideAABB.maxX; __x++) {
+                for (int __y = (int) overrideAABB.minY; __y <= (int) overrideAABB.maxY; __y++) {
+                    for (int __z = (int) overrideAABB.minZ; __z <= (int) overrideAABB.maxZ; __z++) {
+                        BlockPos updatedCurrentPos = targetPos.offset(__x, __y, __z);
+
+                        BlockState updatedBlockState = pLevel.getBlockState(updatedCurrentPos);
+                        if (updatedBlockState.getBlock() instanceof ThrottleBlock) {
+                            if (updatedBlockState.getValue(BlockStateProperties.POWERED)) {
+                                ((ThrottleBlock) updatedBlockState.getBlock()).pull(updatedBlockState, pLevel, updatedCurrentPos);
+                            }
                         }
                     }
                 }

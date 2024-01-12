@@ -23,6 +23,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModItems.SIZE_UPGRADE.get());
                         pOutput.accept(ModItems.EUCLIDEAN_UPGRADE.get());
                         pOutput.accept(ModItems.TARDIS_KEY.get());
+                        pOutput.accept(ModItems.SIZE_DESIGNATOR.get());
                         pOutput.accept(ModItems.WRENCH.get());
                         pOutput.accept(ModBlocks.INTERFACE_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.THROTTLE_BLOCK.get().asItem());

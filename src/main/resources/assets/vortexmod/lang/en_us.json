@@ -5,6 +5,7 @@
   "item.vortexmod.vortex_core": "Vortex Core",
   "item.vortexmod.tardis_key": "TARDIS Key",
   "item.vortexmod.wrench": "Space Time Wrench",
+  "item.vortexmod.size_designator": "Precision Size Designator",
 
   "item.vortexmod.blue_trader_spawn_egg": "Blue Trading Traveler Spawn Egg",
   "item.vortexmod.orange_trader_spawn_egg": "Orange Trading Traveler Spawn Egg",
@@ -62,6 +63,7 @@
   "tooltip.vortexmod.grounding_block.tooltip": "Will ensure that you land on the ground if you were set to be in the air.",
   "tooltip.vortexmod.biometric_module.tooltip": "Allows you to blacklist people from entering your TARDIS with commands. This is only functional in a euclidean TARDIS. (Right click for tutorial).",
   "tooltip.vortexmod.tardis_sign_block.tooltip": "Just a decorative block for your interiors or anything really.",
+  "tooltip.vortexmod.size_designator.tooltip": "Used to precisely set the borders of your proto TARDIS. Each size upgrade is worth 128 blocks when using this. Use like a world edit wand, right click on the size manipulator to set.",
 
 
   "creativetab.vortex_tab": "Time Vortex"

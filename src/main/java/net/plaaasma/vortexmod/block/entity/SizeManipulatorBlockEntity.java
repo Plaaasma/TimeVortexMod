@@ -34,6 +34,8 @@ public class SizeManipulatorBlockEntity extends BlockEntity implements MenuProvi
 
     public final ContainerData data;
     private int field_size = 0;
+    private BlockPos alphaPos = null;
+    private BlockPos betaPos = null;
 
     public SizeManipulatorBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.SIZE_MANIPULATOR_BE.get(), pPos, pBlockState);
@@ -108,6 +110,14 @@ public class SizeManipulatorBlockEntity extends BlockEntity implements MenuProvi
         CompoundTag vortexModData = pTag.getCompound(VortexMod.MODID);
 
         this.field_size = vortexModData.getInt("field_size");
+        int alphaX = vortexModData.getInt("alpha_x");
+        int alphaY = vortexModData.getInt("alpha_y");
+        int alphaZ = vortexModData.getInt("alpha_z");
+        this.alphaPos = new BlockPos(alphaX, alphaY, alphaZ);
+        int betaX = vortexModData.getInt("beta_x");
+        int betaY = vortexModData.getInt("beta_y");
+        int betaZ = vortexModData.getInt("beta_z");
+        this.betaPos = new BlockPos(betaX, betaY, betaZ);
     }
 
     @Override
@@ -119,8 +129,34 @@ public class SizeManipulatorBlockEntity extends BlockEntity implements MenuProvi
         CompoundTag vortexModData = new CompoundTag();
 
         vortexModData.putInt("field_size", this.field_size);
+        if (this.alphaPos != null) {
+            vortexModData.putInt("alpha_x", this.alphaPos.getX());
+            vortexModData.putInt("alpha_y", this.alphaPos.getY());
+            vortexModData.putInt("alpha_z", this.alphaPos.getZ());
+        }
+        if (this.betaPos != null) {
+            vortexModData.putInt("beta_x", this.betaPos.getX());
+            vortexModData.putInt("beta_y", this.betaPos.getY());
+            vortexModData.putInt("beta_z", this.betaPos.getZ());
+        }
 
         pTag.put(VortexMod.MODID, vortexModData);
+    }
+
+    public void setAlphaPos(BlockPos alphaPos) {
+        this.alphaPos = alphaPos;
+    }
+
+    public void setBetaPos(BlockPos betaPos) {
+        this.betaPos = betaPos;
+    }
+
+    public BlockPos getAlphaPos() {
+        return this.alphaPos;
+    }
+
+    public BlockPos getBetaPos() {
+        return this.betaPos;
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {

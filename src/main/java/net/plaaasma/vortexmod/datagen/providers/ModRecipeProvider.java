@@ -183,6 +183,15 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy(getHasName(ModItems.EUCLIDEAN_UPGRADE.get()), has(ModItems.EUCLIDEAN_UPGRADE.get()))
                 .save(pWriter);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.SIZE_DESIGNATOR.get())
+                .pattern(" CL")
+                .pattern(" CC")
+                .pattern("C  ")
+                .define('L', Items.LAPIS_BLOCK)
+                .define('C', Items.COBBLESTONE)
+                .unlockedBy(getHasName(ModBlocks.INTERFACE_BLOCK.get()), has(ModBlocks.INTERFACE_BLOCK.get()))
+                .save(pWriter);
+
         ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, ModBlocks.TARDIS_SIGN_BLOCK.get())
                 .requires(ItemTags.SIGNS)
                 .requires(Items.IRON_INGOT, 1)

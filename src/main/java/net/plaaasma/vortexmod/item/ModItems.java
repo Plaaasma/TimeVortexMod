@@ -31,6 +31,9 @@ public class ModItems {
     public static final RegistryObject<Item> TARDIS_KEY = ITEMS.register("tardis_key",
             () -> new TardisKey(new Item.Properties().stacksTo(1)));
 
+    public static final RegistryObject<Item> SIZE_DESIGNATOR = ITEMS.register("size_designator",
+            () -> new SizeDesignator(new Item.Properties().stacksTo(1)));
+
     public static final RegistryObject<Item> BLUE_TRADER_SPAWN_EGG = ITEMS.register("blue_trader_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.BLUE_TRADER, 0x0d3f8f, 0xa67f46, new Item.Properties()));
 
