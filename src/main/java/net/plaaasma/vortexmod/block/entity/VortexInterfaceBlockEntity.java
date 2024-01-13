@@ -800,6 +800,11 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     this.data.set(7, tardisEntity.getBlockY());
                     this.data.set(8, tardisEntity.getBlockZ());
                 }
+                else {
+                    tardisEntity = ModEntities.TARDIS.get().spawn(currentDimension, new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8)), MobSpawnType.NATURAL);
+                    currentDimension.addFreshEntity(tardisEntity);
+                    setExtUUID(tardisEntity.getUUID());
+                }
 
                 if (throttle_on == 1) {
                     this.data.set(21, 15);
@@ -821,7 +826,6 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
                         this.data.set(1, this.data.get(0));
                         handleLandingEntities(targetDimension, tardisDimension, flight_target, this.getExtUUID());
-                        //tardisEntity.teleportTo(targetDimension, flight_target.getX(), flight_target.getY(), flight_target.getZ(), RelativeMovement.ALL, rotation_yaw, 0);
                         this.data.set(6, targetX);
                         this.data.set(7, targetY);
                         this.data.set(8, targetZ);
@@ -930,6 +934,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         tardisEntity.setYRot(rotation_yaw);
                         tardisEntity.setNoGravity(false);
                         tardisEntity.teleportTo(targetDimension, flight_target.getX(), flight_target.getY(), flight_target.getZ(), RelativeMovement.ALL, rotation_yaw, 0);
+                        if (targetDimension.dimension() != currentDimension.dimension()) {
+                            targetDimension.addFreshEntity(tardisEntity);
+                        }
                         chunkPos = vortexDimension.getChunkAt(exteriorPos).getPos();
                         ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, exteriorPos, chunkPos.x, chunkPos.z, false, true);
                     }
