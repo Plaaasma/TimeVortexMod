@@ -64,10 +64,7 @@ public class DoorBlock extends Block {
             ServerLevel overworldDimension = minecraftserver.getLevel(Level.OVERWORLD);
             Iterable<ServerLevel> serverLevels = minecraftserver.getAllLevels();
             ServerLevel tardisDimension = minecraftserver.getLevel(ModDimensions.tardisDIM_LEVEL_KEY);
-            ServerLevel vortexDimension = minecraftserver.getLevel(ModDimensions.vortexDIM_LEVEL_KEY);
             ItemStack heldStack = pPlayer.getItemInHand(pHand);
-
-            Random random = new Random();
 
             if (serverLevel == tardisDimension) {
                 for (int x = -100; x <= 100; x++) {
@@ -101,7 +98,7 @@ public class DoorBlock extends Block {
                                             pPlayer.displayClientMessage(Component.literal("This TARDIS is not yours.").withStyle(ChatFormatting.RED), true);
                                         }
                                     } else {
-                                        if (!tardisEntity.isRemat() && !tardisEntity.isInFlight()) {
+                                        if (!tardisEntity.isRemat() && !tardisEntity.isInFlight() && !tardisEntity.isDemat() && tardisEntity.getAlpha() > 0) {
                                             int yaw = (int) tardisEntity.getYRot();
                                             Vec3 exitPosition;
 

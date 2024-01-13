@@ -546,6 +546,14 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                     }
                                     this.data.set(13, 0);
                                 }
+                                if (tardisEntity != null) {
+                                    if (tardisEntity.isInFlight()) {
+                                        throttle_on = 1;
+                                        if (!blockState.getValue(BlockStateProperties.POWERED)) {
+                                            ((ThrottleBlock) blockState.getBlock()).pull(blockState, pLevel, currentPos);
+                                        }
+                                    }
+                                }
                             }
 
                             var blockEntity = pLevel.getBlockEntity(currentPos);
@@ -934,7 +942,6 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 else {
                     this.data.set(21, 0);
                     if (tardisEntity != null) {
-                        tardisEntity.setInFlight(false);
                         if (tardisEntity.isDemat()) {
                             tardisEntity.setDemat(false);
                             tardisEntity.setAlpha(1);
@@ -1153,7 +1160,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     rotatedZ,
                     xVel, yVel, zVel, 0.025F, 1
             );
-            pConnection.send(particlesPacket);
+            if (pConnection.isConnected()) {
+                pConnection.send(particlesPacket);
+            }
         }
     }
 
@@ -1216,7 +1225,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     rotatedZ,
                     xVel, yVel, zVel, 0.025F, 1
             );
-            pConnection.send(particlesPacket);
+            if (pConnection.isConnected()) {
+                pConnection.send(particlesPacket);
+            }
         }
     }
 
@@ -1279,7 +1290,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     rotatedZ,
                     xVel, yVel, zVel, 0.025F, 1
             );
-            pConnection.send(particlesPacket);
+            if (pConnection.isConnected()) {
+                pConnection.send(particlesPacket);
+            }
         }
     }
 
@@ -1395,7 +1408,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 newZ + 0.5,
                                 xVel, yVel, zVel, 0, 1
                         );
-                        pConnection.send(particlesPacket);
+                        if (pConnection.isConnected()) {
+                            pConnection.send(particlesPacket);
+                        }
                     }
                 }
             }
@@ -1464,7 +1479,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                     minCorner.getZ() + z,
                                     xVel, yVel, zVel, 0, 1
                             );
-                            pConnection.send(particlesPacket);
+                            if (pConnection.isConnected()) {
+                                pConnection.send(particlesPacket);
+                            }
                         }
                     }
                 }
@@ -1577,7 +1594,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 newZ + 0.5,
                                 xVel, yVel, zVel, 0, 1
                         );
-                        pConnection.send(particlesPacket);
+                        if (pConnection.isConnected()) {
+                            pConnection.send(particlesPacket);
+                        }
                     }
                 }
             }
@@ -1653,7 +1672,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                     minCorner.getZ() + z,
                                     xVel, yVel, zVel, 0, 1
                             );
-                            pConnection.send(particlesPacket);
+                            if (pConnection.isConnected()) {
+                                pConnection.send(particlesPacket);
+                            }
                         }
                     }
                 }
@@ -1734,7 +1755,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     rotatedZ,
                     xVel, yVel, zVel, 0.025F, 1
             );
-            pConnection.send(particlesPacket);
+            if (pConnection.isConnected()) {
+                pConnection.send(particlesPacket);
+            }
         }
     }
 
@@ -1774,7 +1797,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         for (Connection pConnection : connectionList) {
             if (pConnection.isConnected()) {
                 ClientboundAddEntityPacket entityPacket = new ClientboundAddEntityPacket(new LightningBolt(EntityType.LIGHTNING_BOLT, pLevel), 0, targetPosition);
-                pConnection.send(entityPacket);
+                if (pConnection.isConnected()) {
+                    pConnection.send(entityPacket);
+                }
             }
         }
     }

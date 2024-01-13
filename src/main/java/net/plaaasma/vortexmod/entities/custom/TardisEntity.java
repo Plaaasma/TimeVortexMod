@@ -281,7 +281,7 @@ public class TardisEntity extends Mob {
             else {
                 if (!this.entityData.get(DATA_LOCKED_ID)) {
                     if (!this.entityData.get(DATA_DEMAT_ID) && !this.entityData.get(DATA_REMAT_ID)) {
-                        if (!this.entityData.get(DATA_IN_FLIGHT_ID)) {
+                        if (!this.entityData.get(DATA_IN_FLIGHT_ID) && this.entityData.get(DATA_ALPHA_ID) > 0) {
                             boolean hasBioSecurity = this.entityData.get(DATA_HAS_BIO_SECURITY_ID);
 
                             List<String> whitelistedCodes = new ArrayList<>();

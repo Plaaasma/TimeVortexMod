@@ -246,7 +246,9 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
             ClientboundAddEntityPacket entityPacket = new ClientboundAddEntityPacket(new LightningBolt(EntityType.LIGHTNING_BOLT, pLevel), 0, targetPosition);
-            pConnection.send(entityPacket);
+            if (pConnection.isConnected()) {
+                pConnection.send(entityPacket);
+            }
         }
     }
 
