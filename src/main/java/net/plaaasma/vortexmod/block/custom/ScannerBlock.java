@@ -71,6 +71,7 @@ public class ScannerBlock extends HorizontalBaseEntityBlock {
             ServerLevel overworldDimension = minecraftserver.getLevel(Level.OVERWORLD);
             Iterable<ServerLevel> serverLevels = minecraftserver.getAllLevels();
             ServerLevel vortexDimension = minecraftserver.getLevel(ModDimensions.vortexDIM_LEVEL_KEY);
+            ServerLevel tardisDimension = minecraftserver.getLevel(ModDimensions.tardisDIM_LEVEL_KEY);
 
             Random random = new Random();
 
@@ -81,69 +82,74 @@ public class ScannerBlock extends HorizontalBaseEntityBlock {
             boolean setVars = false;
 
             //Scanner Scan lol
-            for (int x = -16; x <= 16 && !setVars; x++) {
-                for (int y = -16; y <= 16 && !setVars; y++) {
-                    for (int z = -16; z <= 16 && !setVars; z++) {
-                        BlockPos currentPos = pPos.offset(x, y, z);
-                        var blockEntity = pLevel.getBlockEntity(currentPos);
-                        if (blockEntity instanceof VortexInterfaceBlockEntity vortexInterfaceBlockEntity) {
-                            ServerLevel targetDimension = overworldDimension;
+            if (serverLevel.dimension() == tardisDimension.dimension()) {
+                for (int x = -16; x <= 16 && !setVars; x++) {
+                    for (int y = -16; y <= 16 && !setVars; y++) {
+                        for (int z = -16; z <= 16 && !setVars; z++) {
+                            BlockPos currentPos = pPos.offset(x, y, z);
+                            var blockEntity = pLevel.getBlockEntity(currentPos);
+                            if (blockEntity instanceof VortexInterfaceBlockEntity vortexInterfaceBlockEntity) {
+                                ServerLevel targetDimension = overworldDimension;
 
-                            for (ServerLevel cLevel : serverLevels) {
-                                if (cLevel.dimension().location().getPath().hashCode() == vortexInterfaceBlockEntity.data.get(9)) {
-                                    targetDimension = cLevel;
+                                for (ServerLevel cLevel : serverLevels) {
+                                    if (cLevel.dimension().location().getPath().hashCode() == vortexInterfaceBlockEntity.data.get(9)) {
+                                        targetDimension = cLevel;
+                                    }
                                 }
+
+                                BlockPos blockExitPos = new BlockPos(vortexInterfaceBlockEntity.data.get(6), vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8));
+                                TardisEntity tardisEntity = (TardisEntity) targetDimension.getEntity(vortexInterfaceBlockEntity.getExtUUID());
+                                if (tardisEntity != null) {
+                                    int yaw = (int) tardisEntity.getYRot();
+
+                                    double distance = 1.4; // Distance from the root position
+
+                                    double yawRadians = Math.toRadians(yaw);
+
+                                    double newX = blockExitPos.getX() + distance * Math.sin(yawRadians);
+                                    double newZ = blockExitPos.getZ() - distance * Math.cos(yawRadians);
+
+                                    targetExit = new Vec3(newX, blockExitPos.getY(), newZ);
+                                    blockTargetExit = new BlockPos((int) newX, blockExitPos.getY(), (int) newZ);
+                                    decidedDimension = targetDimension;
+                                } else {
+                                    decidedDimension = vortexDimension;
+                                    targetExit = new Vec3(random.nextInt(1000000) - 500000, -100, random.nextInt(1000000) - 500000);
+                                }
+
+                                setVars = true;
                             }
-
-                            BlockPos blockExitPos = new BlockPos(vortexInterfaceBlockEntity.data.get(6), vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8));
-                            TardisEntity tardisEntity = (TardisEntity) targetDimension.getEntity(vortexInterfaceBlockEntity.getExtUUID());
-                            if (tardisEntity != null) {
-                                int yaw = (int) tardisEntity.getYRot();
-
-                                double distance = 1.4; // Distance from the root position
-
-                                double yawRadians = Math.toRadians(yaw);
-
-                                double newX = blockExitPos.getX() + distance * Math.sin(yawRadians);
-                                double newZ = blockExitPos.getZ() - distance * Math.cos(yawRadians);
-
-                                targetExit = new Vec3(newX, blockExitPos.getY(), newZ);
-                                blockTargetExit = new BlockPos((int) newX, blockExitPos.getY(), (int) newZ);
-                                decidedDimension = targetDimension;
-                            } else {
-                                decidedDimension = vortexDimension;
-                                targetExit = new Vec3(random.nextInt(1000000) - 500000, -100, random.nextInt(1000000) - 500000);
-                            }
-
-                            setVars = true;
                         }
                     }
                 }
-            }
 
-            String status = "Safe to exit, outside block: ";
-            ChatFormatting statusFormat = ChatFormatting.GREEN;
+                String status = "Safe to exit, outside block: ";
+                ChatFormatting statusFormat = ChatFormatting.GREEN;
 
-            if (!((decidedDimension.getBlockState(blockTargetExit.below()).getBlock() != Blocks.AIR && decidedDimension.getBlockState(blockTargetExit.below()).getBlock() != Blocks.LAVA && decidedDimension.getBlockState(blockTargetExit.below()).getBlock() != Blocks.WATER) && decidedDimension.getBlockState(blockTargetExit).getBlock() == Blocks.AIR && decidedDimension.getBlockState(blockTargetExit.above()).getBlock() == Blocks.AIR) || decidedDimension == vortexDimension) {
-                status = "Not safe to exit, outside block: ";
-                statusFormat = ChatFormatting.RED;
-            }
+                if (!((decidedDimension.getBlockState(blockTargetExit.below()).getBlock() != Blocks.AIR && decidedDimension.getBlockState(blockTargetExit.below()).getBlock() != Blocks.LAVA && decidedDimension.getBlockState(blockTargetExit.below()).getBlock() != Blocks.WATER) && decidedDimension.getBlockState(blockTargetExit).getBlock() == Blocks.AIR && decidedDimension.getBlockState(blockTargetExit.above()).getBlock() == Blocks.AIR) || decidedDimension == vortexDimension) {
+                    status = "Not safe to exit, outside block: ";
+                    statusFormat = ChatFormatting.RED;
+                }
 
-            String blockString = decidedDimension.getBlockState(blockTargetExit.below()).getBlock().getName().getString() + "\n";
+                String blockString = decidedDimension.getBlockState(blockTargetExit.below()).getBlock().getName().getString() + "\n";
 
-            String dimensionString = decidedDimension.dimension().location().getPath() + "\n";
+                String dimensionString = decidedDimension.dimension().location().getPath() + "\n";
 
-            String coordinateString = targetExit.x + " " + targetExit.y + " " + targetExit.z;
+                String coordinateString = targetExit.x + " " + targetExit.y + " " + targetExit.z;
 
-            pPlayer.displayClientMessage(Component.literal("Scan Results:\n").withStyle(ChatFormatting.GRAY).append(
-                Component.literal(status).withStyle(statusFormat).append(
-                    Component.literal(blockString).withStyle(ChatFormatting.GRAY).append(
-                        Component.literal(dimensionString).withStyle(ChatFormatting.AQUA).append(
-                            Component.literal(coordinateString).withStyle(ChatFormatting.GOLD)
+                pPlayer.displayClientMessage(Component.literal("Scan Results:\n").withStyle(ChatFormatting.GRAY).append(
+                        Component.literal(status).withStyle(statusFormat).append(
+                                Component.literal(blockString).withStyle(ChatFormatting.GRAY).append(
+                                        Component.literal(dimensionString).withStyle(ChatFormatting.AQUA).append(
+                                                Component.literal(coordinateString).withStyle(ChatFormatting.GOLD)
+                                        )
+                                )
                         )
-                    )
-                )
-            ), false);
+                ), false);
+            }
+            else {
+                pPlayer.displayClientMessage(Component.literal("Scanner is not in the TARDIS dimension.").withStyle(ChatFormatting.RED), true);
+            }
         }
 
         return InteractionResult.SUCCESS;

@@ -400,7 +400,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             ServerLevel currentDimension = overworldDimension;
             ServerLevel targetDimension = overworldDimension;
 
-            TardisEntity tardisEntity = (TardisEntity) currentDimension.getEntity(this.exterior_uuid);
+            TardisEntity tardisEntity = null;
 
             for (ServerLevel cLevel : serverLevels) {
                 if (cLevel.dimension().location().getPath().hashCode() == this.data.get(9)) {
@@ -419,6 +419,10 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 if (newTardisEntity != null) {
                     tardisEntity = newTardisEntity;
                 }
+            }
+
+            if (tardisEntity == null) {
+                tardisEntity = (TardisEntity) currentDimension.getEntity(this.exterior_uuid);
             }
 
             if (tardisEntity == null) {
