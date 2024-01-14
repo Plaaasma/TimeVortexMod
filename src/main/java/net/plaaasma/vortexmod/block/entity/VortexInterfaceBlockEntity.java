@@ -2245,6 +2245,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
     private void handleBlockTeleportVortex2Vortex(Level pLevel, BlockPos currentPos, BlockPos targetPos, int x, int y, int z) {
         if (pLevel instanceof ServerLevel serverlevel) {
+            if (serverlevel.getBlockState(currentPos).getBlock() == Blocks.BEDROCK) {
+                return;
+            }
             BlockPos augmentedPos = targetPos.offset(x, y, z);
 
             BlockEntity blockEntity = serverlevel.getBlockEntity(currentPos);
@@ -2270,6 +2273,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
     private void handleBlockTeleportVortex(Level pLevel, BlockPos currentPos, BlockPos targetPos, int x, int y, int z) {
         if (pLevel instanceof ServerLevel serverlevel) {
+            if (serverlevel.getBlockState(currentPos).getBlock() == Blocks.BEDROCK) {
+                return;
+            }
             MinecraftServer minecraftserver = serverlevel.getServer();
             ResourceKey<Level> resourcekey = ModDimensions.vortexDIM_LEVEL_KEY;
 
@@ -2309,6 +2315,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
     private void handleBlockTeleport(Level pLevel, BlockPos currentPos, BlockPos targetPos, int x, int y, int z, ServerLevel dimension) {
         if (pLevel instanceof ServerLevel serverlevel) {
+            if (serverlevel.getBlockState(currentPos).getBlock() == Blocks.BEDROCK) {
+                return;
+            }
             if (dimension != null) {
                 BlockPos augmentedPos = targetPos.offset(x, y, z);
 
@@ -2347,7 +2356,10 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     }
 
     private void handleBlockRemoval(Level pLevel, BlockPos currentPos) {
-        if (pLevel instanceof ServerLevel) {
+        if (pLevel instanceof ServerLevel serverLevel) {
+            if (serverLevel.getBlockState(currentPos).getBlock() == Blocks.BEDROCK) {
+                return;
+            }
             BlockEntity blockEntity = pLevel.getBlockEntity(currentPos);
             if (blockEntity != null) {
                 blockEntity.load(new CompoundTag());

@@ -43,6 +43,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.plaaasma.vortexmod.block.entity.CoordinateDesignatorBlockEntity;
 import net.plaaasma.vortexmod.block.entity.ModBlockEntities;
+import net.plaaasma.vortexmod.sound.ModSounds;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -105,7 +106,7 @@ public class ThrottleBlock extends FaceAttachedHorizontalDirectionalBlock {
         for(Direction direction : pContext.getNearestLookingDirections()) {
             BlockState blockstate;
             if (direction.getAxis() == Direction.Axis.Y) {
-                blockstate = this.defaultBlockState().setValue(FACE, direction == Direction.UP ? AttachFace.CEILING : AttachFace.FLOOR).setValue(FACING, pContext.getHorizontalDirection());
+                blockstate = this.defaultBlockState().setValue(FACE, direction == Direction.UP ? AttachFace.CEILING : AttachFace.FLOOR).setValue(FACING, pContext.getHorizontalDirection().getOpposite());
             } else {
                 blockstate = this.defaultBlockState().setValue(FACE, AttachFace.WALL).setValue(FACING, direction.getOpposite());
             }
@@ -127,10 +128,13 @@ public class ThrottleBlock extends FaceAttachedHorizontalDirectionalBlock {
             }
             return InteractionResult.SUCCESS;
         } else {
+            Random random = new Random();
+
             BlockState blockstate = this.pull(pState, pLevel, pPos);
             pLevel.gameEvent(pPlayer, blockstate.getValue(POWERED) ? GameEvent.BLOCK_ACTIVATE : GameEvent.BLOCK_DEACTIVATE, pPos);
             if (blockstate.getValue(POWERED)) {
                 pPlayer.displayClientMessage(Component.literal("Throttle Enabled"), true);
+                pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.THROTTLE_SOUND.get(), SoundSource.BLOCKS, 1f, random.nextFloat(0.8f, 1.2f), 0);
             } else {
                 pPlayer.displayClientMessage(Component.literal("Throttle Disabled"), true);
             }

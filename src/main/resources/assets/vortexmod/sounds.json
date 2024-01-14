@@ -17,6 +17,12 @@
       "vortexmod:remat_sound"
     ]
   },
+  "throttle_sound": {
+    "subtitle": "sounds.vortexmod.throttle_sound",
+    "sounds": [
+      "vortexmod:throttle_sound"
+    ]
+  },
   "dalek_move_sound": {
     "subtitle": "sounds.vortexmod.dalek_move_sound",
     "sounds": [

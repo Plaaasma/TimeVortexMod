@@ -2,9 +2,13 @@ package net.plaaasma.vortexmod.datagen.providers;
 
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.models.blockstates.PropertyDispatch;
-import net.minecraft.data.models.blockstates.Variant;
-import net.minecraft.data.models.blockstates.VariantProperties;
+import net.minecraft.data.models.blockstates.*;
+import net.minecraft.data.models.model.ModelLocationUtils;
+import net.minecraft.data.models.model.ModelTemplates;
+import net.minecraft.data.models.model.TextureMapping;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.AttachFace;
@@ -16,17 +20,27 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.block.ModBlocks;
+import net.plaaasma.vortexmod.block.custom.ThrottleBlock;
+
+import java.util.function.Consumer;
 
 public class ModBlockStateProvider extends BlockStateProvider {
-
     public ModBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
         super(output, VortexMod.MODID, exFileHelper);
     }
 
     @Override
     protected void registerStatesAndModels() {
-        horizontalFaceBlock(ModBlocks.THROTTLE_BLOCK.get(),
-                new ModelFile.UncheckedModelFile(modLoc("block/tardis_throttle")));
+        getVariantBuilder(ModBlocks.THROTTLE_BLOCK.get())
+                .forAllStates(blockState -> {
+                   boolean powered = blockState.getValue(ThrottleBlock.POWERED);
+                   String model = powered ? "tardis_throttle_powered" : "tardis_throttle";
+                    return ConfiguredModel.builder()
+                            .modelFile(new ModelFile.UncheckedModelFile(modLoc("block/" + model)))
+                            .rotationX(blockState.getValue(BlockStateProperties.ATTACH_FACE).ordinal() * 90)
+                            .rotationY((((int) blockState.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180) + (blockState.getValue(BlockStateProperties.ATTACH_FACE) == AttachFace.CEILING ? 180 : 0)) % 360)
+                            .build();
+                });
         simpleBlockItem(ModBlocks.THROTTLE_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/tardis_throttle")));
 

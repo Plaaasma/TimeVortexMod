@@ -15,12 +15,13 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> DEMAT_SOUND = registerSoundEvents("demat_sound");
     public static final RegistryObject<SoundEvent> FLIGHT_SOUND = registerSoundEvents("flight_sound");
     public static final RegistryObject<SoundEvent> REMAT_SOUND = registerSoundEvents("remat_sound");
+    public static final RegistryObject<SoundEvent> THROTTLE_SOUND = registerSoundEvents("throttle_sound");
 
     public static final RegistryObject<SoundEvent> DALEK_MOVE_SOUND = registerSoundEvents("dalek_move_sound");
     public static final RegistryObject<SoundEvent> DALEK_SHOOT_SOUND = registerSoundEvents("dalek_shoot_sound");
 
-    private static RegistryObject<SoundEvent> registerSoundEvents(String demat_sound) {
-        return SOUND_EVENTS.register(demat_sound, () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(VortexMod.MODID, demat_sound)));
+    private static RegistryObject<SoundEvent> registerSoundEvents(String sound) {
+        return SOUND_EVENTS.register(sound, () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(VortexMod.MODID, sound)));
     }
 
     public static void register(IEventBus eventBus) {

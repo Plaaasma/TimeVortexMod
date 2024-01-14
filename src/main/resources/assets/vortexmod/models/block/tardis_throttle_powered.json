@@ -24,37 +24,37 @@
 		},
 		{
 			"name": "handle",
-			"from": [5.5, 3.90523, 8.6044],
-			"to": [10.5, 5.40523, 10.1044],
-			"rotation": {"angle": 22.5, "axis": "x", "origin": [8, 2.49346, 8]},
+			"from": [5.5, 1.05, 5.48823],
+			"to": [10.5, 2.55, 6.98823],
+			"rotation": {"angle": 45, "axis": "x", "origin": [8, 2.49346, 8]},
 			"faces": {
-				"north": {"uv": [0, 2, 5, 3.5], "texture": "#2"},
-				"east": {"uv": [5, 4, 6.5, 5.5], "texture": "#2"},
-				"south": {"uv": [0, 0, 5, 1.5], "texture": "#2"},
-				"west": {"uv": [5, 2, 6.5, 3.5], "texture": "#2"},
-				"up": {"uv": [5, 5.5, 0, 4], "rotation": 180, "texture": "#2"},
-				"down": {"uv": [10, 0, 5, 1.5], "rotation": 180, "texture": "#2"}
+				"north": {"uv": [5, 5.5, 0, 4], "texture": "#2"},
+				"east": {"uv": [5, 4, 6.5, 5.5], "rotation": 90, "texture": "#2"},
+				"south": {"uv": [10, 0, 5, 1.5], "rotation": 180, "texture": "#2"},
+				"west": {"uv": [5, 2, 6.5, 3.5], "rotation": 270, "texture": "#2"},
+				"up": {"uv": [0, 0, 5, 1.5], "texture": "#2"},
+				"down": {"uv": [0, 2, 5, 3.5], "rotation": 180, "texture": "#2"}
 			}
 		},
 		{
 			"name": "shaft1",
-			"from": [6.3, 0.50523, 8.8544],
-			"to": [7.3, 4.10523, 9.8544],
-			"rotation": {"angle": 22.5, "axis": "x", "origin": [8, 2.49346, 8]},
+			"from": [6.3, -0.13576, 7.37082],
+			"to": [7.3, 0.86424, 10.37082],
+			"rotation": {"angle": 45, "axis": "x", "origin": [8, 2.16424, 9.87082]},
 			"faces": {
-				"north": {"uv": [4, 0, 6, 8], "texture": "#1"},
-				"east": {"uv": [6, 0, 8, 8], "texture": "#1"},
-				"south": {"uv": [0, 0, 2, 8], "texture": "#1"},
-				"west": {"uv": [2, 0, 4, 8], "texture": "#1"},
-				"up": {"uv": [8, 10, 6, 8], "rotation": 180, "texture": "#1"},
-				"down": {"uv": [10, 8, 8, 10], "rotation": 180, "texture": "#1"}
+				"north": {"uv": [8, 10, 6, 8], "texture": "#1"},
+				"east": {"uv": [6, 0, 8, 8], "rotation": 90, "texture": "#1"},
+				"south": {"uv": [10, 8, 8, 10], "rotation": 180, "texture": "#1"},
+				"west": {"uv": [2, 0, 4, 8], "rotation": 270, "texture": "#1"},
+				"up": {"uv": [0, 0, 2, 8], "texture": "#1"},
+				"down": {"uv": [4, 0, 6, 8], "rotation": 180, "texture": "#1"}
 			}
 		},
 		{
 			"name": "shaft2",
-			"from": [8.7, 0.50523, 8.8544],
-			"to": [9.7, 4.10523, 9.8544],
-			"rotation": {"angle": 22.5, "axis": "x", "origin": [8, 2.49346, 8]},
+			"from": [8.7, 1.66424, 7.57082],
+			"to": [9.7, 4.66424, 8.57082],
+			"rotation": {"angle": -45, "axis": "x", "origin": [8, 2.16424, 9.87082]},
 			"faces": {
 				"north": {"uv": [2, 8, 4, 16], "texture": "#1"},
 				"east": {"uv": [4, 8, 6, 16], "texture": "#1"},
