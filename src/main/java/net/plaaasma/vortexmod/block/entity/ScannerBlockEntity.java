@@ -6,7 +6,9 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.model.data.ModelData;
 import net.plaaasma.vortexmod.VortexMod;
+import org.jetbrains.annotations.NotNull;
 
 public class ScannerBlockEntity extends BlockEntity {
     public ScannerBlockEntity(BlockPos pPos, BlockState pBlockState) {

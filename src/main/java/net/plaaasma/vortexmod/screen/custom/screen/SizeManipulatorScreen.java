@@ -1,6 +1,8 @@
 package net.plaaasma.vortexmod.screen.custom.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.CommonComponents;
 import net.plaaasma.vortexmod.VortexMod;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -22,7 +24,8 @@ public class SizeManipulatorScreen extends AbstractContainerScreen<SizeManipulat
     protected void init() {
         super.init();
         this.inventoryLabelY = 10000;
-        this.titleLabelY = 10000;
+        this.titleLabelY = 22;
+        this.titleLabelX = 48;
     }
 
     @Override

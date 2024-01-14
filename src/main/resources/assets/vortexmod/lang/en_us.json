@@ -22,6 +22,7 @@
   "block.vortexmod.coordinate_block": "Coordinate Designator Module",
   "block.vortexmod.keypad_block": "Coordinate Keypad Module",
   "block.vortexmod.size_manipulator_block": "Vortex Entry Size Manipulator Module",
+  "block.vortexmod.size_manipulator_name": "Size Manipulator",
   "block.vortexmod.equalizer_block": "Artron Equalizer",
   "block.vortexmod.tardis_block": "TARDIS",
   "block.vortexmod.door_block": "TARDIS Interior Door",

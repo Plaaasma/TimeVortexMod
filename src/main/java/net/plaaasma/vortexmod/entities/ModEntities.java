@@ -98,7 +98,7 @@ public class ModEntities {
 
     public static final RegistryObject<EntityType<TardisEntity>> TARDIS =
             ENTITY_TYPES.register("tardis", () -> EntityType.Builder.of(TardisEntity::new, MobCategory.CREATURE)
-                    .sized(1.3f, 2.9f).build("tardis"));
+                    .sized(1.2f, 2.6f).build("tardis"));
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);

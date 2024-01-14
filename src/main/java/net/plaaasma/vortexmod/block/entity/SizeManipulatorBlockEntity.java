@@ -1,5 +1,7 @@
 package net.plaaasma.vortexmod.block.entity;
 
+import net.minecraft.client.gui.screens.inventory.AnvilScreen;
+import net.minecraft.client.gui.screens.inventory.CommandBlockEditScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -10,6 +12,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -93,7 +96,7 @@ public class SizeManipulatorBlockEntity extends BlockEntity implements MenuProvi
 
     @Override
     public Component getDisplayName() {
-        return Component.translatable("block.vortexmod.size_manipulator");
+        return Component.translatable("block.vortexmod.size_manipulator_name");
     }
 
     @Nullable
@@ -101,7 +104,6 @@ public class SizeManipulatorBlockEntity extends BlockEntity implements MenuProvi
     public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
         return new SizeManipulatorMenu(pContainerId, pPlayerInventory, this, this.data);
     }
-
 
     @Override
     public void load(CompoundTag pTag) {
