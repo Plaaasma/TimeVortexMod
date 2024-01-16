@@ -116,10 +116,10 @@ public class TardisRenderer extends MobRenderer<TardisEntity, TardisModel<Tardis
                 pPoseStack.translate(-62.5, 0, -62.5);
                 this.getFont().drawInBatch(signText, -(this.getFont().width(signText) / 2), 0, colorWithAlpha, false, pPoseStack.last().pose(), pBuffer, Font.DisplayMode.POLYGON_OFFSET, 0, pPackedLight);
                 pPoseStack.mulPose(Axis.YP.rotationDegrees(90));
-                pPoseStack.translate(-62.5, 0, -63.5);
+                pPoseStack.translate(-62.5, 0, -63.25);
                 this.getFont().drawInBatch(signText, -(this.getFont().width(signText) / 2), 0, colorWithAlpha, false, pPoseStack.last().pose(), pBuffer, Font.DisplayMode.POLYGON_OFFSET, 0, pPackedLight);
                 pPoseStack.mulPose(Axis.YP.rotationDegrees(90));
-                pPoseStack.translate(-62.5, 0, -64);
+                pPoseStack.translate(-62.5, 0, -63.75);
                 this.getFont().drawInBatch(signText, -(this.getFont().width(signText) / 2), 0, colorWithAlpha, false, pPoseStack.last().pose(), pBuffer, Font.DisplayMode.POLYGON_OFFSET, 0, pPackedLight);
             }
         }
