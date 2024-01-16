@@ -21,6 +21,7 @@ public class ModEvents {
         new LoadCoordinateCommand(event.getDispatcher());
         new ListCoordinateCommand(event.getDispatcher());
         new SecurityCommand(event.getDispatcher());
+        new ExteriorCommand(event.getDispatcher());
 
         ConfigCommand.register(event.getDispatcher());
     }

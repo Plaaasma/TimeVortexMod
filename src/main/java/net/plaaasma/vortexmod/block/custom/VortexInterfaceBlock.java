@@ -193,7 +193,7 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                                 serverLevel.removeBlockEntity(currentPos);
                             }
                             else {
-                                if (serverLevel.getBlockState(currentPos).getBlock() != Blocks.BEDROCK) {
+                                if (serverLevel.getBlockState(currentPos).getBlock() != Blocks.BEDROCK && serverLevel.getBlockState(currentPos).getBlock() != Blocks.END_PORTAL && serverLevel.getBlockState(currentPos).getBlock() != Blocks.END_PORTAL_FRAME) {
                                     if (currentPos != pPos) {
                                         toBeRemoved.add(currentPos);
                                     }

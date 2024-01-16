@@ -229,6 +229,51 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         super.saveAdditional(pTag);
     }
 
+    public final void setSignJ(String signText) {
+        MinecraftServer minecraftserver = this.level.getServer();
+        Iterable<ServerLevel> serverLevels = minecraftserver.getAllLevels();
+
+        TardisEntity tardisEntity = null;
+
+        for (ServerLevel cLevel : serverLevels) {
+            TardisEntity newTardisEntity = (TardisEntity) cLevel.getEntity(this.exterior_uuid);
+
+            if (newTardisEntity != null) {
+                tardisEntity = newTardisEntity;
+            }
+        }
+
+        if (tardisEntity != null) {
+            tardisEntity.setSignText(signText);
+        }
+    }
+
+    @LuaFunction
+    public final boolean setSign(String signText) throws LuaException {
+        if (signText.length() <= 16) {
+            MinecraftServer minecraftserver = this.level.getServer();
+            Iterable<ServerLevel> serverLevels = minecraftserver.getAllLevels();
+
+            TardisEntity tardisEntity = null;
+
+            for (ServerLevel cLevel : serverLevels) {
+                TardisEntity newTardisEntity = (TardisEntity) cLevel.getEntity(this.exterior_uuid);
+
+                if (newTardisEntity != null) {
+                    tardisEntity = newTardisEntity;
+                }
+            }
+
+            if (tardisEntity != null) {
+                tardisEntity.setSignText(signText);
+            }
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     @LuaFunction
     public final Boolean enableThrottle() throws LuaException {
         this.data.set(13, 1);
@@ -2245,7 +2290,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
     private void handleBlockTeleportVortex2Vortex(Level pLevel, BlockPos currentPos, BlockPos targetPos, int x, int y, int z) {
         if (pLevel instanceof ServerLevel serverlevel) {
-            if (serverlevel.getBlockState(currentPos).getBlock() == Blocks.BEDROCK) {
+            if (serverlevel.getBlockState(currentPos).getBlock() == Blocks.BEDROCK || serverlevel.getBlockState(currentPos).getBlock() == Blocks.END_PORTAL || serverlevel.getBlockState(currentPos).getBlock() == Blocks.END_PORTAL_FRAME) {
                 return;
             }
             BlockPos augmentedPos = targetPos.offset(x, y, z);
@@ -2273,7 +2318,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
     private void handleBlockTeleportVortex(Level pLevel, BlockPos currentPos, BlockPos targetPos, int x, int y, int z) {
         if (pLevel instanceof ServerLevel serverlevel) {
-            if (serverlevel.getBlockState(currentPos).getBlock() == Blocks.BEDROCK) {
+            if (serverlevel.getBlockState(currentPos).getBlock() == Blocks.BEDROCK || serverlevel.getBlockState(currentPos).getBlock() == Blocks.END_PORTAL || serverlevel.getBlockState(currentPos).getBlock() == Blocks.END_PORTAL_FRAME) {
                 return;
             }
             MinecraftServer minecraftserver = serverlevel.getServer();
@@ -2315,7 +2360,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
     private void handleBlockTeleport(Level pLevel, BlockPos currentPos, BlockPos targetPos, int x, int y, int z, ServerLevel dimension) {
         if (pLevel instanceof ServerLevel serverlevel) {
-            if (serverlevel.getBlockState(currentPos).getBlock() == Blocks.BEDROCK) {
+            if (serverlevel.getBlockState(currentPos).getBlock() == Blocks.BEDROCK || serverlevel.getBlockState(currentPos).getBlock() == Blocks.END_PORTAL || serverlevel.getBlockState(currentPos).getBlock() == Blocks.END_PORTAL_FRAME) {
                 return;
             }
             if (dimension != null) {
@@ -2357,7 +2402,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
     private void handleBlockRemoval(Level pLevel, BlockPos currentPos) {
         if (pLevel instanceof ServerLevel serverLevel) {
-            if (serverLevel.getBlockState(currentPos).getBlock() == Blocks.BEDROCK) {
+            if (serverLevel.getBlockState(currentPos).getBlock() == Blocks.BEDROCK || serverLevel.getBlockState(currentPos).getBlock() == Blocks.END_PORTAL || serverLevel.getBlockState(currentPos).getBlock() == Blocks.END_PORTAL_FRAME) {
                 return;
             }
             BlockEntity blockEntity = pLevel.getBlockEntity(currentPos);

@@ -3,6 +3,7 @@ package net.plaaasma.vortexmod.entities.custom;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -64,6 +65,7 @@ public class TardisEntity extends Mob {
     private static final EntityDataAccessor<Float> DATA_TARGET_Y_ID = SynchedEntityData.defineId(TardisEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_TARGET_Z_ID = SynchedEntityData.defineId(TardisEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> DATA_ROTATION_ID = SynchedEntityData.defineId(TardisEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<String> DATA_SIGN_ID = SynchedEntityData.defineId(TardisEntity.class, EntityDataSerializers.STRING);
 
     public TardisEntity(EntityType<? extends Mob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -86,6 +88,7 @@ public class TardisEntity extends Mob {
         pCompound.putFloat("Y", this.entityData.get(DATA_TARGET_Y_ID));
         pCompound.putFloat("Z", this.entityData.get(DATA_TARGET_Z_ID));
         pCompound.putInt("Rotation", this.entityData.get(DATA_ROTATION_ID));
+        pCompound.putString("Sign", this.entityData.get(DATA_SIGN_ID));
     }
 
     @Override
@@ -106,6 +109,12 @@ public class TardisEntity extends Mob {
         this.entityData.set(DATA_TARGET_Z_ID, pCompound.getFloat("Z"));
         this.entityData.set(DATA_ROTATION_ID, pCompound.getInt("Rotation"));
         this.setYRot(pCompound.getInt("Rotation"));
+        if (pCompound.getString("Sign").length() > 0) {
+            this.entityData.set(DATA_SIGN_ID, pCompound.getString("Sign"));
+        }
+        else {
+            this.entityData.set(DATA_SIGN_ID, "Police -=- Box");
+        }
     }
 
     @Override
@@ -125,6 +134,7 @@ public class TardisEntity extends Mob {
         this.entityData.define(DATA_TARGET_Y_ID, 0f);
         this.entityData.define(DATA_TARGET_Z_ID, 0f);
         this.entityData.define(DATA_ROTATION_ID, 0);
+        this.entityData.define(DATA_SIGN_ID, "Police -=- Box");
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -178,12 +188,20 @@ public class TardisEntity extends Mob {
         this.entityData.set(DATA_ANIM_STAGE_ID, anim_stage);
     }
 
+    public void setSignText(String signText) {
+        entityData.set(DATA_SIGN_ID, signText);
+    }
+
     public int getOwnerID() {
         return this.entityData.get(DATA_OWNERID_ID);
     }
 
     public float getAlpha() {
         return this.entityData.get(DATA_ALPHA_ID);
+    }
+
+    public String getSign() {
+        return this.entityData.get(DATA_SIGN_ID);
     }
 
     public String getLevel() {
