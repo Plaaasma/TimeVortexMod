@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
@@ -102,7 +103,7 @@ public class TardisRenderer extends MobRenderer<TardisEntity, TardisModel<Tardis
         if (rendertype != null) {
             VertexConsumer vertexconsumer = pBuffer.getBuffer(rendertype);
             int i = getOverlayCoords(pEntity, this.getWhiteOverlayProgress(pEntity, pPartialTicks));
-            this.model.renderToBuffer(pPoseStack, vertexconsumer, pPackedLight, i, 1.0F, 1.0F, 1.0F, pEntity.getAlpha());
+            this.model.renderToBuffer(pPoseStack, vertexconsumer, pPackedLight, i, 1, 1, 1, pEntity.getAlpha());
             if (!pEntity.isInFlight() && pEntity.getAlpha() > 0.01) {
                 String signText = pEntity.getSign();
                 int color = ChatFormatting.WHITE.getColor();
