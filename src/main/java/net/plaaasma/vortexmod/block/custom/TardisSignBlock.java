@@ -39,16 +39,16 @@ public class TardisSignBlock extends HorizontalDirectionalBlock {
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         if (pState.getValue(FACING) == Direction.SOUTH) {
-            return Block.box(-1, 0, 0, 17, 3, 1.2);
+            return Block.box(-0.7, 0, 0, 16.7, 2.5, 1.2);
         }
         else if (pState.getValue(FACING) == Direction.WEST) {
-            return Block.box(14.8, 0, -1, 16, 3, 17);
+            return Block.box(14.8, 0, -0.7, 16, 2.5, 16.7);
         }
         else if (pState.getValue(FACING) == Direction.NORTH) {
-            return Block.box(-1, 0, 14.8, 17, 3, 16);
+            return Block.box(-0.7, 0, 14.8, 16.7, 2.5, 16);
         }
         else {
-            return Block.box(0, 0, -1, 1.2, 3, 17);
+            return Block.box(0, 0, -0.7, 1.2, 2.5, 16.7);
         }
     }
 

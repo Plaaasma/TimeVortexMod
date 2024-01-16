@@ -8,8 +8,8 @@
 	"elements": [
 		{
 			"name": "sign",
-			"from": [0, 0, 14.8],
-			"to": [16, 2.6, 16],
+			"from": [-0.7, 0, 14.8],
+			"to": [16.7, 2.6, 16],
 			"rotation": {"angle": 0, "axis": "y", "origin": [8, 0, 8]},
 			"faces": {
 				"north": {"uv": [0, 0, 9, 1.5], "texture": "#0"},
