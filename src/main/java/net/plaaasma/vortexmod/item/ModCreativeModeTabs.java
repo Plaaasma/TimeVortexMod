@@ -14,9 +14,9 @@ public class ModCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, VortexMod.MODID);
 
-    public static final RegistryObject<CreativeModeTab> VORTEX_TAB = CREATIVE_MODE_TABS.register("vortex_tab",
+    public static final RegistryObject<CreativeModeTab> VORTEX_MAIN_TAB = CREATIVE_MODE_TABS.register("vortex_main_tab",
             () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModBlocks.INTERFACE_BLOCK.get()))
-                    .title(Component.translatable("creativetab.vortex_tab"))
+                    .title(Component.translatable("creativetab.vortex_main_tab"))
                     .displayItems((pParameters, pOutput) -> {
                         pOutput.accept(ModItems.CHEESE.get());
                         pOutput.accept(ModItems.CORE.get());
@@ -46,6 +46,23 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModItems.SILVER_DALEK_SPAWN_EGG.get());
                         pOutput.accept(ModItems.BLACK_DALEK_SPAWN_EGG.get());
                         pOutput.accept(ModItems.SILVER_BLACK_DALEK_SPAWN_EGG.get());
+                    })
+                    .build());
+
+    public static final RegistryObject<CreativeModeTab> VORTEX_ROUNDELS_TAB = CREATIVE_MODE_TABS.register("vortex_roundel_tab",
+            () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModBlocks.OAK_ROUNDEL.get()))
+                    .title(Component.translatable("creativetab.vortex_roundel_tab"))
+                    .displayItems((pParameters, pOutput) -> {
+                        pOutput.accept(ModBlocks.OAK_ROUNDEL.get());
+                        pOutput.accept(ModBlocks.SPRUCE_ROUNDEL.get());
+                        pOutput.accept(ModBlocks.ACACIA_ROUNDEL.get());
+                        pOutput.accept(ModBlocks.BIRCH_ROUNDEL.get());
+                        pOutput.accept(ModBlocks.CHERRY_ROUNDEL.get());
+                        pOutput.accept(ModBlocks.CRIMSON_ROUNDEL.get());
+                        pOutput.accept(ModBlocks.DARK_OAK_ROUNDEL.get());
+                        pOutput.accept(ModBlocks.JUNGLE_ROUNDEL.get());
+                        pOutput.accept(ModBlocks.MANGROVE_ROUNDEL.get());
+                        pOutput.accept(ModBlocks.WARPED_ROUNDEL.get());
                     })
                     .build());
 

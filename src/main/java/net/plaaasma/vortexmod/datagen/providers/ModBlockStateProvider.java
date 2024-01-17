@@ -31,6 +31,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
+        // TARDIS PARTS
         getVariantBuilder(ModBlocks.THROTTLE_BLOCK.get())
                 .forAllStates(blockState -> {
                    boolean powered = blockState.getValue(ThrottleBlock.POWERED);
@@ -94,6 +95,28 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 new ModelFile.UncheckedModelFile(modLoc("block/tardis_sign_block")));
         simpleBlockItem(ModBlocks.TARDIS_SIGN_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/tardis_sign_block")));
+
+        // ROUNDELS
+        simpleBlockWithItem(ModBlocks.OAK_ROUNDEL.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/roundels/oak_roundel_block")));
+        simpleBlockWithItem(ModBlocks.SPRUCE_ROUNDEL.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/roundels/spruce_roundel_block")));
+        simpleBlockWithItem(ModBlocks.ACACIA_ROUNDEL.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/roundels/acacia_roundel_block")));
+        simpleBlockWithItem(ModBlocks.BIRCH_ROUNDEL.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/roundels/birch_roundel_block")));
+        simpleBlockWithItem(ModBlocks.CHERRY_ROUNDEL.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/roundels/cherry_roundel_block")));
+        simpleBlockWithItem(ModBlocks.DARK_OAK_ROUNDEL.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/roundels/dark_oak_roundel_block")));
+        simpleBlockWithItem(ModBlocks.JUNGLE_ROUNDEL.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/roundels/jungle_roundel_block")));
+        simpleBlockWithItem(ModBlocks.MANGROVE_ROUNDEL.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/roundels/mangrove_roundel_block")));
+        simpleBlockWithItem(ModBlocks.CRIMSON_ROUNDEL.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/roundels/crimson_roundel_block")));
+        simpleBlockWithItem(ModBlocks.WARPED_ROUNDEL.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/roundels/warped_roundel_block")));
     }
 
     private void blockWithItem(RegistryObject<Block> blockRegistryObject) {

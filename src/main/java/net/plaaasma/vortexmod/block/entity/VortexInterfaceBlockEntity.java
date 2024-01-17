@@ -859,10 +859,13 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     BlockState blockAtTarget = targetDimension.getBlockState(target);
 
                     BlockPos exteriorPos = new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8));
-                    double ticks_to_travel = 35 * tickSpeed;
+                    double intermediate_seconds = 15;
+                    double demat_seconds = 10;
+                    double remat_seconds = 10;
+                    double demat_time = tickSpeed * demat_seconds;
+                    double remat_time = tickSpeed * remat_seconds;
+                    double ticks_to_travel = (intermediate_seconds + demat_seconds + remat_seconds) * tickSpeed;
                     double end_tick = this.data.get(1) + ticks_to_travel;
-                    double demat_time = tickSpeed * 10;
-                    double remat_time = tickSpeed * 10;
 
 //                        if (this.data.get(0) > this.data.get(1) + demat_time) {
 //                            //delete tardis

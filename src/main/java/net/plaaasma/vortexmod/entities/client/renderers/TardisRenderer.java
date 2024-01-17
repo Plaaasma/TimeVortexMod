@@ -7,6 +7,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.font.FontManager;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
@@ -124,6 +125,8 @@ public class TardisRenderer extends MobRenderer<TardisEntity, TardisModel<Tardis
                 this.getFont().drawInBatch(signText, -(this.getFont().width(signText) / 2), 0, colorWithAlpha, false, pPoseStack.last().pose(), pBuffer, Font.DisplayMode.POLYGON_OFFSET, 0, pPackedLight);
             }
         }
+
+        this.shadowStrength = 0;
 
         pPoseStack.popPose();
     }

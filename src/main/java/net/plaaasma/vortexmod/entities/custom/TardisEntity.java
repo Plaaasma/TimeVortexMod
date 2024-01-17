@@ -264,7 +264,7 @@ public class TardisEntity extends Mob {
 
     @Override
     public boolean canBeCollidedWith() {
-        return !this.entityData.get(DATA_IN_FLIGHT_ID) && !this.entityData.get(DATA_REMAT_ID);
+        return !this.isInFlight() && !this.isRemat();
     }
 
     @Override
