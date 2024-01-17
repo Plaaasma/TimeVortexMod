@@ -14,6 +14,7 @@ public class ModSounds {
 
     public static final RegistryObject<SoundEvent> DEMAT_SOUND = registerSoundEvents("demat_sound");
     public static final RegistryObject<SoundEvent> FLIGHT_SOUND = registerSoundEvents("flight_sound");
+    public static final RegistryObject<SoundEvent> EUC_FLIGHT_SOUND = registerSoundEvents("euc_flight_sound");
     public static final RegistryObject<SoundEvent> REMAT_SOUND = registerSoundEvents("remat_sound");
     public static final RegistryObject<SoundEvent> THROTTLE_SOUND = registerSoundEvents("throttle_sound");
 

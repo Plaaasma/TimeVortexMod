@@ -5,6 +5,12 @@
       "vortexmod:flight_sound"
     ]
   },
+  "euc_flight_sound": {
+    "subtitle": "sounds.vortexmod.euc_flight_sound",
+    "sounds": [
+      "vortexmod:euc_flight_sound"
+    ]
+  },
   "demat_sound": {
     "subtitle": "sounds.vortexmod.demat_sound",
     "sounds": [

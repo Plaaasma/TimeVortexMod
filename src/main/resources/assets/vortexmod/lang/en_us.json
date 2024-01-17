@@ -1,7 +1,7 @@
 {
   "item.vortexmod.cheese": "Cheese",
   "item.vortexmod.size_upgrade": "Size Upgrade",
-  "item.vortexmod.euclidean_upgrade": "Euclidean Upgrade",
+  "item.vortexmod.euclidean_upgrade": "11D Upgrade",
   "item.vortexmod.vortex_core": "Vortex Core",
   "item.vortexmod.tardis_key": "TARDIS Key",
   "item.vortexmod.wrench": "Space Time Wrench",
@@ -54,6 +54,7 @@
   "entity.vortexmod.laser": "Laser",
 
   "sounds.vortexmod.flight_sound": "TARDIS Flight Sound",
+  "sounds.vortexmod.euc_flight_sound": "TARDIS Flight Sound",
   "sounds.vortexmod.demat_sound": "TARDIS Dematerialization Sound",
   "sounds.vortexmod.remat_sound": "TARDIS Rematerialization Sound",
 
@@ -61,7 +62,7 @@
   "tooltip.vortexmod.size_upgrade.tooltip": "Increases the radius that is considered the TARDIS by 1 when input in a size manipulator module.",
   "tooltip.vortexmod.euclidean_upgrade.tooltip": "Right clicking on the interface with this will make your TARDIS bigger on the inside! All modules must be within 16 blocks of the interface in the TARDIS dimension. If you have more than 1 euclidean TARDIS at a time the interiors will blend together, using the wrench you can move the interface and have multiple interfaces that point to different exteriors.",
   "tooltip.vortexmod.vortex_core.tooltip": "A crafting item for the vortex mod.",
-  "tooltip.vortexmod.key.tooltip": "An optional key to lock your euclidean TARDIS.",
+  "tooltip.vortexmod.key.tooltip": "An optional key to lock your non euclidean TARDIS.",
   "tooltip.vortexmod.wrench.tooltip": "Right clicking on the interface with this will drop the interface.",
   "tooltip.vortexmod.throttle_block.tooltip": "Starts/Stops the flight sequence when right clicked.",
   "tooltip.vortexmod.interface_block.tooltip": "Use the wrench to pick me up. Main block of the TARDIS, considered the center and needed for any TARDIS.",
@@ -69,13 +70,14 @@
   "tooltip.vortexmod.keypad_block.tooltip": "Allows you to set the coordinates with a command. Also adds dimensional functionality to the TARDIS. (Right click for tutorial). ",
   "tooltip.vortexmod.size_manipulator_block.tooltip": "Module that allows you to input size upgrades. Must be touching the interface block.",
   "tooltip.vortexmod.equalizer_block.tooltip": "Module that prevents the lightning from striking your landing zone.",
-  "tooltip.vortexmod.door_block.tooltip": "Meant for the interior of a euclidean TARDIS, leads to the outside world, you can place as many doors as you want inside the TARDIS dimension within 100 blocks of the interface. When entering the TARDIS, you will always end up at the closest door to the original entry position.",
-  "tooltip.vortexmod.scanner_block.tooltip": "Meant of the interior of a euclidean TARDIS, gives information about the outside world such as if there's ground below the exit point.",
+  "tooltip.vortexmod.door_block.tooltip": "Meant for the interior of a non euclidean TARDIS, leads to the outside world, you can place as many doors as you want inside the TARDIS dimension within 100 blocks of the interface. When entering the TARDIS, you will always end up at the closest door to the original entry position.",
+  "tooltip.vortexmod.scanner_block.tooltip": "Meant of the interior of a non euclidean TARDIS, gives information about the outside world such as if there's ground below the exit point.",
   "tooltip.vortexmod.grounding_block.tooltip": "Will ensure that you land on the ground if you were set to be in the air.",
-  "tooltip.vortexmod.biometric_module.tooltip": "Allows you to blacklist people from entering your TARDIS with commands. This is only functional in a euclidean TARDIS. (Right click for tutorial).",
+  "tooltip.vortexmod.biometric_module.tooltip": "Allows you to blacklist people from entering your TARDIS with commands. This is only functional in a non euclidean TARDIS. (Right click for tutorial).",
   "tooltip.vortexmod.tardis_sign_block.tooltip": "Just a decorative block for your interiors or anything really.",
   "tooltip.vortexmod.size_designator.tooltip": "Used to precisely set the borders of your proto TARDIS. Each size upgrade is worth 128 blocks when using this. Use like a world edit wand, right click on the size manipulator to set.",
 
 
-  "creativetab.vortex_tab": "Time Vortex"
+  "creativetab.vortex_main_tab": "Time Vortex",
+  "creativetab.vortex_roundel_tab": "Time Vortex Roundels"
 }

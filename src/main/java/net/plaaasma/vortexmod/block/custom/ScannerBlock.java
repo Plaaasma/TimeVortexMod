@@ -98,18 +98,26 @@ public class ScannerBlock extends HorizontalBaseEntityBlock {
                                 BlockPos blockExitPos = new BlockPos(vortexInterfaceBlockEntity.data.get(6), vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8));
                                 TardisEntity tardisEntity = (TardisEntity) targetDimension.getEntity(vortexInterfaceBlockEntity.getExtUUID());
                                 if (tardisEntity != null) {
-                                    int yaw = (int) tardisEntity.getYRot();
+                                    if (!tardisEntity.isInFlight() && !tardisEntity.isRemat()) {
+                                        int yaw = (int) tardisEntity.getYRot();
 
-                                    double distance = 1.4; // Distance from the root position
+                                        double distance = 1.4; // Distance from the root position
 
-                                    double yawRadians = Math.toRadians(yaw);
+                                        double yawRadians = Math.toRadians(yaw);
 
-                                    double newX = blockExitPos.getX() + distance * Math.sin(yawRadians);
-                                    double newZ = blockExitPos.getZ() - distance * Math.cos(yawRadians);
+                                        double newX = blockExitPos.getX() + distance * Math.sin(yawRadians);
+                                        double newZ = blockExitPos.getZ() - distance * Math.cos(yawRadians);
 
-                                    targetExit = new Vec3(newX, blockExitPos.getY(), newZ);
-                                    blockTargetExit = new BlockPos((int) newX, blockExitPos.getY(), (int) newZ);
-                                    decidedDimension = targetDimension;
+                                        targetExit = new Vec3(newX, blockExitPos.getY(), newZ);
+                                        blockTargetExit = new BlockPos((int) newX, blockExitPos.getY(), (int) newZ);
+                                        decidedDimension = targetDimension;
+                                    }
+                                    else {
+                                        Vec3 randomVec = new Vec3(random.nextInt(1000000) - 500000, -100, random.nextInt(1000000) - 500000);
+                                        targetExit = randomVec;
+                                        blockTargetExit = new BlockPos((int) randomVec.x, -100, (int) randomVec.z);
+                                        decidedDimension = vortexDimension;
+                                    }
                                 } else {
                                     decidedDimension = vortexDimension;
                                     targetExit = new Vec3(random.nextInt(1000000) - 500000, -100, random.nextInt(1000000) - 500000);

@@ -4,6 +4,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import io.netty.buffer.Unpooled;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.multiplayer.ClientHandshakePacketListenerImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -12,6 +13,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
@@ -77,6 +79,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private int is_flying = 0;
     private int flight_time = 0;
     private int redstone_signal = 0;
+    private int sound_time = 0;
     private UUID exterior_uuid = UUID.randomUUID();
     public final ContainerData data;
 
@@ -108,6 +111,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     case 19 -> VortexInterfaceBlockEntity.this.is_flying;
                     case 20 -> VortexInterfaceBlockEntity.this.flight_time;
                     case 21 -> VortexInterfaceBlockEntity.this.redstone_signal;
+                    case 22 -> VortexInterfaceBlockEntity.this.sound_time;
                     default -> 0;
                 };
             }
@@ -137,12 +141,13 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     case 19 -> VortexInterfaceBlockEntity.this.is_flying = pValue;
                     case 20 -> VortexInterfaceBlockEntity.this.flight_time = pValue;
                     case 21 -> VortexInterfaceBlockEntity.this.redstone_signal = pValue;
+                    case 22 -> VortexInterfaceBlockEntity.this.sound_time = pValue;
                 }
             }
 
             @Override
             public int getCount() {
-                return 22;
+                return 23;
             }
         };
     }
@@ -190,6 +195,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         this.cc_set_dim = vortexModData.getInt("cc_set_dim");
         this.is_flying = vortexModData.getInt("is_flying");
         this.flight_time = vortexModData.getInt("flight_time");
+        this.sound_time = vortexModData.getInt("sound_time");
 
         if (vortexModData.contains("exterior_uuid")) {
             this.exterior_uuid = vortexModData.getUUID("exterior_uuid");
@@ -224,6 +230,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         vortexModData.putInt("is_flying", this.is_flying);
         vortexModData.putInt("flight_time", this.flight_time);
         vortexModData.putUUID("exterior_uuid", this.exterior_uuid);
+        vortexModData.putInt("sound_time", this.sound_time);
         pTag.put(VortexMod.MODID, vortexModData);
 
         super.saveAdditional(pTag);
@@ -775,13 +782,13 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     this.data.set(21, 15);
                     if (this.data.get(0) > this.data.get(1) + (10 * tickSpeed) && pLevel != vortexDimension) {
                         BlockPos realTargetPos = new BlockPos(targetX, targetY, targetZ);
-                        BlockPos vortexTargetPos = findNewVortexPosition(exteriorPos, pPos, realTargetPos, size);
+                        BlockPos vortexTargetPos = findNewVortexPosition(pPos, realTargetPos);
                         vortexTargetPos = new BlockPos(vortexTargetPos.getX(), -100, vortexTargetPos.getZ());
-                        if (Math.sqrt(exteriorPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 10000) {
-                            this.data.set(6, this.data.get(6) + 10000);
-                            this.data.set(8, this.data.get(8) + 10000);
-                            vortexTargetPos = vortexTargetPos.offset(10000, 0, 10000);
-                        }
+//                        if (Math.sqrt(exteriorPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 10000) {
+//                            this.data.set(6, this.data.get(6) + 10000);
+//                            this.data.set(8, this.data.get(8) + 10000);
+//                            vortexTargetPos = vortexTargetPos.offset(10000, 0, 10000);
+//                        }
 
                         this.data.set(1, this.data.get(0));
                         ChunkPos chunkPos = vortexDimension.getChunkAt(vortexTargetPos).getPos();
@@ -790,7 +797,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         chunkPos = currentDimension.getChunkAt(pPos).getPos();
                         ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, false, true);
                         vortexDimension.playSeededSound(null, vortexTargetPos.getX(), vortexTargetPos.getY(), vortexTargetPos.getZ(), ModSounds.FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
-                    } else if (pLevel == vortexDimension && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 0.05 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ))) {
+                    } else if (pLevel == vortexDimension && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 100 && this.data.get(0) >= (tickSpeed * 5) + this.data.get(1)) {
                         BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
                         this.data.set(1, this.data.get(0));
                         this.data.set(11, 0);
@@ -816,13 +823,17 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                             this.data.set(11, 1);
                         }
                         if (this.data.get(0) % (4 * tickSpeed) == 0 && this.data.get(0) > this.data.get(1) + (4 * tickSpeed) && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) > 0.05 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ))) {
-                            BlockPos newTarget = findNewVortexPosition(exteriorPos, pPos, new BlockPos(targetX, targetY, targetZ), size);
-                            ChunkPos chunkPos = vortexDimension.getChunkAt(newTarget).getPos();
-                            ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, newTarget, chunkPos.x, chunkPos.z, true, true);
-                            handleVortex2VortexTeleports(size, overrideAABB, pLevel, pPos, newTarget);
-//                            chunkPos = vortexDimension.getChunkAt(pPos).getPos();
-//                            ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, false, true);
-                            vortexDimension.playSeededSound(null, newTarget.getX(), newTarget.getY(), newTarget.getZ(), ModSounds.FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                            BlockPos newTarget = findNewVortexPosition(pPos, new BlockPos(targetX, targetY, targetZ));
+                            if (Math.sqrt(newTarget.distToCenterSqr(pPos.getX(), pPos.getY(), pPos.getZ())) > size) {
+                                ChunkPos chunkPos = vortexDimension.getChunkAt(newTarget).getPos();
+                                ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, newTarget, chunkPos.x, chunkPos.z, true, true);
+                                handleVortex2VortexTeleports(size, overrideAABB, pLevel, pPos, newTarget);
+                                ChunkPos newChunkPos = vortexDimension.getChunkAt(pPos).getPos();
+                                if (newChunkPos != chunkPos) {
+                                    ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, pPos, newChunkPos.x, newChunkPos.z, false, true);
+                                    vortexDimension.playSeededSound(null, newTarget.getX(), newTarget.getY(), newTarget.getZ(), ModSounds.FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                                }
+                            }
                         }
                         if (Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 0.3 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ))) {
                             handleRematParticles(size, overrideAABB, targetDimension, new BlockPos(targetX, targetY, targetZ));
@@ -839,16 +850,18 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     this.data.set(21, 0);
                 }
             }
-            else { // Euclidean TARDIS Logic
+            else { // Non Euclidean TARDIS Logic
                 if (tardisEntity != null) {
-                    this.data.set(6, tardisEntity.getBlockX());
-                    this.data.set(7, tardisEntity.getBlockY());
-                    this.data.set(8, tardisEntity.getBlockZ());
+                    if (!tardisEntity.isRemat() && !tardisEntity.isInFlight()) {
+                        this.data.set(6, tardisEntity.getBlockX());
+                        this.data.set(7, tardisEntity.getBlockY());
+                        this.data.set(8, tardisEntity.getBlockZ());
+                    }
                 }
                 else {
                     tardisEntity = ModEntities.TARDIS.get().spawn(currentDimension, new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8)), MobSpawnType.NATURAL);
                     currentDimension.addFreshEntity(tardisEntity);
-                    setExtUUID(tardisEntity.getUUID());
+                    tardisEntity.setUUID(getExtUUID());
                 }
 
                 if (throttle_on == 1) {
@@ -859,18 +872,16 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     BlockState blockAtTarget = targetDimension.getBlockState(target);
 
                     BlockPos exteriorPos = new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8));
-                    double intermediate_seconds = 15;
+                    double intermediate_seconds = 1.8;
+                    intermediate_seconds += intermediate_seconds * (Math.sqrt(exteriorPos.distToCenterSqr(target.getX(), target.getY(), target.getZ())) / 1000);
                     double demat_seconds = 10;
-                    double remat_seconds = 10;
+                    double remat_seconds = 11;
                     double demat_time = tickSpeed * demat_seconds;
                     double remat_time = tickSpeed * remat_seconds;
                     double ticks_to_travel = (intermediate_seconds + demat_seconds + remat_seconds) * tickSpeed;
                     double end_tick = this.data.get(1) + ticks_to_travel;
 
-//                        if (this.data.get(0) > this.data.get(1) + demat_time) {
-//                            //delete tardis
-//                        }
-                    if (this.data.get(0) > end_tick && this.data.get(0) > this.data.get(1) + remat_time) {
+                    if (this.data.get(0) > end_tick) {
                         BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
                         this.data.set(1, this.data.get(0));
                         handleLandingEntities(targetDimension, tardisDimension, flight_target, this.getExtUUID());
@@ -879,6 +890,8 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         this.data.set(8, targetZ);
                         this.data.set(9, targetDimension.dimension().location().getPath().hashCode());
                         this.data.set(0, 0);
+                        this.data.set(22, 0);
+                        this.data.set(11, 0);
                         for (int x = -size; x <= size; x++) {
                             for (int y = -1; y <= y_size + (y_size - 1); y++) {
                                 for (int z = -size; z <= size; z++) {
@@ -922,7 +935,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 }
                             }
                         }
-                    } else if (this.data.get(0) > end_tick - remat_time && this.data.get(0) > 0) {
+                    } else if (this.data.get(0) >= (int) (end_tick - remat_time) && this.data.get(0) > 0) {
                         this.data.set(20, 0);
                         if (tardisEntity != null) {
                             tardisEntity.setInFlight(false);
@@ -949,12 +962,16 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                             BlockPos dummyTarget = new BlockPos(0, 500, 0);
                             ChunkPos chunkPos = currentDimension.getChunkAt(dummyTarget).getPos();
                             ForgeChunkManager.forceChunk(currentDimension, VortexMod.MODID, dummyTarget, chunkPos.x, chunkPos.z, true, true);
-                            tardisEntity.teleportTo(0, 500, 0);
+                            tardisEntity.teleportTo(currentDimension, 0, 500, 0, RelativeMovement.ALL, rotation_yaw, 0);
+                            tardisEntity.tick();
                         }
                         double time_remaining = (end_tick - remat_time - this.data.get(0)) / tickSpeed;
                         this.data.set(20, (int) time_remaining);
-                        if (this.data.get(0) == this.data.get(1) + demat_time + 1) {
-                            pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                        if (this.data.get(0) >= this.data.get(1) + demat_time + 1 && (this.data.get(0) - (this.data.get(1) + demat_time) > 0)) {
+                            if (this.data.get(0) >= this.data.get(22) + (tickSpeed * 1.35)) {
+                                pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.EUC_FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                                this.data.set(22, this.data.get(0));
+                            }
                         }
                         for (int x = -size; x <= size; x++) {
                             for (int y = -1; y <= y_size + (y_size - 1); y++) {
@@ -972,10 +989,10 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     else {
                         tardisEntity.setInFlight(false);
                     }
-                    if (this.data.get(0) == end_tick - remat_time && this.data.get(0) > 0) {
+                    if (this.data.get(0) == (int) (end_tick - remat_time) && this.data.get(0) > 0) {
                         tardisEntity.setRemat(true);
                     }
-                    if (this.data.get(0) == end_tick - remat_time && this.data.get(0) > 0) {
+                    if (this.data.get(0) == (int) (end_tick - remat_time) && this.data.get(0) > 0) {
                         BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
                         ChunkPos chunkPos = targetDimension.getChunkAt(flight_target).getPos();
                         ForgeChunkManager.forceChunk(targetDimension, VortexMod.MODID, flight_target, chunkPos.x, chunkPos.z, true, true);
@@ -985,6 +1002,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         if (targetDimension.dimension() != currentDimension.dimension()) {
                             targetDimension.addFreshEntity(tardisEntity);
                         }
+                        tardisEntity.tick();
                         chunkPos = vortexDimension.getChunkAt(exteriorPos).getPos();
                         ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, exteriorPos, chunkPos.x, chunkPos.z, false, true);
                     }
@@ -993,9 +1011,12 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.DEMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
                         tardisEntity.setDemat(true);
                     }
-                    if (this.data.get(0) == end_tick - (remat_time + (5 * tickSpeed)) && this.data.get(0) > 0) {
-                        targetDimension.playSeededSound(null, targetX, targetY, targetZ, ModSounds.REMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
-                        pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.REMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                    if (this.data.get(0) == (int) (end_tick - (remat_time + (5 * tickSpeed))) && this.data.get(0) > 0) {
+                        if (this.data.get(11) == 0) {
+                            targetDimension.playSeededSound(null, targetX, targetY, targetZ, ModSounds.REMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                            pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.REMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
+                            this.data.set(11, 1);
+                        }
                     }
                 }
                 else {
@@ -1219,7 +1240,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     rotatedZ,
                     xVel, yVel, zVel, 0.025F, 1
             );
-            if (pConnection.isConnected()) {
+            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
                 pConnection.send(particlesPacket);
             }
         }
@@ -1284,7 +1305,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     rotatedZ,
                     xVel, yVel, zVel, 0.025F, 1
             );
-            if (pConnection.isConnected()) {
+            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
                 pConnection.send(particlesPacket);
             }
         }
@@ -1349,7 +1370,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     rotatedZ,
                     xVel, yVel, zVel, 0.025F, 1
             );
-            if (pConnection.isConnected()) {
+            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
                 pConnection.send(particlesPacket);
             }
         }
@@ -1467,7 +1488,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 newZ + 0.5,
                                 xVel, yVel, zVel, 0, 1
                         );
-                        if (pConnection.isConnected()) {
+                        if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
                             pConnection.send(particlesPacket);
                         }
                     }
@@ -1538,7 +1559,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                     minCorner.getZ() + z,
                                     xVel, yVel, zVel, 0, 1
                             );
-                            if (pConnection.isConnected()) {
+                            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
                                 pConnection.send(particlesPacket);
                             }
                         }
@@ -1653,7 +1674,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 newZ + 0.5,
                                 xVel, yVel, zVel, 0, 1
                         );
-                        if (pConnection.isConnected()) {
+                        if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
                             pConnection.send(particlesPacket);
                         }
                     }
@@ -1731,7 +1752,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                     minCorner.getZ() + z,
                                     xVel, yVel, zVel, 0, 1
                             );
-                            if (pConnection.isConnected()) {
+                            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
                                 pConnection.send(particlesPacket);
                             }
                         }
@@ -1814,13 +1835,13 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     rotatedZ,
                     xVel, yVel, zVel, 0.025F, 1
             );
-            if (pConnection.isConnected()) {
+            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
                 pConnection.send(particlesPacket);
             }
         }
     }
 
-    private BlockPos findNewVortexPosition(BlockPos fromPos, BlockPos pPos, BlockPos currentTarget, int size) {
+    private BlockPos findNewVortexPosition(BlockPos pPos, BlockPos currentTarget) {
         // Direction vector from pPos to currentTarget
         double dirX = currentTarget.getX() - pPos.getX();
         double dirZ = currentTarget.getZ() - pPos.getZ();
@@ -1830,12 +1851,8 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         dirX /= magnitude;
         dirZ /= magnitude;
 
-        double total_distance = Math.sqrt(fromPos.distToCenterSqr(currentTarget.getX(), pPos.getY(), currentTarget.getZ()));
-        double distance = (0.1 * total_distance);
-
-        if (distance < size) {
-            distance = size + 1;
-        }
+        double total_distance = Math.sqrt(pPos.distToCenterSqr(currentTarget.getX(), pPos.getY(), currentTarget.getZ()));
+        double distance = (0.5 * total_distance);
 
         // Calculate the new position
         int newX = pPos.getX() + (int)(dirX * distance);
@@ -1854,11 +1871,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private void handleLightningStrikes(Level pLevel, BlockPos targetPosition) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            if (pConnection.isConnected()) {
+            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
                 ClientboundAddEntityPacket entityPacket = new ClientboundAddEntityPacket(new LightningBolt(EntityType.LIGHTNING_BOLT, pLevel), 0, targetPosition);
-                if (pConnection.isConnected()) {
-                    pConnection.send(entityPacket);
-                }
+                pConnection.send(entityPacket);
             }
         }
     }
@@ -1866,7 +1881,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private void handleFlightCenterParticles(Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            if (pConnection.isConnected()) {
+            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
                 spawnFlightCenterCylinder(pConnection, pPos);
             }
         }
@@ -1875,7 +1890,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private void handleRematCenterParticles(Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            if (pConnection.isConnected()) {
+            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
                 spawnRematCenterCylinder(pConnection, pPos);
             }
         }
@@ -1884,7 +1899,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private void handleDematCenterParticles(Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            if (pConnection.isConnected()) {
+            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
                 spawnDematCenterCylinder(pConnection, pPos);
             }
         }
@@ -1893,7 +1908,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private void handleVortexParticles(int size, Level pLevel, BlockPos pPos, BlockPos targetPosition) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            if (pConnection.isConnected()) {
+            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
                 spawnVortexCylinder(pConnection, pPos, targetPosition, size, 100);
             }
         }
@@ -1902,7 +1917,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private void handleDematParticles(int size, AABB overrideAABB, Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            if (pConnection.isConnected()) {
+            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
                 spawnDematSquare(pConnection, pPos, size, overrideAABB);
             }
         }
@@ -1911,7 +1926,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private void handleRematParticles(int size, AABB overrideAABB, Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            if (pConnection.isConnected()) {
+            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
                 spawnRematSquare(pConnection, pPos, size, overrideAABB);
             }
         }

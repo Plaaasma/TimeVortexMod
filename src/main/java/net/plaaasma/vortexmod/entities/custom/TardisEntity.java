@@ -469,14 +469,9 @@ public class TardisEntity extends Mob {
                         this.moveTo(target.x, target.y, target.z, rotation_yaw, 0);
                     }
                 }
-//                if ((int) this.getYRot() != rotation_yaw) {
-//                    this.setYRot(rotation_yaw);
-//                }
             }
         }
 
-        if (!this.entityData.get(DATA_IN_FLIGHT_ID)) {
-            super.tick();
-        }
+        super.tick();
     }
 }

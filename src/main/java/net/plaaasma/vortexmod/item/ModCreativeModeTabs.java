@@ -50,7 +50,7 @@ public class ModCreativeModeTabs {
                     .build());
 
     public static final RegistryObject<CreativeModeTab> VORTEX_ROUNDELS_TAB = CREATIVE_MODE_TABS.register("vortex_roundel_tab",
-            () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModBlocks.OAK_ROUNDEL.get()))
+            () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModBlocks.WARPED_ROUNDEL.get()))
                     .title(Component.translatable("creativetab.vortex_roundel_tab"))
                     .displayItems((pParameters, pOutput) -> {
                         pOutput.accept(ModBlocks.OAK_ROUNDEL.get());

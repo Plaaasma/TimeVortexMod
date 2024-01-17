@@ -1,6 +1,7 @@
 package net.plaaasma.vortexmod.block.custom;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.multiplayer.ClientHandshakePacketListenerImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -9,6 +10,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.*;
 
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -248,7 +250,7 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
             ClientboundAddEntityPacket entityPacket = new ClientboundAddEntityPacket(new LightningBolt(EntityType.LIGHTNING_BOLT, pLevel), 0, targetPosition);
-            if (pConnection.isConnected()) {
+            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
                 pConnection.send(entityPacket);
             }
         }
