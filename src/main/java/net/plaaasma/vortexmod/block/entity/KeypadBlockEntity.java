@@ -1,16 +1,38 @@
 package net.plaaasma.vortexmod.block.entity;
 
+import net.minecraft.client.gui.screens.inventory.AnvilScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 import net.plaaasma.vortexmod.VortexMod;
+import net.plaaasma.vortexmod.screen.custom.menu.KeypadMenu;
+import net.plaaasma.vortexmod.screen.custom.menu.SizeManipulatorMenu;
+import org.jetbrains.annotations.Nullable;
 
-public class KeypadBlockEntity extends BlockEntity {
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class KeypadBlockEntity extends BlockEntity implements MenuProvider {
+    public final ItemStackHandler itemHandler = new ItemStackHandler(1);
+
+    private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
+
     public final ContainerData data;
     private int is_active = 0;
+    public Map<String, BlockPos> coordData = new HashMap<>();
+    public Map<String, String> dimData = new HashMap<>();
 
     public KeypadBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.TARDIS_KEYPAD_BE.get(), pPos, pBlockState);
@@ -38,13 +60,26 @@ public class KeypadBlockEntity extends BlockEntity {
     }
 
     @Override
+    public Component getDisplayName() {
+        return Component.translatable("block.vortexmod.keypad_block");
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
+        return new KeypadMenu(pContainerId, pPlayerInventory, this, this.data);
+    }
+
+    @Override
     public void onLoad() {
         super.onLoad();
+        lazyItemHandler = LazyOptional.of(() -> itemHandler);
     }
 
     @Override
     public void invalidateCaps() {
         super.invalidateCaps();
+        lazyItemHandler.invalidate();
     }
 
     @Override

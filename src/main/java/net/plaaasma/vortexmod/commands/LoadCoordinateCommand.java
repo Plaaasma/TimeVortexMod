@@ -105,7 +105,7 @@ public class LoadCoordinateCommand {
                 vortexInterfaceBlockEntity.data.set(17, savedPos.getZ());
                 vortexInterfaceBlockEntity.data.set(18, savedDimHash);
 
-                source.sendSuccess(() -> Component.literal("Loading " + locName.getString() + " to the designator. (" + savedPos.getX() + " " + savedPos.getY() + " " + savedPos.getZ() + ")"), false);
+                source.sendSuccess(() -> Component.literal("Loading " + locName.getString() + " to the designator. (" + savedPos.getX() + " " + savedPos.getY() + " " + savedPos.getZ() + " | " + savedDimName + ")"), false);
             }
             else {
                 source.sendFailure(Component.literal("You do not have a saved destination called " + locName.getString() + ", you can list your destinations with /tardis list"));

@@ -9,6 +9,7 @@ import net.minecraftforge.network.IContainerFactory;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import net.plaaasma.vortexmod.screen.custom.menu.KeypadMenu;
 import net.plaaasma.vortexmod.screen.custom.menu.SizeManipulatorMenu;
 
 public class ModMenuTypes {
@@ -17,6 +18,8 @@ public class ModMenuTypes {
 
     public static final RegistryObject<MenuType<SizeManipulatorMenu>> SIZE_MANIPULATOR_MENU =
             registerMenuType("size_manipulator_menu", SizeManipulatorMenu::new);
+    public static final RegistryObject<MenuType<KeypadMenu>> KEYPAD_MENU =
+            registerMenuType("keypad_menu", KeypadMenu::new);
 
 
     private static <T extends AbstractContainerMenu>RegistryObject<MenuType<T>> registerMenuType(String name, IContainerFactory<T> factory) {

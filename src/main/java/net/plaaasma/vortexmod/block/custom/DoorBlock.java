@@ -119,9 +119,6 @@ public class DoorBlock extends Block {
                                         }
                                     }
                                 }
-                                else {
-                                    System.out.println("Cannot find TARDIS entity");
-                                }
                                 return InteractionResult.CONSUME;
                             }
                         }

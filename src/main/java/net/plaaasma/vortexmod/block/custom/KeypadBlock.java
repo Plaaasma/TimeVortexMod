@@ -4,7 +4,10 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -28,11 +31,20 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.network.NetworkHooks;
 import net.plaaasma.vortexmod.block.entity.ModBlockEntities;
 import net.plaaasma.vortexmod.block.entity.KeypadBlockEntity;
+import net.plaaasma.vortexmod.block.entity.SizeManipulatorBlockEntity;
+import net.plaaasma.vortexmod.mapdata.DimensionMapData;
+import net.plaaasma.vortexmod.mapdata.LocationMapData;
+import net.plaaasma.vortexmod.network.ClientboundTargetMapPacket;
+import net.plaaasma.vortexmod.network.PacketHandler;
+import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class KeypadBlock extends HorizontalBaseEntityBlock {
     public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 4, 16);
@@ -61,7 +73,25 @@ public class KeypadBlock extends HorizontalBaseEntityBlock {
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (!pLevel.isClientSide()) {
-            pPlayer.displayClientMessage(Component.literal("Use the '/tardis target set coords (x) (y) (z)' to set the target coordinates or '/tardis target set dim (dimension)' to set the target dimension. You can also do '/tardis locations save (name)' and '/tardis locations load (name)'").withStyle(ChatFormatting.AQUA), false);
+            KeypadBlockEntity entity = (KeypadBlockEntity) pLevel.getBlockEntity(pPos);
+
+            MinecraftServer minecraftserver = pLevel.getServer();
+            ServerLevel tardis_dim = minecraftserver.getLevel(ModDimensions.tardisDIM_LEVEL_KEY);
+            ServerLevel vortex = minecraftserver.getLevel(ModDimensions.vortexDIM_LEVEL_KEY);
+            LocationMapData coord_data = LocationMapData.get(vortex);
+            DimensionMapData dim_data = DimensionMapData.get(tardis_dim);
+
+            Set<String> coordKeys = coord_data.getDataMap().keySet();
+            for (String coordKey : coordKeys) {
+                BlockPos pointPos = coord_data.getDataMap().get(coordKey);
+                entity.coordData.put(coordKey, pointPos);
+                String pointDimension = dim_data.getDataMap().get(coordKey);
+                entity.dimData.put(coordKey, pointDimension);
+            }
+
+            PacketHandler.sendToAllClients(new ClientboundTargetMapPacket(pLevel.dimension().location().getPath(), pPos, entity.coordData, entity.dimData));
+
+            NetworkHooks.openScreen(((ServerPlayer) pPlayer), entity, pPos);
         }
 
         return InteractionResult.SUCCESS;

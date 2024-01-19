@@ -22,6 +22,7 @@ import net.plaaasma.vortexmod.entities.client.renderers.LostTravelerRenderer;
 import net.plaaasma.vortexmod.entities.client.renderers.TardisRenderer;
 import net.plaaasma.vortexmod.item.ModCreativeModeTabs;
 import net.plaaasma.vortexmod.item.ModItems;
+import net.plaaasma.vortexmod.screen.custom.screen.KeypadScreen;
 import net.plaaasma.vortexmod.sound.ModSounds;
 import net.plaaasma.vortexmod.screen.ModMenuTypes;
 import net.plaaasma.vortexmod.screen.custom.screen.SizeManipulatorScreen;
@@ -94,6 +95,7 @@ public class VortexMod {
             EntityRenderers.register(ModEntities.TARDIS.get(), TardisRenderer::new);
 
             MenuScreens.register(ModMenuTypes.SIZE_MANIPULATOR_MENU.get(), SizeManipulatorScreen::new);
+            MenuScreens.register(ModMenuTypes.KEYPAD_MENU.get(), KeypadScreen::new);
         }
     }
 }

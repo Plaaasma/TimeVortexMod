@@ -24,13 +24,12 @@ public class SetCoordinateCommand {
     public SetCoordinateCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("tardis")
         .then(Commands.literal("target")
-        .then(Commands.literal("set")
         .then(Commands.literal("coords")
         .then(Commands.argument("target", Vec3Argument.vec3())
             .executes((command) -> {
                 return setCoords(command.getSource(), Vec3Argument.getCoordinates(command, "target"));
             }))
-        ))));
+        )));
     }
 
     private int setCoords(CommandSourceStack source, Coordinates targetCoords) throws CommandSyntaxException {

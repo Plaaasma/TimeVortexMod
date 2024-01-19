@@ -22,13 +22,12 @@ public class SetDimensionCommand {
     public SetDimensionCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("tardis")
         .then(Commands.literal("target")
-        .then(Commands.literal("set")
         .then(Commands.literal("dim")
         .then(Commands.argument("dimension", DimensionArgument.dimension())
             .executes((command) -> {
                 return setDim(command.getSource(), DimensionArgument.getDimension(command, "dimension"));
             }))
-        ))));
+        )));
     }
 
     private int setDim(CommandSourceStack source, ServerLevel targetDim) throws CommandSyntaxException {

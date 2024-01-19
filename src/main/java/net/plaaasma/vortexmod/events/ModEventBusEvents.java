@@ -6,12 +6,14 @@ import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.entities.ModEntities;
 import net.plaaasma.vortexmod.entities.custom.DalekEntity;
 import net.plaaasma.vortexmod.entities.custom.LaserEntity;
 import net.plaaasma.vortexmod.entities.custom.LostTravelerEntity;
 import net.plaaasma.vortexmod.entities.custom.TardisEntity;
+import net.plaaasma.vortexmod.network.PacketHandler;
 import oshi.util.tuples.Pair;
 
 import java.util.ArrayList;
@@ -65,4 +67,10 @@ public class ModEventBusEvents {
         );
     }
 
+    @SubscribeEvent
+    public static void commonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            PacketHandler.register();
+        });
+    }
 }

@@ -104,7 +104,8 @@ public class SaveCoordinateCommand {
 
             coord_data.getDataMap().put(player.getScoreboardName() + locName.getString(), targetVec);
             dim_data.getDataMap().put(player.getScoreboardName() + locName.getString(), currentLevel.dimension().location().getPath());
-            source.sendSuccess(() -> Component.literal("Adding the current target coordinates (" + targetVec.getX() + " " + targetVec.getY() + " " + targetVec.getZ() + ") as " + locName.getString()), false);
+            ServerLevel finalCurrentLevel = currentLevel;
+            source.sendSuccess(() -> Component.literal("Adding the current target coordinates (" + targetVec.getX() + " " + targetVec.getY() + " " + targetVec.getZ() +  " | " + finalCurrentLevel.dimension().location().getPath() + ") as " + locName.getString()), false);
         }
         else {
             if (!core_found) {
