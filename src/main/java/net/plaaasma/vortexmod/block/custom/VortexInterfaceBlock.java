@@ -168,18 +168,21 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
 
                             BlockEntity blockEntity = serverLevel.getBlockEntity(currentPos);
 
-                            CompoundTag nbtData = null;
                             if (blockEntity != null) {
-                                nbtData = blockEntity.saveWithFullMetadata();
-                                if (blockEntity instanceof SizeManipulatorBlockEntity sizeManipulatorBlockEntity) {
-                                    sizeManipulatorBlockEntity.itemHandler.setStackInSlot(0, new ItemStack(Items.AIR, 0));
-                                }
                                 if (blockEntity instanceof VortexInterfaceBlockEntity vortexInterfaceBlockEntity) {
                                     interfacePos = currentTargetPos;
                                 }
                             }
 
                             BlockState blockState = serverLevel.getBlockState(currentPos);
+
+                            CompoundTag nbtData = null;
+                            if (blockEntity != null) {
+                                nbtData = blockEntity.saveWithFullMetadata();
+                                if (blockEntity instanceof SizeManipulatorBlockEntity sizeManipulatorBlockEntity) {
+                                    sizeManipulatorBlockEntity.itemHandler.setStackInSlot(0, new ItemStack(Items.AIR, 0));
+                                }
+                            }
 
                             tardisDimension.setBlockAndUpdate(currentTargetPos, blockState);
 
@@ -225,6 +228,7 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                 VortexInterfaceBlockEntity interfaceBlockEntity = (VortexInterfaceBlockEntity) tardisDimension.getBlockEntity(interfacePos);
 
                 TardisEntity tardisMob = ModEntities.TARDIS.get().spawn(serverLevel, pPos, MobSpawnType.NATURAL);
+                serverLevel.addFreshEntity(tardisMob);
 
                 tardisMob.setOwnerID(ownerCode);
                 interfaceBlockEntity.setExtUUID(tardisMob.getUUID());

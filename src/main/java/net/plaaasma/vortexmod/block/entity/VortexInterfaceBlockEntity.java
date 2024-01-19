@@ -200,9 +200,6 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         if (vortexModData.contains("exterior_uuid")) {
             this.exterior_uuid = vortexModData.getUUID("exterior_uuid");
         }
-        else {
-            System.out.println("Bruh");
-        }
 
         super.load(pTag);
     }
@@ -271,6 +268,10 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             }
         }
         return targetDim;
+    }
+
+    public final void setDimensionJ(String param) {
+        this.data.set(18, param.hashCode());
     }
 
     @LuaFunction
@@ -451,11 +452,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
             this.data.set(0, this.data.get(0) + 1);
 
-            if (pLevel != vortexDimension && pLevel != tardisDimension) {
+            if (pLevel.dimension() != vortexDimension.dimension() && pLevel.dimension() != tardisDimension.dimension()) {
                 int dimId = pLevel.dimension().location().getPath().hashCode();
-                if (this.data.get(9) == 0) {
-                    this.data.set(9, dimId);
-                }
+                this.data.set(9, dimId);
                 if (this.data.get(10) == 0) {
                     this.data.set(10, dimId);
                 }
@@ -490,6 +489,11 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     tardisEntity = newTardisEntity;
                 }
             }
+
+            System.out.println(currentDimension.dimension().location().getPath());
+            System.out.println(this.data.get(9));
+            System.out.println(this.exterior_uuid);
+            System.out.println("-----------");
 
             if (tardisEntity == null) {
                 tardisEntity = (TardisEntity) currentDimension.getEntity(this.exterior_uuid);

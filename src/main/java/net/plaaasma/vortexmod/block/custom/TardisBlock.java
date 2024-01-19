@@ -76,6 +76,7 @@ public class TardisBlock extends HorizontalBaseEntityBlock {
             TardisBlockEntity blockEntity = (TardisBlockEntity) serverLevel.getBlockEntity(pPos);
 
             TardisEntity tardisMob = ModEntities.TARDIS.get().spawn(serverLevel, pPos, MobSpawnType.NATURAL);
+            tardisMob.tick();
             tardisMob.setOwnerID(blockEntity.data.get(0));
             tardisMob.setLocked(blockEntity.data.get(1) == 1);
             tardisMob.setHasBioSecurity(blockEntity.data.get(2) == 1);
