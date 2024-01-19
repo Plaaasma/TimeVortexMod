@@ -20,17 +20,17 @@ public class PacketHandler {
             .simpleChannel();
 
     public static void register() {
-        INSTANCE.messageBuilder(ServerboundTargetPacket.class, NetworkDirection.PLAY_TO_SERVER.ordinal())
+        INSTANCE.messageBuilder(ServerboundTargetPacket.class, 0)
             .encoder(ServerboundTargetPacket::encode)
             .decoder(ServerboundTargetPacket::new)
             .consumerMainThread(ServerboundTargetPacket::handle)
             .add();
-        INSTANCE.messageBuilder(ServerboundSaveTargetPacket.class, NetworkDirection.PLAY_TO_SERVER.ordinal())
+        INSTANCE.messageBuilder(ServerboundSaveTargetPacket.class, 1)
                 .encoder(ServerboundSaveTargetPacket::encode)
                 .decoder(ServerboundSaveTargetPacket::new)
                 .consumerMainThread(ServerboundSaveTargetPacket::handle)
                 .add();
-        INSTANCE.messageBuilder(ClientboundTargetMapPacket.class, NetworkDirection.PLAY_TO_CLIENT.ordinal())
+        INSTANCE.messageBuilder(ClientboundTargetMapPacket.class, 2)
                 .encoder(ClientboundTargetMapPacket::encode)
                 .decoder(ClientboundTargetMapPacket::new)
                 .consumerMainThread(ClientboundTargetMapPacket::handle)

@@ -229,46 +229,52 @@ public class KeypadScreen extends AbstractContainerScreen<KeypadMenu> {
     }
 
     public void onSave() {
-        PacketHandler.sendToServer(new ServerboundSaveTargetPacket(this.menu.blockEntity.getBlockPos(), this.name.getValue(), true));
+        if (!this.targetScreen) {
+            PacketHandler.sendToServer(new ServerboundSaveTargetPacket(this.menu.blockEntity.getBlockPos(), this.name.getValue(), true, this.targetScreen));
+        }
     }
 
     public void onLoad() {
-        PacketHandler.sendToServer(new ServerboundSaveTargetPacket(this.menu.blockEntity.getBlockPos(), this.name.getValue(), false));
+        if (!this.targetScreen) {
+            PacketHandler.sendToServer(new ServerboundSaveTargetPacket(this.menu.blockEntity.getBlockPos(), this.name.getValue(), false, this.targetScreen));
+        }
     }
 
     public void onDone() {
-        int x_int = 999999999;
-        int y_int = 999999999;
-        int z_int = 999999999;
+        if (this.targetScreen) {
+            int x_int = 999999999;
+            int y_int = 999999999;
+            int z_int = 999999999;
 
-        String x_string = this.x.getValue();
-        String y_string = this.y.getValue();
-        String z_string = this.z.getValue();
+            String x_string = this.x.getValue();
+            String y_string = this.y.getValue();
+            String z_string = this.z.getValue();
 
-        if (x_string.matches("^-?\\d+$")) {
-            x_int = Integer.parseInt(x_string);
+            if (x_string.matches("^-?\\d+$")) {
+                x_int = Integer.parseInt(x_string);
+            }
+            if (y_string.matches("^-?\\d+$")) {
+                y_int = Integer.parseInt(y_string);
+            }
+            if (z_string.matches("^-?\\d+$")) {
+                z_int = Integer.parseInt(z_string);
+            }
+
+            BlockPos from_pos = this.menu.blockEntity.getBlockPos();
+            String from_dimension = this.menu.blockEntity.getLevel().dimension().location().getPath();
+            BlockPos to_pos = new BlockPos(x_int, y_int, z_int);
+            int to_rotation = 999999999;
+            String rot_String = this.rotation.getValue();
+            if (rot_String.matches("^-?\\d+$")) {
+                to_rotation = Integer.parseInt(rot_String);
+            }
+
+            String to_dimension = this.dimension.getValue();
+
+            PacketHandler.sendToServer(new ServerboundTargetPacket(from_pos, from_dimension, to_pos, to_rotation, to_dimension, this.targetScreen));
+
+            this.onClose();
         }
-        if (y_string.matches("^-?\\d+$")) {
-            y_int = Integer.parseInt(y_string);
-        }
-        if (z_string.matches("^-?\\d+$")) {
-            z_int = Integer.parseInt(z_string);
-        }
-
-        BlockPos from_pos = this.menu.blockEntity.getBlockPos();
-        String from_dimension = this.menu.blockEntity.getLevel().dimension().location().getPath();
-        BlockPos to_pos = new BlockPos(x_int, y_int, z_int);
-        int to_rotation = 999999999;
-        String rot_String = this.rotation.getValue();
-        if (rot_String.matches("^-?\\d+$")) {
-            to_rotation = Integer.parseInt(rot_String);
-        }
-
-        String to_dimension = this.dimension.getValue();
-
-        PacketHandler.sendToServer(new ServerboundTargetPacket(from_pos, from_dimension, to_pos, to_rotation, to_dimension));
-
-        this.onClose();
     }
 
     @Override
