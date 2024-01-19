@@ -160,11 +160,11 @@ public class DalekEntity extends Monster implements RangedAttackMob {
     }
 
     @Override
-    public boolean hurt(DamageSource pSource, float pAmount) {
-        if (!(pSource.getEntity() instanceof DalekEntity)) {
-            return super.hurt(pSource, pAmount);
+    public boolean isInvulnerableTo(DamageSource pSource) {
+        if (pSource.getEntity() instanceof DalekEntity || pSource.getEntity() instanceof LaserEntity) {
+            return true;
         }
-        return false;
+        return super.isInvulnerableTo(pSource);
     }
 
     private void shootLaser(LivingEntity pTarget) {

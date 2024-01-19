@@ -490,11 +490,6 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 }
             }
 
-            System.out.println(currentDimension.dimension().location().getPath());
-            System.out.println(this.data.get(9));
-            System.out.println(this.exterior_uuid);
-            System.out.println("-----------");
-
             if (tardisEntity == null) {
                 tardisEntity = (TardisEntity) currentDimension.getEntity(this.exterior_uuid);
             }
