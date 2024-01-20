@@ -814,7 +814,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         chunkPos = currentDimension.getChunkAt(pPos).getPos();
                         ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, false, true);
                         vortexDimension.playSeededSound(null, vortexTargetPos.getX(), vortexTargetPos.getY(), vortexTargetPos.getZ(), ModSounds.FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
-                    } else if (pLevel == vortexDimension && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 100 && this.data.get(0) >= (tickSpeed * 5) + this.data.get(1)) {
+                    } else if (pLevel == vortexDimension && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 250 && this.data.get(0) >= (tickSpeed * 15) + this.data.get(1)) {
                         BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
                         this.data.set(1, this.data.get(0));
                         this.data.set(11, 0);
@@ -835,7 +835,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         handleDematParticles(size, overrideAABB, pLevel, pPos);
                     }
                     if (pLevel == vortexDimension && this.data.get(0) > 0) {
-                        if (Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 0.3 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ)) && this.data.get(11) == 0) {
+                        if ((Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 0.3 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ)) || (Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 250)) && this.data.get(11) == 0) {
                             targetDimension.playSeededSound(null, targetX, targetY, targetZ, ModSounds.REMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
                             this.data.set(11, 1);
                         }
@@ -852,7 +852,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 }
                             }
                         }
-                        if (Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 0.3 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ))) {
+                        if ((Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 0.3 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ))) || (Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 250)) {
                             handleRematParticles(size, overrideAABB, targetDimension, new BlockPos(targetX, targetY, targetZ));
                             if (this.data.get(0) % (4 * tickSpeed) == 0) {
                                 if (!has_equalizer) {

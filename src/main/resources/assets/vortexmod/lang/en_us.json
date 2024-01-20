@@ -53,6 +53,7 @@
 
   "entity.vortexmod.laser": "Laser",
 
+  "sounds.vortexmod.throttle_sound": "TARDIS Throttle Sound",
   "sounds.vortexmod.flight_sound": "TARDIS Flight Sound",
   "sounds.vortexmod.euc_flight_sound": "TARDIS Flight Sound",
   "sounds.vortexmod.demat_sound": "TARDIS Dematerialization Sound",
