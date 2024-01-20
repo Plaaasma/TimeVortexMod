@@ -117,6 +117,8 @@ public class ServerboundSaveTargetPacket {
                     dim_data.getDataMap().put(player.getScoreboardName() + this.save_name, currentLevel.dimension().location().getPath());
 
                     realContext.getSender().displayClientMessage(Component.literal("Adding the current target coordinates (" + targetVec.getX() + " " + targetVec.getY() + " " + targetVec.getZ() + " | " + currentLevel.dimension().location().getPath() + ") as " + this.save_name), false);
+                    coord_data.setDirty();
+                    dim_data.setDirty();
                     PacketHandler.sendToAllClients(new ClientboundTargetMapPacket(level.dimension().location().getPath(), this.from_pos, coord_data.getDataMap(), dim_data.getDataMap()));
                 } else {
                     if (!core_found) {

@@ -66,11 +66,4 @@ public class ModEventBusEvents {
                 SpawnPlacementRegisterEvent.Operation.OR
         );
     }
-
-    @SubscribeEvent
-    public static void commonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            PacketHandler.register();
-        });
-    }
 }
