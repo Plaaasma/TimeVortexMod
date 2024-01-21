@@ -1255,7 +1255,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     rotatedZ,
                     xVel, yVel, zVel, 0.025F, 1
             );
-            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
+            if (pConnection.isConnected()) {
                 pConnection.send(particlesPacket);
             }
         }
@@ -1320,7 +1320,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     rotatedZ,
                     xVel, yVel, zVel, 0.025F, 1
             );
-            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
+            if (pConnection.isConnected()) {
                 pConnection.send(particlesPacket);
             }
         }
@@ -1385,7 +1385,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     rotatedZ,
                     xVel, yVel, zVel, 0.025F, 1
             );
-            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
+            if (pConnection.isConnected()) {
                 pConnection.send(particlesPacket);
             }
         }
@@ -1503,7 +1503,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 newZ + 0.5,
                                 xVel, yVel, zVel, 0, 1
                         );
-                        if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
+                        if (pConnection.isConnected()) {
                             pConnection.send(particlesPacket);
                         }
                     }
@@ -1574,7 +1574,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                     minCorner.getZ() + z,
                                     xVel, yVel, zVel, 0, 1
                             );
-                            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
+                            if (pConnection.isConnected()) {
                                 pConnection.send(particlesPacket);
                             }
                         }
@@ -1689,7 +1689,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 newZ + 0.5,
                                 xVel, yVel, zVel, 0, 1
                         );
-                        if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
+                        if (pConnection.isConnected()) {
                             pConnection.send(particlesPacket);
                         }
                     }
@@ -1767,7 +1767,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                     minCorner.getZ() + z,
                                     xVel, yVel, zVel, 0, 1
                             );
-                            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
+                            if (pConnection.isConnected()) {
                                 pConnection.send(particlesPacket);
                             }
                         }
@@ -1850,7 +1850,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     rotatedZ,
                     xVel, yVel, zVel, 0.025F, 1
             );
-            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
+            if (pConnection.isConnected()) {
                 pConnection.send(particlesPacket);
             }
         }
@@ -1886,7 +1886,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private void handleLightningStrikes(Level pLevel, BlockPos targetPosition) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
+            if (pConnection.isConnected()) {
                 ClientboundAddEntityPacket entityPacket = new ClientboundAddEntityPacket(new LightningBolt(EntityType.LIGHTNING_BOLT, pLevel), 0, targetPosition);
                 pConnection.send(entityPacket);
             }
@@ -1896,7 +1896,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private void handleFlightCenterParticles(Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
+            if (pConnection.isConnected()) {
                 spawnFlightCenterCylinder(pConnection, pPos);
             }
         }
@@ -1905,7 +1905,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private void handleRematCenterParticles(Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
+            if (pConnection.isConnected()) {
                 spawnRematCenterCylinder(pConnection, pPos);
             }
         }
@@ -1914,7 +1914,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private void handleDematCenterParticles(Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
+            if (pConnection.isConnected()) {
                 spawnDematCenterCylinder(pConnection, pPos);
             }
         }
@@ -1923,7 +1923,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private void handleVortexParticles(int size, Level pLevel, BlockPos pPos, BlockPos targetPosition) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
+            if (pConnection.isConnected()) {
                 spawnVortexCylinder(pConnection, pPos, targetPosition, size, 100);
             }
         }
@@ -1932,7 +1932,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private void handleDematParticles(int size, AABB overrideAABB, Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
+            if (pConnection.isConnected()) {
                 spawnDematSquare(pConnection, pPos, size, overrideAABB);
             }
         }
@@ -1941,7 +1941,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     private void handleRematParticles(int size, AABB overrideAABB, Level pLevel, BlockPos pPos) {
         List<Connection> connectionList = pLevel.getServer().getConnection().getConnections();
         for (Connection pConnection : connectionList) {
-            if (pConnection.isConnected() && !(pConnection.getPacketListener() instanceof ClientHandshakePacketListenerImpl)) {
+            if (pConnection.isConnected()) {
                 spawnRematSquare(pConnection, pPos, size, overrideAABB);
             }
         }
