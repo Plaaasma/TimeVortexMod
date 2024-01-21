@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.network.NetworkConstants;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
@@ -14,11 +15,11 @@ import net.plaaasma.vortexmod.VortexMod;
 
 public class PacketHandler {
 
-    static String version = Minecraft.getInstance().getLaunchedVersion();
     private static final SimpleChannel INSTANCE = NetworkRegistry.ChannelBuilder.named(
             new ResourceLocation(VortexMod.MODID, "main"))
-            .networkProtocolVersion(() -> version)
-            .clientAcceptedVersions(version::equals).serverAcceptedVersions(version::equals)
+            .networkProtocolVersion(() -> NetworkConstants.NETVERSION)
+            .clientAcceptedVersions(a->true)
+            .serverAcceptedVersions(a->true)
             .simpleChannel();
 
     public static void register() {

@@ -72,9 +72,9 @@ public class KeypadBlock extends HorizontalBaseEntityBlock {
 
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        if (!pLevel.isClientSide()) {
-            KeypadBlockEntity entity = (KeypadBlockEntity) pLevel.getBlockEntity(pPos);
+        KeypadBlockEntity entity = (KeypadBlockEntity) pLevel.getBlockEntity(pPos);
 
+        if (!pLevel.isClientSide()) {
             MinecraftServer minecraftserver = pLevel.getServer();
             ServerLevel tardis_dim = minecraftserver.getLevel(ModDimensions.tardisDIM_LEVEL_KEY);
             ServerLevel vortex = minecraftserver.getLevel(ModDimensions.vortexDIM_LEVEL_KEY);
@@ -91,7 +91,7 @@ public class KeypadBlock extends HorizontalBaseEntityBlock {
 
             PacketHandler.sendToAllClients(new ClientboundTargetMapPacket(pLevel.dimension().location().getPath(), pPos, entity.coordData, entity.dimData));
 
-            NetworkHooks.openScreen(((ServerPlayer) pPlayer), entity, pPos);
+            NetworkHooks.openScreen((ServerPlayer) pPlayer, entity, pPos);
         }
 
         return InteractionResult.SUCCESS;

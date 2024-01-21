@@ -29,11 +29,4 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(ModModelLayers.LASER_LAYER, LaserModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.TARDIS_LAYER, TardisModel::createBodyLayer);
     }
-
-    @SubscribeEvent
-    public static void commonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            PacketHandler.register();
-        });
-    }
 }
