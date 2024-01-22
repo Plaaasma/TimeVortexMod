@@ -244,6 +244,8 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                 handleLightningStrikes(serverLevel, pPos);
 
                 data.setDirty();
+
+                serverLevel.removeBlock(pPos, false);
             }
         }
 
