@@ -66,7 +66,7 @@
   "tooltip.vortexmod.key.tooltip": "An optional key to lock your non euclidean TARDIS.",
   "tooltip.vortexmod.wrench.tooltip": "Right clicking on the interface with this will drop the interface.",
   "tooltip.vortexmod.throttle_block.tooltip": "Starts/Stops the flight sequence when right clicked.",
-  "tooltip.vortexmod.interface_block.tooltip": "Use the wrench to pick me up. Main block of the TARDIS, considered the center and needed for any TARDIS.",
+  "tooltip.vortexmod.interface_block.tooltip": "Use the wrench to pick me up. Main block of the TARDIS, considered the center and needed for any TARDIS. Outputs redstone signal during flight.",
   "tooltip.vortexmod.coordinate_block.tooltip": "Control the target location using basic sliders.",
   "tooltip.vortexmod.keypad_block.tooltip": "Allows you to use most of /tardis. Also adds dimensional functionality to the TARDIS. This block also has a gui.",
   "tooltip.vortexmod.size_manipulator_block.tooltip": "Module that allows you to input size upgrades. Must be touching the interface block.",

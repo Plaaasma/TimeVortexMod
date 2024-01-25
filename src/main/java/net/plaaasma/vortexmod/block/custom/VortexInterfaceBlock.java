@@ -209,6 +209,10 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                 }
 
                 for (BlockPos positionToBeRemoved : toBeRemoved) {
+                    BlockEntity blockEntity = serverLevel.getBlockEntity(positionToBeRemoved);
+                    if (blockEntity != null) {
+                        blockEntity.load(new CompoundTag());
+                    }
                     serverLevel.removeBlock(positionToBeRemoved, false);
                     serverLevel.removeBlockEntity(positionToBeRemoved);
                 }

@@ -37,14 +37,13 @@ import net.plaaasma.vortexmod.block.entity.KeypadBlockEntity;
 import net.plaaasma.vortexmod.block.entity.SizeManipulatorBlockEntity;
 import net.plaaasma.vortexmod.mapdata.DimensionMapData;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
+import net.plaaasma.vortexmod.network.ClientboundDimListPacket;
 import net.plaaasma.vortexmod.network.ClientboundTargetMapPacket;
 import net.plaaasma.vortexmod.network.PacketHandler;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class KeypadBlock extends HorizontalBaseEntityBlock {
     public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 4, 16);
@@ -81,6 +80,12 @@ public class KeypadBlock extends HorizontalBaseEntityBlock {
             LocationMapData coord_data = LocationMapData.get(vortex);
             DimensionMapData dim_data = DimensionMapData.get(tardis_dim);
 
+            // Store list of levels in entity.Levels or something, use this to select in KeypadScreen
+            Iterable<ServerLevel> serverLevels = minecraftserver.getAllLevels();
+            for (ServerLevel serverLevel : serverLevels) {
+                entity.serverLevels.add(serverLevel.dimension().location().getPath());
+            }
+
             Set<String> coordKeys = coord_data.getDataMap().keySet();
             for (String coordKey : coordKeys) {
                 BlockPos pointPos = coord_data.getDataMap().get(coordKey);
@@ -89,7 +94,13 @@ public class KeypadBlock extends HorizontalBaseEntityBlock {
                 entity.dimData.put(coordKey, pointDimension);
             }
 
+            Map<String, String> levelMap = new HashMap<>();
+            for (String levelString : entity.serverLevels) {
+                levelMap.put(levelString, levelString);
+            }
+
             PacketHandler.sendToAllClients(new ClientboundTargetMapPacket(pLevel.dimension().location().getPath(), pPos, entity.coordData, entity.dimData));
+            PacketHandler.sendToAllClients(new ClientboundDimListPacket(pLevel.dimension().location().getPath(), pPos, levelMap));
 
             NetworkHooks.openScreen((ServerPlayer) pPlayer, entity, pPos);
         }

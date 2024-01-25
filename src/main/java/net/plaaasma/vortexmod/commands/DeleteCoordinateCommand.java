@@ -2,17 +2,14 @@ package net.plaaasma.vortexmod.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Position;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.block.entity.CoordinateDesignatorBlockEntity;
@@ -23,18 +20,18 @@ import net.plaaasma.vortexmod.network.ClientboundTargetMapPacket;
 import net.plaaasma.vortexmod.network.PacketHandler;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 
-public class SaveCoordinateCommand {
-    public SaveCoordinateCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
+public class DeleteCoordinateCommand {
+    public DeleteCoordinateCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("tardis")
         .then(Commands.literal("locations")
-        .then(Commands.literal("save")
+        .then(Commands.literal("delete")
                 .then(Commands.argument("name", MessageArgument.message())
                         .executes((command) -> {
-                            return setCoords(command.getSource(), MessageArgument.getMessage(command, "name"));
+                            return deleteCoords(command.getSource(), MessageArgument.getMessage(command, "name"));
                         })))));
     }
 
-    private int setCoords(CommandSourceStack source, Component locName) throws CommandSyntaxException {
+    private int deleteCoords(CommandSourceStack source, Component locName) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayer();
         BlockPos ePlayerPos = player.blockPosition();
         ServerLevel pLevel = source.getPlayer().serverLevel();
@@ -94,25 +91,22 @@ public class SaveCoordinateCommand {
             }
         }
         if (core_found && has_components && designatorEntity != null) {
-            int dim_hash = vortexInterfaceBlockEntity.data.get(10);
+            String dataKey = player.getScoreboardName() + locName.getString();
+            if (coord_data.getDataMap().containsKey(dataKey)) {
+                BlockPos savedPos = coord_data.getDataMap().get(dataKey);
+                String savedDimName = dim_data.getDataMap().get(dataKey);
 
-            Iterable<ServerLevel> serverLevels = minecraftserver.getAllLevels();
-            ServerLevel currentLevel = pLevel;
+                coord_data.getDataMap().remove(dataKey);
+                dim_data.getDataMap().remove(dataKey);
+                source.sendSuccess(() -> Component.literal("Deleting " + locName.getString() + ". (" + savedPos.getX() + " " + savedPos.getY() + " " + savedPos.getZ() + " | " + savedDimName + ")"), false);
 
-            for (ServerLevel cLevel : serverLevels) {
-                if (cLevel.dimension().location().getPath().hashCode() == dim_hash) {
-                    currentLevel = cLevel;
-                }
+                coord_data.setDirty();
+                dim_data.setDirty();
+                PacketHandler.sendToAllClients(new ClientboundTargetMapPacket(pLevel.dimension().location().getPath(), keypadPos, coord_data.getDataMap(), dim_data.getDataMap()));
             }
-
-            BlockPos targetVec = new BlockPos(vortexInterfaceBlockEntity.data.get(3), vortexInterfaceBlockEntity.data.get(4), vortexInterfaceBlockEntity.data.get(5));
-
-            coord_data.getDataMap().put(player.getScoreboardName() + locName.getString(), targetVec);
-            dim_data.getDataMap().put(player.getScoreboardName() + locName.getString(), currentLevel.dimension().location().getPath());
-            ServerLevel finalCurrentLevel = currentLevel;
-            source.sendSuccess(() -> Component.literal("Adding the current target coordinates (" + targetVec.getX() + " " + targetVec.getY() + " " + targetVec.getZ() +  " | " + finalCurrentLevel.dimension().location().getPath() + ") as " + locName.getString()), false);
-
-            PacketHandler.sendToAllClients(new ClientboundTargetMapPacket(pLevel.dimension().location().getPath(), keypadPos, coord_data.getDataMap(), dim_data.getDataMap()));
+            else {
+                source.sendFailure(Component.literal("You do not have a saved destination called " + locName.getString() + ", you can list your destinations with /tardis list"));
+            }
         }
         else {
             if (!core_found) {

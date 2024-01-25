@@ -33,10 +33,20 @@ public class PacketHandler {
                 .decoder(ServerboundSaveTargetPacket::new)
                 .consumerMainThread(ServerboundSaveTargetPacket::handle)
                 .add();
-        INSTANCE.messageBuilder(ClientboundTargetMapPacket.class, 2)
+        INSTANCE.messageBuilder(ServerboundDeleteTargetPacket.class, 2)
+                .encoder(ServerboundDeleteTargetPacket::encode)
+                .decoder(ServerboundDeleteTargetPacket::new)
+                .consumerMainThread(ServerboundDeleteTargetPacket::handle)
+                .add();
+        INSTANCE.messageBuilder(ClientboundTargetMapPacket.class, 3)
                 .encoder(ClientboundTargetMapPacket::encode)
                 .decoder(ClientboundTargetMapPacket::new)
                 .consumerMainThread(ClientboundTargetMapPacket::handle)
+                .add();
+        INSTANCE.messageBuilder(ClientboundDimListPacket.class, 4)
+                .encoder(ClientboundDimListPacket::encode)
+                .decoder(ClientboundDimListPacket::new)
+                .consumerMainThread(ClientboundDimListPacket::handle)
                 .add();
     }
 
