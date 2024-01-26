@@ -400,12 +400,12 @@ public class KeypadScreen extends AbstractContainerScreen<KeypadMenu> {
 
             if (this.x.getValue().length() > 0) {
                 int xWidth = this.font.width(this.x.getValue().substring(0, Math.min(6, this.x.getValue().length() - 1)));
-                this.x.setX((i + 62) - (xWidth / 2));
+                this.x.setX((i + 58) - (xWidth / 2));
                 this.x.setWidth(Math.min(46, this.font.width(this.x.getValue()) + 8));
             }
             else {
                 if (this.x.canConsumeInput()) {
-                    this.x.setX((i + 62));
+                    this.x.setX((i + 58));
                     this.x.setWidth(8);
                 }
                 else {
@@ -419,12 +419,12 @@ public class KeypadScreen extends AbstractContainerScreen<KeypadMenu> {
 
             if (this.y.getValue().length() > 0) {
                 int yWidth = this.font.width(this.y.getValue().substring(0, Math.min(6, this.y.getValue().length() - 1)));
-                this.y.setX((i + 117) - (yWidth / 2));
+                this.y.setX((i + 113) - (yWidth / 2));
                 this.y.setWidth(Math.min(46, this.font.width(this.y.getValue()) + 8));
             }
             else {
                 if (this.y.canConsumeInput()) {
-                    this.y.setX((i + 117));
+                    this.y.setX((i + 113));
                     this.y.setWidth(8);
                 }
                 else {
@@ -438,12 +438,12 @@ public class KeypadScreen extends AbstractContainerScreen<KeypadMenu> {
 
             if (this.z.getValue().length() > 0) {
                 int zWidth = this.font.width(this.z.getValue().substring(0, Math.min(6, this.z.getValue().length() - 1)));
-                this.z.setX((i + 117) - (zWidth / 2));
+                this.z.setX((i + 113) - (zWidth / 2));
                 this.z.setWidth(Math.min(46, this.font.width(this.z.getValue()) + 8));
             }
             else {
                 if (this.z.canConsumeInput()) {
-                    this.z.setX((i + 117));
+                    this.z.setX((i + 113));
                     this.z.setWidth(8);
                 }
                 else {
@@ -475,13 +475,13 @@ public class KeypadScreen extends AbstractContainerScreen<KeypadMenu> {
             this.dimension.visible = true;
 
             if (this.dimension.getValue().length() > 0) {
-                int dimWidth = this.font.width(this.dimension.getValue().substring(0, Math.min(16, this.dimension.getValue().length() - 1)));
-                this.dimension.setX((i + 88) - (dimWidth / 2));
+                int dimWidth = this.font.width(this.dimension.getValue().substring(0, Math.min(15, this.dimension.getValue().length() - 1)));
+                this.dimension.setX((i + 83) - (dimWidth / 2));
                 this.dimension.setWidth(Math.min(94, this.font.width(this.dimension.getValue()) + 8));
             }
             else {
                 if (this.dimension.canConsumeInput()) {
-                    this.dimension.setX((i + 88));
+                    this.dimension.setX((i + 83));
                     this.dimension.setWidth(8);
                 }
                 else {

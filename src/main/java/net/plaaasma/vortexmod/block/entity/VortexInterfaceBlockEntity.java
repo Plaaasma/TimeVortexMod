@@ -907,7 +907,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                             targetDimension.playSeededSound(null, targetX, targetY, targetZ, ModSounds.REMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
                             this.data.set(11, 1);
                         }
-                        if (this.data.get(0) % (4 * tickSpeed) == 0 && this.data.get(0) > this.data.get(1) + (4 * tickSpeed) && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) > 0.05 * Math.sqrt(exteriorPos.distToCenterSqr(targetX, exteriorPos.getY(), targetZ))) {
+                        if (this.data.get(0) % (4 * tickSpeed) == 0 && this.data.get(0) > this.data.get(1) + (4 * tickSpeed)) {
                             BlockPos newTarget = findNewVortexPosition(pPos, new BlockPos(targetX, targetY, targetZ));
                             if (Math.sqrt(newTarget.distToCenterSqr(pPos.getX(), pPos.getY(), pPos.getZ())) > size) {
                                 ChunkPos chunkPos = vortexDimension.getChunkAt(newTarget).getPos();
