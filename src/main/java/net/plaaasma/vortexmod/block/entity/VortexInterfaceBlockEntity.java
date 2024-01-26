@@ -590,6 +590,8 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 y_size = 16;
             }
 
+            MonitorBlockEntity monitorBlockEntity = null;
+
             if (overrideAABB == null || !proto) {
                 for (int x = -size; x <= size; x++) {
                     for (int y = -1; y <= y_size + (y_size - 1); y++) {
@@ -650,6 +652,10 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 if (blockEntity instanceof BiometricBlockEntity) {
                                     has_bio_sec = true;
                                 }
+
+                                if (blockEntity instanceof MonitorBlockEntity monitorBlockEntity1) {
+                                    monitorBlockEntity = monitorBlockEntity1;
+                                }
                             }
                         }
                     }
@@ -706,6 +712,10 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
                                 if (blockEntity instanceof BiometricBlockEntity) {
                                     has_bio_sec = true;
+                                }
+
+                                if (blockEntity instanceof MonitorBlockEntity monitorBlockEntity1) {
+                                    monitorBlockEntity = monitorBlockEntity1;
                                 }
                             }
                         }
@@ -792,13 +802,71 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 targetZ = -31999800;
             }
 
+            if (monitorBlockEntity != null) {
+                monitorBlockEntity.data.set(0, targetX);
+                monitorBlockEntity.data.set(1, targetY);
+                monitorBlockEntity.data.set(2, targetZ);
+                monitorBlockEntity.target_dimension = targetDimension.dimension().location().getPath();
+                monitorBlockEntity.data.set(3, this.data.get(12));
+
+                if (tardisEntity != null) {
+                    monitorBlockEntity.current_dimension = tardisEntity.level().dimension().location().getPath();
+                    monitorBlockEntity.data.set(6, tardisEntity.getBlockX());
+                    monitorBlockEntity.data.set(7, tardisEntity.getBlockY());
+                    monitorBlockEntity.data.set(8, tardisEntity.getBlockZ());
+                    monitorBlockEntity.data.set(9, (int) tardisEntity.getYRot());
+                }
+                else {
+                    monitorBlockEntity.current_dimension = currentDimension.dimension().location().getPath();
+                    monitorBlockEntity.data.set(6, this.data.get(6));
+                    monitorBlockEntity.data.set(7, this.data.get(7));
+                    monitorBlockEntity.data.set(8, this.data.get(8));
+                    monitorBlockEntity.data.set(9, 0);
+                }
+            }
+
             if (proto) { // Proto TARDIS Logic
                 BlockPos exteriorPos = new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8));
+                BlockPos realTargetPos = new BlockPos(targetX, targetY, targetZ);
+
+                double dematSeconds = 10;
+                double minFlightSeconds = 15;
+                int estTime;
+                int remTime;
+
+                BlockPos estimatePos = exteriorPos;
+                int numEstJumps = 0;
+                while (Math.sqrt(estimatePos.distToCenterSqr(realTargetPos.getX(), estimatePos.getY(), realTargetPos.getZ())) > 250) {
+                    numEstJumps++;
+                    estimatePos = findNewVortexPosition(estimatePos, realTargetPos);
+                }
+
+                estTime = (5 * numEstJumps) + 20;
+
+                BlockPos remainingPos = pPos;
+                int numRemJumps = 0;
+                while (Math.sqrt(remainingPos.distToCenterSqr(realTargetPos.getX(), remainingPos.getY(), realTargetPos.getZ())) > 250) {
+                    numRemJumps++;
+                    remainingPos = findNewVortexPosition(remainingPos, realTargetPos);
+                }
+
+                remTime = (5 * numRemJumps);
+
+                if (this.data.get(0) < (tickSpeed * minFlightSeconds) + this.data.get(1)) {
+                    remTime += minFlightSeconds;
+                }
+
+                if (monitorBlockEntity != null) {
+                    monitorBlockEntity.data.set(4, estTime);
+                }
 
                 if (throttle_on == 1) {
+                    if (monitorBlockEntity != null) {
+                        monitorBlockEntity.data.set(5, remTime);
+                    }
+
                     this.data.set(21, 15);
-                    if (this.data.get(0) > this.data.get(1) + (10 * tickSpeed) && pLevel != vortexDimension) {
-                        BlockPos realTargetPos = new BlockPos(targetX, targetY, targetZ);
+                    if (this.data.get(0) > this.data.get(1) + (dematSeconds * tickSpeed) && pLevel != vortexDimension) {
                         BlockPos vortexTargetPos = findNewVortexPosition(pPos, realTargetPos);
                         vortexTargetPos = new BlockPos(vortexTargetPos.getX(), -100, vortexTargetPos.getZ());
 //                        if (Math.sqrt(exteriorPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 10000) {
@@ -814,7 +882,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         chunkPos = currentDimension.getChunkAt(pPos).getPos();
                         ForgeChunkManager.forceChunk(vortexDimension, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, false, true);
                         vortexDimension.playSeededSound(null, vortexTargetPos.getX(), vortexTargetPos.getY(), vortexTargetPos.getZ(), ModSounds.FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
-                    } else if (pLevel == vortexDimension && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 250 && this.data.get(0) >= (tickSpeed * 15) + this.data.get(1)) {
+                    } else if (pLevel == vortexDimension && Math.sqrt(pPos.distToCenterSqr(targetX, pPos.getY(), targetZ)) <= 250 && this.data.get(0) >= (tickSpeed * minFlightSeconds) + this.data.get(1)) {
                         BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
                         this.data.set(1, this.data.get(0));
                         this.data.set(11, 0);
@@ -865,6 +933,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 }
                 else {
                     this.data.set(21, 0);
+                    if (monitorBlockEntity != null) {
+                        monitorBlockEntity.data.set(5, 0);
+                    }
                 }
             }
             else { // Non Euclidean TARDIS Logic
@@ -874,21 +945,37 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         this.data.set(7, tardisEntity.getBlockY());
                         this.data.set(8, tardisEntity.getBlockZ());
                     }
+
+                    int rotation_yaw = this.data.get(12);
+                    BlockPos target = new BlockPos(targetX, targetY, targetZ);
+
+                    BlockPos exteriorPos = new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8));
+                    double intermediate_seconds = 1.8;
+                    intermediate_seconds += intermediate_seconds * (Math.sqrt(exteriorPos.distToCenterSqr(target.getX(), target.getY(), target.getZ())) / 1000);
+                    if (intermediate_seconds > 180) {
+                        intermediate_seconds = 180;
+                    }
+                    double demat_seconds = 10;
+                    double remat_seconds = 11;
+                    double demat_time = tickSpeed * demat_seconds;
+                    double remat_time = tickSpeed * remat_seconds;
+                    double ticks_to_travel = (intermediate_seconds + demat_seconds + remat_seconds) * tickSpeed;
+                    double end_tick = this.data.get(1) + ticks_to_travel;
+
+                    if (monitorBlockEntity != null) {
+                        monitorBlockEntity.data.set(4, (int) (ticks_to_travel / tickSpeed));
+                    }
+
                     if (throttle_on == 1) {
                         this.data.set(21, 15);
 
-                        int rotation_yaw = this.data.get(12);
-                        BlockPos target = new BlockPos(targetX, targetY, targetZ);
-
-                        BlockPos exteriorPos = new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8));
-                        double intermediate_seconds = 1.8;
-                        intermediate_seconds += intermediate_seconds * (Math.sqrt(exteriorPos.distToCenterSqr(target.getX(), target.getY(), target.getZ())) / 1000);
-                        double demat_seconds = 10;
-                        double remat_seconds = 11;
-                        double demat_time = tickSpeed * demat_seconds;
-                        double remat_time = tickSpeed * remat_seconds;
-                        double ticks_to_travel = (intermediate_seconds + demat_seconds + remat_seconds) * tickSpeed;
-                        double end_tick = this.data.get(1) + ticks_to_travel;
+                        if (monitorBlockEntity != null) {
+                            int time_remaining = (int) ((end_tick - remat_time - this.data.get(0)) / tickSpeed);
+                            if (time_remaining < 0) {
+                                time_remaining = 0;
+                            }
+                            monitorBlockEntity.data.set(5, time_remaining);
+                        }
 
                         if (this.data.get(0) > end_tick) {
                             BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
@@ -968,10 +1055,10 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                             if (tardisEntity != null) {
                                 tardisEntity.setInFlight(true);
                                 tardisEntity.setNoGravity(true);
-                                BlockPos dummyTarget = new BlockPos(0, 500, 0);
+                                BlockPos dummyTarget = new BlockPos(exteriorPos.getX(), -128, exteriorPos.getZ());
                                 ChunkPos chunkPos = currentDimension.getChunkAt(dummyTarget).getPos();
                                 ForgeChunkManager.forceChunk(currentDimension, VortexMod.MODID, dummyTarget, chunkPos.x, chunkPos.z, true, true);
-                                tardisEntity.teleportTo(currentDimension, 0, 500, 0, RelativeMovement.ALL, rotation_yaw, 0);
+                                tardisEntity.teleportTo(currentDimension, exteriorPos.getX(), -128, exteriorPos.getZ(), RelativeMovement.ALL, rotation_yaw, 0);
                                 tardisEntity.tick();
                             }
                             double time_remaining = (end_tick - remat_time - this.data.get(0)) / tickSpeed;
@@ -1035,6 +1122,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                             tardisEntity.setAlpha(1);
                             tardisEntity.setAnimDescending(false);
                             tardisEntity.setAnimStage(0);
+                        }
+                        if (monitorBlockEntity != null) {
+                            monitorBlockEntity.data.set(5, 0);
                         }
                     }
                 }

@@ -48,6 +48,11 @@ public class PacketHandler {
                 .decoder(ClientboundDimListPacket::new)
                 .consumerMainThread(ClientboundDimListPacket::handle)
                 .add();
+        INSTANCE.messageBuilder(ClientboundMonitorDataPacket.class, 5)
+                .encoder(ClientboundMonitorDataPacket::encode)
+                .decoder(ClientboundMonitorDataPacket::new)
+                .consumerMainThread(ClientboundMonitorDataPacket::handle)
+                .add();
     }
 
     public static void sendToServer(Object msg) {

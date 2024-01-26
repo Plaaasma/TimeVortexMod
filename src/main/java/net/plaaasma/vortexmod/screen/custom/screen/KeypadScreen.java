@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.network.PacketHandler;
 import net.plaaasma.vortexmod.network.ServerboundDeleteTargetPacket;
@@ -351,7 +352,12 @@ public class KeypadScreen extends AbstractContainerScreen<KeypadMenu> {
 
             String to_dimension = this.dimension.getValue();
 
-            PacketHandler.sendToServer(new ServerboundTargetPacket(from_pos, from_dimension, to_pos, to_rotation, to_dimension, this.targetScreen));
+            if (to_dimension.equals("tardisdim")) {
+                this.minecraft.player.displayClientMessage(Component.literal("You cannot set the dimension to the TARDIS dimension.").withStyle(ChatFormatting.RED), false);
+            }
+            else {
+                PacketHandler.sendToServer(new ServerboundTargetPacket(from_pos, from_dimension, to_pos, to_rotation, to_dimension, this.targetScreen));
+            }
         }
     }
 

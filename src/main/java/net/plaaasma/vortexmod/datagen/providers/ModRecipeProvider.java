@@ -165,6 +165,17 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy(getHasName(ModItems.EUCLIDEAN_UPGRADE.get()), has(ModItems.EUCLIDEAN_UPGRADE.get()))
                 .save(pWriter);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, ModBlocks.MONITOR_BLOCK.get())
+                .pattern("FWF")
+                .pattern("WIW")
+                .pattern("WGW")
+                .define('W', ItemTags.WOODEN_SLABS)
+                .define('F', ItemTags.WOODEN_FENCES)
+                .define('G', Items.GLASS)
+                .define('I', Items.IRON_INGOT)
+                .unlockedBy(getHasName(ModBlocks.INTERFACE_BLOCK.get()), has(ModBlocks.INTERFACE_BLOCK.get()))
+                .save(pWriter);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.WRENCH.get())
                 .pattern("  R")
                 .pattern(" I ")
@@ -173,6 +184,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('R', Items.REDSTONE)
                 .unlockedBy(getHasName(ModBlocks.INTERFACE_BLOCK.get()), has(ModBlocks.INTERFACE_BLOCK.get()))
                 .save(pWriter);
+
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.TARDIS_KEY.get())
                 .pattern(" ID")

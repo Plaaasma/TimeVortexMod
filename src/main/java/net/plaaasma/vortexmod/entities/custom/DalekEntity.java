@@ -49,12 +49,12 @@ public class DalekEntity extends Monster implements RangedAttackMob {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 200D)
+                .add(Attributes.MAX_HEALTH, 1D)
                 .add(Attributes.FOLLOW_RANGE, 18D)
                 .add(Attributes.MOVEMENT_SPEED, 0.5D)
                 .add(Attributes.ARMOR_TOUGHNESS, 10f)
                 .add(Attributes.ATTACK_KNOCKBACK, 0.5f)
-                .add(Attributes.ATTACK_DAMAGE, 1000000f);
+                .add(Attributes.ATTACK_DAMAGE, 1D);
     }
 
     @Override

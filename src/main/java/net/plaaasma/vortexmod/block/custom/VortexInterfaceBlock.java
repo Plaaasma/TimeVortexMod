@@ -35,6 +35,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.event.ServerChatEvent;
@@ -285,17 +288,6 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
         }
 
         super.onPlace(pState, pLevel, pPos, pOldState, pMovedByPiston);
-    }
-
-    @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
-        if (pLevel instanceof ServerLevel serverLevel) {
-            serverLevel.removeBlockEntity(pPos);
-            ChunkPos chunkPos = serverLevel.getChunkAt(pPos).getPos();
-            ForgeChunkManager.forceChunk(serverLevel, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, false, true);
-        }
-
-        super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
     }
 
     @Nullable
