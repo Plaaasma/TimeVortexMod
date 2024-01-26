@@ -457,6 +457,9 @@ public class TardisEntity extends Mob {
             this.entityData.set(DATA_TARGET_Y_ID, (float) this.position().y);
             this.entityData.set(DATA_TARGET_Z_ID, (float) this.position().z);
             this.entityData.set(DATA_ROTATION_ID, (int) this.getYRot());
+            if (this.getAlpha() >= 1) {
+                this.entityData.set(DATA_IN_FLIGHT_ID, false);
+            }
         }
         else if (this.level() instanceof ClientLevel clientLevel) {
             if (Minecraft.getInstance().isSingleplayer()) {

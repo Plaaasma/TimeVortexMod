@@ -166,9 +166,9 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .save(pWriter);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, ModBlocks.MONITOR_BLOCK.get())
-                .pattern("FWF")
-                .pattern("WIW")
                 .pattern("WGW")
+                .pattern("WIW")
+                .pattern("FWF")
                 .define('W', ItemTags.WOODEN_SLABS)
                 .define('F', ItemTags.WOODEN_FENCES)
                 .define('G', Items.GLASS)
@@ -216,7 +216,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
     }
 
     public void doRoundels(Consumer<FinishedRecipe> pWriter) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.WARPED_ROUNDEL.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.WARPED_ROUNDEL.get(), 8)
                 .pattern("SSS")
                 .pattern("SWS")
                 .pattern("SSS")
@@ -224,7 +224,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('W', Items.WARPED_STEM)
                 .unlockedBy(getHasName(ModBlocks.INTERFACE_BLOCK.get()), has(ModBlocks.INTERFACE_BLOCK.get()))
                 .save(pWriter);
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.MANGROVE_ROUNDEL.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.MANGROVE_ROUNDEL.get(), 8)
                 .pattern("SSS")
                 .pattern("SWS")
                 .pattern("SSS")
@@ -232,7 +232,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('W', Items.MANGROVE_LOG)
                 .unlockedBy(getHasName(ModBlocks.INTERFACE_BLOCK.get()), has(ModBlocks.INTERFACE_BLOCK.get()))
                 .save(pWriter);
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.JUNGLE_ROUNDEL.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.JUNGLE_ROUNDEL.get(), 8)
                 .pattern("SSS")
                 .pattern("SWS")
                 .pattern("SSS")
@@ -240,7 +240,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('W', Items.JUNGLE_LOG)
                 .unlockedBy(getHasName(ModBlocks.INTERFACE_BLOCK.get()), has(ModBlocks.INTERFACE_BLOCK.get()))
                 .save(pWriter);
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.CRIMSON_ROUNDEL.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.CRIMSON_ROUNDEL.get(), 8)
                 .pattern("SSS")
                 .pattern("SWS")
                 .pattern("SSS")
@@ -248,7 +248,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('W', Items.CRIMSON_STEM)
                 .unlockedBy(getHasName(ModBlocks.INTERFACE_BLOCK.get()), has(ModBlocks.INTERFACE_BLOCK.get()))
                 .save(pWriter);
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.CHERRY_ROUNDEL.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.CHERRY_ROUNDEL.get(), 8)
                 .pattern("SSS")
                 .pattern("SWS")
                 .pattern("SSS")
@@ -256,7 +256,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('W', Items.CHERRY_LOG)
                 .unlockedBy(getHasName(ModBlocks.INTERFACE_BLOCK.get()), has(ModBlocks.INTERFACE_BLOCK.get()))
                 .save(pWriter);
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.BIRCH_ROUNDEL.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.BIRCH_ROUNDEL.get(), 8)
                 .pattern("SSS")
                 .pattern("SWS")
                 .pattern("SSS")
@@ -264,7 +264,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('W', Items.BIRCH_LOG)
                 .unlockedBy(getHasName(ModBlocks.INTERFACE_BLOCK.get()), has(ModBlocks.INTERFACE_BLOCK.get()))
                 .save(pWriter);
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.DARK_OAK_ROUNDEL.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.DARK_OAK_ROUNDEL.get(), 8)
                 .pattern("SSS")
                 .pattern("SWS")
                 .pattern("SSS")
@@ -272,7 +272,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('W', Items.DARK_OAK_LOG)
                 .unlockedBy(getHasName(ModBlocks.INTERFACE_BLOCK.get()), has(ModBlocks.INTERFACE_BLOCK.get()))
                 .save(pWriter);
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.ACACIA_ROUNDEL.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.ACACIA_ROUNDEL.get(), 8)
                 .pattern("SSS")
                 .pattern("SWS")
                 .pattern("SSS")
@@ -280,7 +280,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('W', Items.ACACIA_LOG)
                 .unlockedBy(getHasName(ModBlocks.INTERFACE_BLOCK.get()), has(ModBlocks.INTERFACE_BLOCK.get()))
                 .save(pWriter);
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.OAK_ROUNDEL.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.OAK_ROUNDEL.get(), 8)
                 .pattern("SSS")
                 .pattern("SWS")
                 .pattern("SSS")
@@ -288,7 +288,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('W', Items.OAK_LOG)
                 .unlockedBy(getHasName(ModBlocks.INTERFACE_BLOCK.get()), has(ModBlocks.INTERFACE_BLOCK.get()))
                 .save(pWriter);
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.SPRUCE_ROUNDEL.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.SPRUCE_ROUNDEL.get(), 8)
                 .pattern("SSS")
                 .pattern("SWS")
                 .pattern("SSS")
