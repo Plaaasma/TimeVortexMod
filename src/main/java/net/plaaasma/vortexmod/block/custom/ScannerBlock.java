@@ -52,6 +52,11 @@ public class ScannerBlock extends HorizontalBaseEntityBlock {
     }
 
     @Override
+    public SoundType getSoundType(BlockState pState) {
+        return super.getSoundType(pState);
+    }
+
+    @Override
     public RenderShape getRenderShape(BlockState pState) {
         return RenderShape.MODEL;
     }
