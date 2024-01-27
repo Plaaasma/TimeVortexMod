@@ -34,6 +34,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.SCANNER_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.GROUNDING_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.BIOMETRIC_BLOCK.get().asItem());
+                        pOutput.accept(ModBlocks.MONITOR_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.DOOR_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.TARDIS_SIGN_BLOCK.get().asItem());
 

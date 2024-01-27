@@ -31,8 +31,17 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
                 .add(ModBlocks.GROUNDING_BLOCK.get())
                 .add(ModBlocks.BIOMETRIC_BLOCK.get())
                 .add(ModBlocks.TARDIS_SIGN_BLOCK.get())
+                .add(ModBlocks.MONITOR_BLOCK.get())
                 .add(ModBlocks.OAK_ROUNDEL.get())
-                .add(ModBlocks.SPRUCE_ROUNDEL.get());
+                .add(ModBlocks.SPRUCE_ROUNDEL.get())
+                .add(ModBlocks.ACACIA_ROUNDEL.get())
+                .add(ModBlocks.BIRCH_ROUNDEL.get())
+                .add(ModBlocks.CHERRY_ROUNDEL.get())
+                .add(ModBlocks.DARK_OAK_ROUNDEL.get())
+                .add(ModBlocks.JUNGLE_ROUNDEL.get())
+                .add(ModBlocks.MANGROVE_ROUNDEL.get())
+                .add(ModBlocks.CRIMSON_ROUNDEL.get())
+                .add(ModBlocks.WARPED_ROUNDEL.get());
 
         this.tag(BlockTags.MINEABLE_WITH_AXE)
                 .add(ModBlocks.THROTTLE_BLOCK.get())
@@ -44,6 +53,7 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
                 .add(ModBlocks.GROUNDING_BLOCK.get())
                 .add(ModBlocks.BIOMETRIC_BLOCK.get())
                 .add(ModBlocks.TARDIS_SIGN_BLOCK.get())
+                .add(ModBlocks.MONITOR_BLOCK.get())
                 .add(ModBlocks.OAK_ROUNDEL.get())
                 .add(ModBlocks.SPRUCE_ROUNDEL.get())
                 .add(ModBlocks.ACACIA_ROUNDEL.get())
@@ -66,6 +76,9 @@ public class ModBlockTagGenerator extends BlockTagsProvider {
                 .add(ModBlocks.GROUNDING_BLOCK.get())
                 .add(ModBlocks.BIOMETRIC_BLOCK.get())
                 .add(ModBlocks.TARDIS_SIGN_BLOCK.get())
+                .add(ModBlocks.MONITOR_BLOCK.get());
+
+        this.tag(BlockTags.NEEDS_STONE_TOOL)
                 .add(ModBlocks.OAK_ROUNDEL.get())
                 .add(ModBlocks.SPRUCE_ROUNDEL.get())
                 .add(ModBlocks.ACACIA_ROUNDEL.get())

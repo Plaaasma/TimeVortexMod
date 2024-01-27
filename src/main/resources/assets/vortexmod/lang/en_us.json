@@ -30,6 +30,7 @@
   "block.vortexmod.scanner_block": "Exterior Scanner",
   "block.vortexmod.grounding_block": "Auto Grounding Module",
   "block.vortexmod.biometric_module": "Bio Security Module",
+  "block.vortexmod.monitor_block": "Monitor Module",
   "block.vortexmod.oak_roundel_block": "Oak Roundel",
   "block.vortexmod.spruce_roundel_block": "Spruce Roundel",
   "block.vortexmod.acacia_roundel_block": "Acacia Roundel",
@@ -66,7 +67,7 @@
   "tooltip.vortexmod.key.tooltip": "An optional key to lock your non euclidean TARDIS.",
   "tooltip.vortexmod.wrench.tooltip": "Right clicking on the interface with this will drop the interface.",
   "tooltip.vortexmod.throttle_block.tooltip": "Starts/Stops the flight sequence when right clicked.",
-  "tooltip.vortexmod.interface_block.tooltip": "Use the wrench to pick me up. Main block of the TARDIS, considered the center and needed for any TARDIS.",
+  "tooltip.vortexmod.interface_block.tooltip": "Use the wrench to pick me up. Main block of the TARDIS, considered the center and needed for any TARDIS. Outputs redstone signal during flight.",
   "tooltip.vortexmod.coordinate_block.tooltip": "Control the target location using basic sliders.",
   "tooltip.vortexmod.keypad_block.tooltip": "Allows you to use most of /tardis. Also adds dimensional functionality to the TARDIS. This block also has a gui.",
   "tooltip.vortexmod.size_manipulator_block.tooltip": "Module that allows you to input size upgrades. Must be touching the interface block.",
@@ -77,7 +78,7 @@
   "tooltip.vortexmod.biometric_module.tooltip": "Allows you to blacklist people from entering your TARDIS with commands. This is only functional in a non euclidean TARDIS. (Right click for tutorial).",
   "tooltip.vortexmod.tardis_sign_block.tooltip": "Just a decorative block for your interiors or anything really.",
   "tooltip.vortexmod.size_designator.tooltip": "Used to precisely set the borders of your proto TARDIS. Each size upgrade is worth 128 blocks when using this. Use like a world edit wand, right click on the size manipulator to set.",
-
+  "tooltip.vortexmod.monitor_block.tooltip": "Displays information about the exterior, target, and current flight. Right click to switch between exterior and target.",
 
   "creativetab.vortex_main_tab": "Time Vortex",
   "creativetab.vortex_roundel_tab": "Time Vortex Roundels"

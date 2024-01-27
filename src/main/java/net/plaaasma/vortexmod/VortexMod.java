@@ -1,6 +1,7 @@
 package net.plaaasma.vortexmod;
 
 import com.mojang.logging.LogUtils;
+import dan200.computercraft.impl.ComputerCraftAPIService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;

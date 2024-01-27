@@ -28,6 +28,9 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(ModBlocks.SCANNER_BLOCK.get());
         this.dropSelf(ModBlocks.GROUNDING_BLOCK.get());
         this.dropSelf(ModBlocks.BIOMETRIC_BLOCK.get());
+        this.dropSelf(ModBlocks.MONITOR_BLOCK.get());
+
+        // ROUNDELS
         this.dropSelf(ModBlocks.OAK_ROUNDEL.get());
         this.dropSelf(ModBlocks.SPRUCE_ROUNDEL.get());
         this.dropSelf(ModBlocks.ACACIA_ROUNDEL.get());

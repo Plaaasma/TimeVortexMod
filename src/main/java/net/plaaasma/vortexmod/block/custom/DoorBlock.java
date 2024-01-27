@@ -126,7 +126,7 @@ public class DoorBlock extends Block {
                 }
             }
             else {
-                pPlayer.displayClientMessage(Component.literal("Door is not in the TARDIS dimension.").withStyle(ChatFormatting.DARK_RED), true);
+                pPlayer.displayClientMessage(Component.literal("Door is not in the TARDIS dimension.").withStyle(ChatFormatting.RED), true);
             }
         }
         return InteractionResult.CONSUME;

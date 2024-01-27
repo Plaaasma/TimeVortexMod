@@ -30,8 +30,8 @@ public class KeypadMenu extends AbstractContainerMenu {
         this.level = inv.player.level();
         this.data = data;
 
-        addPlayerInventory(inv);
-        addPlayerHotbar(inv);
+//        addPlayerInventory(inv);
+//        addPlayerHotbar(inv);
 
         addDataSlots(data);
     }

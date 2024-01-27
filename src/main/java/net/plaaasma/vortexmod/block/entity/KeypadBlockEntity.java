@@ -4,6 +4,7 @@ import net.minecraft.client.gui.screens.inventory.AnvilScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -20,9 +21,7 @@ import net.plaaasma.vortexmod.screen.custom.menu.KeypadMenu;
 import net.plaaasma.vortexmod.screen.custom.menu.SizeManipulatorMenu;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class KeypadBlockEntity extends BlockEntity implements MenuProvider {
     public final ItemStackHandler itemHandler = new ItemStackHandler(1);
@@ -33,6 +32,7 @@ public class KeypadBlockEntity extends BlockEntity implements MenuProvider {
     private int is_active = 0;
     public Map<String, BlockPos> coordData = new HashMap<>();
     public Map<String, String> dimData = new HashMap<>();
+    public List<String> serverLevels = new ArrayList<>();
 
     public KeypadBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.TARDIS_KEYPAD_BE.get(), pPos, pBlockState);
