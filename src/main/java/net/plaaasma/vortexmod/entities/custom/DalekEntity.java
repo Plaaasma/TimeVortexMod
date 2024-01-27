@@ -59,9 +59,9 @@ public class DalekEntity extends Monster implements RangedAttackMob {
 
     @Override
     public void moveTo(double pX, double pY, double pZ, float pYRot, float pXRot) {
-        this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(),
+        /*this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(),
                 ModSounds.DALEK_MOVE_SOUND.get(),
-                this.getSoundSource(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
+                this.getSoundSource(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);*/
         super.moveTo(pX, pY, pZ, pYRot, pXRot);
     }
 
