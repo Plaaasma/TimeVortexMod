@@ -50,15 +50,19 @@ public class ModBiomes {
         switch (biomeColor) {
             case BLUE -> {
                 biomeBuilder.addFeature(GenerationStep.Decoration.RAW_GENERATION, ModPlacedFeatures.BLUE_BIOME_1_PlACED);
+                biomeBuilder.addFeature(GenerationStep.Decoration.RAW_GENERATION, ModPlacedFeatures.BLUE_BIOME_2_PlACED);
             }
             case ORANGE -> {
                 biomeBuilder.addFeature(GenerationStep.Decoration.RAW_GENERATION, ModPlacedFeatures.ORANGE_BIOME_1_PlACED);
+                biomeBuilder.addFeature(GenerationStep.Decoration.RAW_GENERATION, ModPlacedFeatures.ORANGE_BIOME_2_PlACED);
             }
             case PURPLE -> {
                 biomeBuilder.addFeature(GenerationStep.Decoration.RAW_GENERATION, ModPlacedFeatures.PURPLE_BIOME_1_PlACED);
+                biomeBuilder.addFeature(GenerationStep.Decoration.RAW_GENERATION, ModPlacedFeatures.PURPLE_BIOME_2_PlACED);
             }
             case BLACK -> {
                 biomeBuilder.addFeature(GenerationStep.Decoration.RAW_GENERATION, ModPlacedFeatures.BLACK_BIOME_1_PlACED);
+                biomeBuilder.addFeature(GenerationStep.Decoration.RAW_GENERATION, ModPlacedFeatures.BLACK_BIOME_2_PlACED);
             }
         }
 
