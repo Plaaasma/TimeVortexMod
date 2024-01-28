@@ -49,9 +49,7 @@ public class SizeDesignator extends Item {
 
                 return InteractionResult.CONSUME;
             }
-            if (Minecraft.getInstance().isSingleplayer()) {
-                return InteractionResult.CONSUME;
-            }
+            return InteractionResult.CONSUME;
         }
 
         if (!player.isCrouching()) {
