@@ -1,6 +1,8 @@
 package net.plaaasma.vortexmod.events;
 
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
@@ -41,30 +43,30 @@ public class ModEventBusEvents {
         event.register(
                 ModEntities.GOLD_DALEK.get(),
                 SpawnPlacements.Type.ON_GROUND,
-                Heightmap.Types.WORLD_SURFACE,
-                DalekEntity::canSpawn,
-                SpawnPlacementRegisterEvent.Operation.OR
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                Animal::checkAnimalSpawnRules,
+                SpawnPlacementRegisterEvent.Operation.AND
         );
         event.register(
                 ModEntities.SILVER_DALEK.get(),
                 SpawnPlacements.Type.ON_GROUND,
-                Heightmap.Types.WORLD_SURFACE,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 DalekEntity::canSpawn,
-                SpawnPlacementRegisterEvent.Operation.OR
+                SpawnPlacementRegisterEvent.Operation.AND
         );
         event.register(
                 ModEntities.BLACK_DALEK.get(),
                 SpawnPlacements.Type.ON_GROUND,
-                Heightmap.Types.WORLD_SURFACE,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 DalekEntity::canSpawn,
-                SpawnPlacementRegisterEvent.Operation.OR
+                SpawnPlacementRegisterEvent.Operation.AND
         );
         event.register(
                 ModEntities.SILVER_BLACK_DALEK.get(),
                 SpawnPlacements.Type.ON_GROUND,
-                Heightmap.Types.WORLD_SURFACE,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 DalekEntity::canSpawn,
-                SpawnPlacementRegisterEvent.Operation.OR
+                SpawnPlacementRegisterEvent.Operation.AND
         );
     }
 

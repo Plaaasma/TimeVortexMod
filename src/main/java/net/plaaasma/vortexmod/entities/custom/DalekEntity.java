@@ -2,6 +2,9 @@ package net.plaaasma.vortexmod.entities.custom;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -13,10 +16,13 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.plaaasma.vortexmod.sound.ModSounds;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
 
-public class DalekEntity extends Monster implements RangedAttackMob {
+public class DalekEntity extends Animal implements RangedAttackMob {
 
     public final AnimationState idleAnimationState = new AnimationState();
     public DalekUtils.DalekType dalekType;
@@ -49,12 +55,13 @@ public class DalekEntity extends Monster implements RangedAttackMob {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 1D)
+                .add(Attributes.MAX_HEALTH, 100D)
                 .add(Attributes.FOLLOW_RANGE, 18D)
                 .add(Attributes.MOVEMENT_SPEED, 0.5D)
                 .add(Attributes.ARMOR_TOUGHNESS, 10f)
                 .add(Attributes.ATTACK_KNOCKBACK, 0.5f)
-                .add(Attributes.ATTACK_DAMAGE, 1D);
+                .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE)
+                .add(Attributes.ATTACK_DAMAGE, 10D);
     }
 
     @Override
@@ -98,6 +105,12 @@ public class DalekEntity extends Monster implements RangedAttackMob {
         this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.35D));
     }
 
+    @Nullable
+    @Override
+    public AgeableMob getBreedOffspring(ServerLevel pLevel, AgeableMob pOtherParent) {
+        return null;
+    }
+
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
@@ -120,21 +133,36 @@ public class DalekEntity extends Monster implements RangedAttackMob {
         return false;
     }
 
-    /*@Override
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return ModSounds.DALEK_EXTERMINATE_SOUND.get();
+    }
+
+    @Override
+    public void playAmbientSound() {
+        this.playSound(ModSounds.DALEK_EXTERMINATE_SOUND.get(), 0.15F, 1.0F);
+    }
+
+    @Override
+    protected void playHurtSound(DamageSource pSource) {
+        this.playSound(SoundEvents.METAL_HIT, 0.15F, 1.0F);
+    }
+
+    @Override
+    protected void playStepSound(BlockPos pPos, BlockState pBlock) {
+        this.playSound(ModSounds.DALEK_MOVE_SOUND.get(), 0.15F, 1.0F);
+    }
+
+    @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return SoundEvents.WANDERING_TRADER_HURT;
+        return SoundEvents.METAL_HIT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.WANDERING_TRADER_DEATH;
+        this.playSound(ModSounds.DALEK_DEATH_SOUND.get(), 0.15F, 1.0F);
+        return ModSounds.DALEK_DEATH_SOUND.get();
     }
-
-    @Override
-    protected SoundEvent getDrinkingSound(ItemStack stack) {
-        Item item = stack.getItem();
-        return item == Items.MILK_BUCKET ? SoundEvents.WANDERING_TRADER_DRINK_MILK : SoundEvents.WANDERING_TRADER_DRINK_POTION;
-    }*/
 
     public void setWanderTarget(@Nullable BlockPos pos) {
         this.wanderTarget = pos;

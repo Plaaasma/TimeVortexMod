@@ -69,6 +69,12 @@ public class ModBlocks {
     public static final RegistryObject<Block> WARPED_ROUNDEL = registerBlock("warped_roundel_block",
             () -> new RoundelBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
 
+    // Skaro Blocks
+    public static final RegistryObject<Block> SKARO_SAND = registerBlock("skaro_sand_block",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.SAND).noOcclusion()));
+    public static final RegistryObject<Block> SKARO_SAND_STONE = registerBlock("skaro_sand_stone_block",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.SANDSTONE).noOcclusion()));
+
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
         registerBlockItem(name, toReturn);

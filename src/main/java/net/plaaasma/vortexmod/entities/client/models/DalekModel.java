@@ -18,14 +18,14 @@ public class DalekModel<T extends Entity> extends HierarchicalModel<T> {
     private final ModelPart head;
     private final ModelPart body;
     private final ModelPart plunger_arm;
-    private final ModelPart eye_arm;
     private final ModelPart gun_arm;
+    private final ModelPart eye_arm;
 
     public DalekModel(ModelPart root) {
         this.head = root.getChild("head");
+        this.eye_arm = head.getChild("eye_arm");
         this.body = root.getChild("body");
         this.plunger_arm = root.getChild("plunger_arm");
-        this.eye_arm = root.getChild("eye_arm");
         this.gun_arm = root.getChild("gun_arm");
     }
 
@@ -33,36 +33,36 @@ public class DalekModel<T extends Entity> extends HierarchicalModel<T> {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
 
-        PartDefinition head = partdefinition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(149, 163).addBox(-8.25F, -15.75F, 2.0F, 16.0F, 1.0F, 11.0F, new CubeDeformation(0.0F))
-                .texOffs(81, 158).addBox(-8.25F, -20.75F, -3.0F, 16.0F, 2.0F, 15.0F, new CubeDeformation(0.0F))
-                .texOffs(151, 85).addBox(-8.25F, -18.75F, -3.0F, 16.0F, 3.0F, 16.0F, new CubeDeformation(0.0F))
-                .texOffs(1, 159).addBox(-7.25F, -22.75F, -2.0F, 14.0F, 2.0F, 13.0F, new CubeDeformation(0.0F))
-                .texOffs(170, 110).addBox(-6.25F, -24.75F, -1.0F, 12.0F, 2.0F, 11.0F, new CubeDeformation(0.0F))
-                .texOffs(47, 159).addBox(-5.25F, -25.75F, 0.0F, 10.0F, 1.0F, 9.0F, new CubeDeformation(0.0F))
-                .texOffs(92, 26).addBox(-4.25F, -26.75F, 1.0F, 8.0F, 1.0F, 7.0F, new CubeDeformation(0.0F))
-                .texOffs(65, 40).addBox(-3.25F, -24.75F, -4.0F, 6.0F, 1.0F, 3.0F, new CubeDeformation(0.0F))
-                .texOffs(0, 40).addBox(-3.25F, -23.75F, -4.0F, 1.0F, 6.0F, 3.0F, new CubeDeformation(0.0F))
-                .texOffs(38, 40).addBox(1.75F, -23.75F, -4.0F, 1.0F, 6.0F, 3.0F, new CubeDeformation(0.0F))
-                .texOffs(52, 64).addBox(-2.25F, -23.75F, -2.0F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 7.0F, 0.0F));
+        PartDefinition head = partdefinition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(149, 163).addBox(-8.25F, -0.75F, -3.0F, 16.0F, 1.0F, 11.0F, new CubeDeformation(0.0F))
+                .texOffs(81, 158).addBox(-8.25F, -5.75F, -8.0F, 16.0F, 2.0F, 15.0F, new CubeDeformation(0.0F))
+                .texOffs(151, 85).addBox(-8.25F, -3.75F, -8.0F, 16.0F, 3.0F, 16.0F, new CubeDeformation(0.0F))
+                .texOffs(1, 159).addBox(-7.25F, -7.75F, -7.0F, 14.0F, 2.0F, 13.0F, new CubeDeformation(0.0F))
+                .texOffs(170, 110).addBox(-6.25F, -9.75F, -6.0F, 12.0F, 2.0F, 11.0F, new CubeDeformation(0.0F))
+                .texOffs(47, 159).addBox(-5.25F, -10.75F, -5.0F, 10.0F, 1.0F, 9.0F, new CubeDeformation(0.0F))
+                .texOffs(92, 26).addBox(-4.25F, -11.75F, -4.0F, 8.0F, 1.0F, 7.0F, new CubeDeformation(0.0F))
+                .texOffs(65, 40).addBox(-3.25F, -9.75F, -9.0F, 6.0F, 1.0F, 3.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 40).addBox(-3.25F, -8.75F, -9.0F, 1.0F, 6.0F, 3.0F, new CubeDeformation(0.0F))
+                .texOffs(38, 40).addBox(1.75F, -8.75F, -9.0F, 1.0F, 6.0F, 3.0F, new CubeDeformation(0.0F))
+                .texOffs(52, 64).addBox(-2.25F, -8.75F, -7.0F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -8.0F, 5.0F));
 
-        PartDefinition eye_arm = partdefinition.addOrReplaceChild("eye_arm", CubeListBuilder.create().texOffs(52, 56).addBox(-2.25F, -22.75F, -5.0F, 4.0F, 4.0F, 4.0F, new CubeDeformation(0.0F))
-                .texOffs(11, 69).addBox(-2.25F, -22.75F, -11.0F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-                .texOffs(19, 0).addBox(-2.25F, -21.75F, -11.0F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
-                .texOffs(15, 65).addBox(-2.25F, -19.75F, -11.0F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-                .texOffs(29, 0).addBox(-2.25F, -21.75F, -13.0F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
-                .texOffs(62, 84).addBox(-2.25F, -22.75F, -13.0F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-                .texOffs(0, 86).addBox(-2.25F, -19.75F, -13.0F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-                .texOffs(16, 19).addBox(-2.25F, -21.75F, -15.0F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
-                .texOffs(23, 72).addBox(-2.25F, -22.75F, -15.0F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-                .texOffs(13, 72).addBox(-2.25F, -19.75F, -15.0F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-                .texOffs(19, 11).addBox(-2.25F, -22.75F, -20.0F, 4.0F, 1.0F, 3.0F, new CubeDeformation(0.0F))
-                .texOffs(27, 19).addBox(-2.25F, -21.75F, -20.0F, 1.0F, 2.0F, 3.0F, new CubeDeformation(0.0F))
-                .texOffs(0, 69).addBox(-2.25F, -19.75F, -20.0F, 4.0F, 1.0F, 3.0F, new CubeDeformation(0.0F))
-                .texOffs(25, 40).addBox(0.75F, -21.75F, -20.0F, 1.0F, 2.0F, 3.0F, new CubeDeformation(0.0F))
-                .texOffs(0, 19).addBox(-1.25F, -21.75F, -17.0F, 2.0F, 2.0F, 12.0F, new CubeDeformation(0.0F))
-                .texOffs(19, 3).addBox(0.75F, -21.75F, -11.0F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
-                .texOffs(16, 23).addBox(0.75F, -21.75F, -13.0F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
-                .texOffs(19, 21).addBox(0.75F, -21.75F, -15.0F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 7.0F, 0.0F));
+        PartDefinition eye_arm = head.addOrReplaceChild("eye_arm", CubeListBuilder.create().texOffs(52, 56).addBox(-2.25F, -3.75F, -10.0F, 4.0F, 4.0F, 4.0F, new CubeDeformation(0.0F))
+                .texOffs(11, 69).addBox(-2.25F, -3.75F, -16.0F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(19, 0).addBox(-2.25F, -2.75F, -16.0F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(15, 65).addBox(-2.25F, -0.75F, -16.0F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(29, 0).addBox(-2.25F, -2.75F, -18.0F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(62, 84).addBox(-2.25F, -3.75F, -18.0F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 86).addBox(-2.25F, -0.75F, -18.0F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(16, 19).addBox(-2.25F, -2.75F, -20.0F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(23, 72).addBox(-2.25F, -3.75F, -20.0F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(13, 72).addBox(-2.25F, -0.75F, -20.0F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(19, 11).addBox(-2.25F, -3.75F, -25.0F, 4.0F, 1.0F, 3.0F, new CubeDeformation(0.0F))
+                .texOffs(27, 19).addBox(-2.25F, -2.75F, -25.0F, 1.0F, 2.0F, 3.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 69).addBox(-2.25F, -0.75F, -25.0F, 4.0F, 1.0F, 3.0F, new CubeDeformation(0.0F))
+                .texOffs(25, 40).addBox(0.75F, -2.75F, -25.0F, 1.0F, 2.0F, 3.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 19).addBox(-1.25F, -2.75F, -22.0F, 2.0F, 2.0F, 12.0F, new CubeDeformation(0.0F))
+                .texOffs(19, 3).addBox(0.75F, -2.75F, -16.0F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(16, 23).addBox(0.75F, -2.75F, -18.0F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(19, 21).addBox(0.75F, -2.75F, -20.0F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -4.0F, 0.0F));
 
         PartDefinition body = partdefinition.addOrReplaceChild("body", CubeListBuilder.create().texOffs(54, 219).addBox(-14.5F, 13.0F, -18.0F, 28.0F, 2.0F, 35.0F, new CubeDeformation(0.0F))
                 .texOffs(4, 4).addBox(-12.5F, 11.0F, -16.0F, 24.0F, 2.0F, 31.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 9.0F, 0.0F));
@@ -332,7 +332,15 @@ public class DalekModel<T extends Entity> extends HierarchicalModel<T> {
 
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        this.applyHeadRotation(netHeadYaw, headPitch, ageInTicks);
+    }
 
+    private void applyHeadRotation(float pNetHeadYaw, float pHeadPitch, float pAgeInTicks) {
+        pNetHeadYaw = Mth.clamp(pNetHeadYaw, -30.0F, 30.0F);
+        pHeadPitch = Mth.clamp(pHeadPitch, -25.0F, 45.0F);
+
+        this.eye_arm.yRot = pNetHeadYaw * ((float)Math.PI / 180F);
+        this.head.xRot = pHeadPitch * ((float)Math.PI / 180F);
     }
 
     @Override
@@ -340,7 +348,6 @@ public class DalekModel<T extends Entity> extends HierarchicalModel<T> {
         head.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
         body.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
         plunger_arm.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        eye_arm.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
         gun_arm.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
     }
 

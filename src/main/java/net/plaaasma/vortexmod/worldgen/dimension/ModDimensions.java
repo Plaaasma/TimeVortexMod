@@ -10,10 +10,12 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.*;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.*;
+import net.minecraftforge.common.Tags;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.worldgen.utils.ModNoiseGenerator;
 import net.plaaasma.vortexmod.worldgen.biome.ModBiomes;
@@ -133,20 +135,19 @@ public class ModDimensions {
         context.register(tardisDIM_KEY, tardisStem);
 
         // SKARO
-
         NoiseBasedChunkGenerator skaroNoiseBasedChunkGenerator = new NoiseBasedChunkGenerator(
                 MultiNoiseBiomeSource.createFromList(
                         new Climate.ParameterList<>(List.of(
                                 Pair.of(Climate.parameters(0.9F, 0.0F, 0.8F, 0.0F, 0.0F, 0.0F, 0.0F),
-                                        biomeRegistry.getOrThrow(Biomes.BADLANDS)),
+                                        biomeRegistry.getOrThrow(ModBiomes.IRRADIATED_FOREST_BIOME)),
                                 Pair.of(Climate.parameters(0.0F, 0.9F, 0.8F, 0.0F, 0.0F, 0.0F, 0.0F),
-                                        biomeRegistry.getOrThrow(Biomes.ERODED_BADLANDS)),
+                                        biomeRegistry.getOrThrow(ModBiomes.SUPER_IRRADIATED_FOREST_BIOME)),
                                 Pair.of(Climate.parameters(0.0F, 0.0F, 0.0F, 1.0F, 0.7F, 0.0F, 0.0F),
-                                        biomeRegistry.getOrThrow(Biomes.BASALT_DELTAS)),
+                                        biomeRegistry.getOrThrow(ModBiomes.IRRADIATED_DESERT_BIOME)),
                                 Pair.of(Climate.parameters(0.5F, 0.5F, 0.8F, 0.0F, 0.0F, 0.0F, 0.0F),
-                                        biomeRegistry.getOrThrow(Biomes.NETHER_WASTES))
+                                        biomeRegistry.getOrThrow(ModBiomes.IRRADIATED_BADLANDS_BIOME))
                         ))),
-                noiseGenSettings.getOrThrow(NoiseGeneratorSettings.OVERWORLD));
+                noiseGenSettings.getOrThrow(ModNoiseGenerator.OVERWORLD));
 
 
         LevelStem skaroStem = new LevelStem(dimTypes.getOrThrow(ModDimensions.SKARO_DIM_TYPE), skaroNoiseBasedChunkGenerator);

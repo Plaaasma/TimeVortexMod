@@ -42,6 +42,9 @@
   "block.vortexmod.mangrove_roundel_block": "Mangrove Roundel",
   "block.vortexmod.warped_roundel_block": "Warped Roundel",
 
+  "block.vortexmod.skaro_sand_block": "Skaro Sand",
+  "block.vortexmod.skaro_sand_stone_block": "Skaro Sandstone",
+
   "entity.vortexmod.blue_trader": "Trading Traveler",
   "entity.vortexmod.orange_trader": "Trading Traveler",
   "entity.vortexmod.purple_trader": "Trading Traveler",

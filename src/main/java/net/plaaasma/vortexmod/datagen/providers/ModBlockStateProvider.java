@@ -122,6 +122,11 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 new ModelFile.UncheckedModelFile(modLoc("block/roundels/crimson_roundel_block")));
         simpleBlockWithItem(ModBlocks.WARPED_ROUNDEL.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/roundels/warped_roundel_block")));
+
+
+        // SKARO BLOCKS
+        blockWithItem(ModBlocks.SKARO_SAND);
+        blockWithItem(ModBlocks.SKARO_SAND_STONE);
     }
 
     private void blockWithItem(RegistryObject<Block> blockRegistryObject) {

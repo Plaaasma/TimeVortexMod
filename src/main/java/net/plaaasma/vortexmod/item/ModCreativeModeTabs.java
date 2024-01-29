@@ -47,6 +47,9 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModItems.SILVER_DALEK_SPAWN_EGG.get());
                         pOutput.accept(ModItems.BLACK_DALEK_SPAWN_EGG.get());
                         pOutput.accept(ModItems.SILVER_BLACK_DALEK_SPAWN_EGG.get());
+
+                        pOutput.accept(ModBlocks.SKARO_SAND.get());
+                        pOutput.accept(ModBlocks.SKARO_SAND_STONE.get());
                     })
                     .build());
 

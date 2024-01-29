@@ -41,6 +41,10 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(ModBlocks.MANGROVE_ROUNDEL.get());
         this.dropSelf(ModBlocks.CRIMSON_ROUNDEL.get());
         this.dropSelf(ModBlocks.WARPED_ROUNDEL.get());
+
+        // SKARO BLOCKS
+        this.dropSelf(ModBlocks.SKARO_SAND.get());
+        this.dropSelf(ModBlocks.SKARO_SAND_STONE.get());
     }
 
     @Override

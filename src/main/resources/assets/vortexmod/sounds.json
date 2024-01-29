@@ -40,5 +40,17 @@
     "sounds": [
       "vortexmod:dalek_shoot_sound"
     ]
+  },
+  "dalek_exterminate": {
+    "subtitle": "sounds.vortexmod.dalek_exterminate",
+    "sounds": [
+      "vortexmod:dalek_exterminate"
+    ]
+  },
+  "dalek_death": {
+    "subtitle": "sounds.vortexmod.dalek_death",
+    "sounds": [
+      "vortexmod:dalek_death"
+    ]
   }
 }
