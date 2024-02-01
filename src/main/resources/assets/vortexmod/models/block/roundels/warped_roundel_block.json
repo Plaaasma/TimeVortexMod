@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [128, 128],
 	"textures": {
-		"0": "vortexmod:block/skaro/skaro_sand_block",
-		"particle": "vortexmod:block/skaro/skaro_sand_block"
+		"0": "vortexmod:block/roundels/roundel_warped",
+		"particle": "vortexmod:block/roundels/roundel_warped"
 	},
 	"elements": [
 		{
