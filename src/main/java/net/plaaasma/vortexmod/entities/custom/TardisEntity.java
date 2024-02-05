@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -30,6 +31,8 @@ import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Minecart;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -396,6 +399,13 @@ public class TardisEntity extends Mob {
         return InteractionResult.CONSUME;
     }
 
+    public final void teleportToWithTicket(ServerLevel level, double pX, double pY, double pZ, float y_rotation, float x_rotation) {
+        ChunkPos chunkpos = new ChunkPos(BlockPos.containing(pX, pY, pZ));
+        level.getChunkSource().addRegionTicket(TicketType.POST_TELEPORT, chunkpos, 0, this.getId());
+        level.getChunk(chunkpos.x, chunkpos.z);
+        this.teleportTo(level, pX, pY, pZ, RelativeMovement.ALL, y_rotation, x_rotation);
+    }
+
     @Override
     public void tick() {
         if (this.level() instanceof ServerLevel serverLevel) {
@@ -422,33 +432,41 @@ public class TardisEntity extends Mob {
                 if (this.entityData.get(DATA_ALPHA_ID) <= 0) {
                     this.entityData.set(DATA_ALPHA_ID, 0f);
                     this.entityData.set(DATA_DEMAT_ID, false);
+                    this.entityData.set(DATA_IN_FLIGHT_ID, true);
                     this.entityData.set(DATA_ANIM_DESCENDING_ID, false);
                     this.entityData.set(DATA_ANIM_STAGE_ID, 0);
                 }
             }
             if (this.entityData.get(DATA_REMAT_ID)) {
-                if (this.entityData.get(DATA_ANIM_DESCENDING_ID)) {
-                    if (this.entityData.get(DATA_ALPHA_ID) >= 0 + (this.entityData.get(DATA_ANIM_STAGE_ID) / 10f)) {
-                        this.entityData.set(DATA_ALPHA_ID, this.entityData.get(DATA_ALPHA_ID) - r_increment);
-                    }
-                    else {
-                        this.entityData.set(DATA_ANIM_DESCENDING_ID, false);
-                    }
+                MinecraftServer minecraftserver = serverLevel.getServer();
+                int tickSpeed = minecraftserver.getGameRules().getInt(GameRules.RULE_RANDOMTICKING);
+                tickSpeed *= 8;
+
+                int tickDelay = (int) (tickSpeed * 4);
+                if (this.entityData.get(DATA_ANIM_STAGE_ID) < tickDelay) {
+                    this.entityData.set(DATA_ANIM_STAGE_ID, this.entityData.get(DATA_ANIM_STAGE_ID) + 1);
                 }
                 else {
-                    if (this.entityData.get(DATA_ALPHA_ID) <= 0.5 + (this.entityData.get(DATA_ANIM_STAGE_ID) / 10f)) {
-                        this.entityData.set(DATA_ALPHA_ID, this.entityData.get(DATA_ALPHA_ID) + r_increment);
+                    if (this.entityData.get(DATA_ANIM_DESCENDING_ID)) {
+                        if (this.entityData.get(DATA_ALPHA_ID) >= 0 + ((this.entityData.get(DATA_ANIM_STAGE_ID) - tickDelay) / 10f)) {
+                            this.entityData.set(DATA_ALPHA_ID, this.entityData.get(DATA_ALPHA_ID) - r_increment);
+                        } else {
+                            this.entityData.set(DATA_ANIM_DESCENDING_ID, false);
+                        }
+                    } else {
+                        if (this.entityData.get(DATA_ALPHA_ID) <= 0.5 + ((this.entityData.get(DATA_ANIM_STAGE_ID) - tickDelay) / 10f)) {
+                            this.entityData.set(DATA_ALPHA_ID, this.entityData.get(DATA_ALPHA_ID) + r_increment);
+                        } else {
+                            this.entityData.set(DATA_ANIM_STAGE_ID, this.entityData.get(DATA_ANIM_STAGE_ID) + 1);
+                            this.entityData.set(DATA_ANIM_DESCENDING_ID, true);
+                        }
                     }
-                    else {
-                        this.entityData.set(DATA_ANIM_STAGE_ID, this.entityData.get(DATA_ANIM_STAGE_ID) + 1);
-                        this.entityData.set(DATA_ANIM_DESCENDING_ID, true);
+                    if (this.entityData.get(DATA_ALPHA_ID) >= 1) {
+                        this.entityData.set(DATA_ALPHA_ID, 1f);
+                        this.entityData.set(DATA_REMAT_ID, false);
+                        this.entityData.set(DATA_ANIM_DESCENDING_ID, false);
+                        this.entityData.set(DATA_ANIM_STAGE_ID, 0);
                     }
-                }
-                if (this.entityData.get(DATA_ALPHA_ID) >= 1) {
-                    this.entityData.set(DATA_ALPHA_ID, 1f);
-                    this.entityData.set(DATA_REMAT_ID, false);
-                    this.entityData.set(DATA_ANIM_DESCENDING_ID, false);
-                    this.entityData.set(DATA_ANIM_STAGE_ID, 0);
                 }
             }
 

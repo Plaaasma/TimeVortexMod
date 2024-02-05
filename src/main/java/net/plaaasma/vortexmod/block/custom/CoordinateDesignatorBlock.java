@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -28,6 +29,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.plaaasma.vortexmod.block.entity.CoordinateDesignatorBlockEntity;
 import net.plaaasma.vortexmod.block.entity.ModBlockEntities;
+import net.plaaasma.vortexmod.sound.ModSounds;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -121,6 +123,7 @@ public class CoordinateDesignatorBlock extends HorizontalBaseEntityBlock {
             int increment = coordinateDesignatorBlockEntity.data.get(4);
 
             if (closestComponent == x_button_location) {
+                pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.DESIGNATOR_SWITCH_SOUND.get(), SoundSource.BLOCKS, 1, 1, 0);
                 if (is_negative) {
                     coordinateDesignatorBlockEntity.data.set(0, coordinateDesignatorBlockEntity.data.get(0) - increment);
                     pPlayer.displayClientMessage(Component.literal("Target X coordinate is now " + coordinateDesignatorBlockEntity.data.get(0)), true);
@@ -131,6 +134,7 @@ public class CoordinateDesignatorBlock extends HorizontalBaseEntityBlock {
                 }
             }
             else if (closestComponent == y_button_location) {
+                pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.DESIGNATOR_SWITCH_SOUND.get(), SoundSource.BLOCKS, 1, 1, 0);
                 if (is_negative) {
                     coordinateDesignatorBlockEntity.data.set(1, coordinateDesignatorBlockEntity.data.get(1) - increment);
                     pPlayer.displayClientMessage(Component.literal("Target Y coordinate is now " + coordinateDesignatorBlockEntity.data.get(1)), true);
@@ -141,6 +145,7 @@ public class CoordinateDesignatorBlock extends HorizontalBaseEntityBlock {
                 }
             }
             else if (closestComponent == z_button_location) {
+                pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.DESIGNATOR_SWITCH_SOUND.get(), SoundSource.BLOCKS, 1, 1, 0);
                 if (is_negative) {
                     coordinateDesignatorBlockEntity.data.set(2, coordinateDesignatorBlockEntity.data.get(2) - increment);
                     pPlayer.displayClientMessage(Component.literal("Target Z coordinate is now " + coordinateDesignatorBlockEntity.data.get(2)), true);
@@ -151,6 +156,7 @@ public class CoordinateDesignatorBlock extends HorizontalBaseEntityBlock {
                 }
             }
             else if (closestComponent == toggle_button_location) {
+                pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.DESIGNATOR_BUTTON_SOUND.get(), SoundSource.BLOCKS, 1, 1, 0);
                 if (is_negative) {
                     coordinateDesignatorBlockEntity.data.set(3, 0);
                     pPlayer.displayClientMessage(Component.literal("Now increasing coordinate values."), true);
@@ -161,6 +167,7 @@ public class CoordinateDesignatorBlock extends HorizontalBaseEntityBlock {
                 }
             }
             else if (closestComponent == inc_button_location) {
+                pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.DESIGNATOR_BUTTON_SOUND.get(), SoundSource.BLOCKS, 1, 1, 0);
                 if (increment >= 10000) {
                     increment = 1;
                 }

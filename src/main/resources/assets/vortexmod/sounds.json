@@ -23,6 +23,66 @@
       "vortexmod:remat_sound"
     ]
   },
+  "monitor_toggle_sound": {
+    "subtitle": "sounds.vortexmod.monitor_toggle_sound",
+    "sounds": [
+      "vortexmod:monitortoggle"
+    ]
+  },
+  "boti_upgrade_sound": {
+    "subtitle": "sounds.vortexmod.boti_upgrade_sound",
+    "sounds": [
+      "vortexmod:boti_upgrade"
+    ]
+  },
+  "coordinate_keypad_set_sound": {
+    "subtitle": "sounds.vortexmod.coordinate_keypad_set_sound",
+    "sounds": [
+      "vortexmod:coordinate_keypad_coordinatesenter"
+    ]
+  },
+  "biosec_player_removed_sound": {
+    "subtitle": "sounds.vortexmod.biosec_player_removed_sound",
+    "sounds": [
+      "vortexmod:biosecurity_player_removed"
+    ]
+  },
+  "biosec_player_added_sound": {
+    "subtitle": "sounds.vortexmod.biosec_player_added_sound",
+    "sounds": [
+      "vortexmod:biosecurity_player_added"
+    ]
+  },
+  "designator_switch_sound": {
+    "subtitle": "sounds.vortexmod.designator_switch_sound",
+    "sounds": [
+      "vortexmod:coordpanel_switch"
+    ]
+  },
+  "designator_button_sound": {
+    "subtitle": "sounds.vortexmod.designator_button_sound",
+    "sounds": [
+      "vortexmod:coordpanel_button"
+    ]
+  },
+  "equalizer_place_sound": {
+    "subtitle": "sounds.vortexmod.equalizer_place_sound",
+    "sounds": [
+      "vortexmod:artron_equalizer_install"
+    ]
+  },
+  "auto_surface_place_sound": {
+    "subtitle": "sounds.vortexmod.auto_surface_place_sound",
+    "sounds": [
+      "vortexmod:auto_surface_install"
+    ]
+  },
+  "scanner_sound": {
+    "subtitle": "sounds.vortexmod.scanner_sound",
+    "sounds": [
+      "vortexmod:exterior_scanner"
+    ]
+  },
   "throttle_sound": {
     "subtitle": "sounds.vortexmod.throttle_sound",
     "sounds": [

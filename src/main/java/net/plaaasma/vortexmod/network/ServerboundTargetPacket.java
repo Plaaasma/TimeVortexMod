@@ -6,11 +6,13 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.NetworkEvent;
 import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.block.entity.CoordinateDesignatorBlockEntity;
 import net.plaaasma.vortexmod.block.entity.VortexInterfaceBlockEntity;
+import net.plaaasma.vortexmod.sound.ModSounds;
 
 import java.util.function.Supplier;
 
@@ -107,6 +109,8 @@ public class ServerboundTargetPacket {
             int y = this.to_pos.getY();
             int z = this.to_pos.getZ();
             if (core_found && has_components && designatorEntity != null) {
+                level.playSeededSound(null, this.from_pos.getX(), this.from_pos.getY(), this.from_pos.getZ(), ModSounds.COORDINATE_KEYPAD_SET_SOUND.get(), SoundSource.BLOCKS, 1, 1, 0);
+
                 if (x != -6632961) {
                     designatorEntity.data.set(0, x);
                 } else {

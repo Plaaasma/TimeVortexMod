@@ -7,6 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -31,6 +32,7 @@ import net.plaaasma.vortexmod.block.entity.ModBlockEntities;
 import net.plaaasma.vortexmod.block.entity.ScannerBlockEntity;
 import net.plaaasma.vortexmod.block.entity.VortexInterfaceBlockEntity;
 import net.plaaasma.vortexmod.entities.custom.TardisEntity;
+import net.plaaasma.vortexmod.sound.ModSounds;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 import net.plaaasma.vortexmod.worldgen.portal.ModTeleporter;
 import org.jetbrains.annotations.Nullable;
@@ -69,6 +71,8 @@ public class ScannerBlock extends HorizontalBaseEntityBlock {
 
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+        pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.SCANNER_SOUND.get(), SoundSource.BLOCKS, 1, 1, 0);
+
         if (pLevel instanceof ServerLevel serverLevel) {
             MinecraftServer minecraftserver = serverLevel.getServer();
             ServerLevel overworldDimension = minecraftserver.getLevel(Level.OVERWORLD);

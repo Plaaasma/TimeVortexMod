@@ -16,7 +16,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.MemoryServerHandshakePacketListenerImpl;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -50,6 +53,7 @@ import net.plaaasma.vortexmod.entities.ModEntities;
 import net.plaaasma.vortexmod.entities.custom.TardisEntity;
 import net.plaaasma.vortexmod.item.ModItems;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
+import net.plaaasma.vortexmod.sound.ModSounds;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 import org.apache.logging.log4j.core.jmx.Server;
 import org.jetbrains.annotations.Nullable;
@@ -102,6 +106,8 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
             }
 
             if (holdingItem.is(ModItems.EUCLIDEAN_UPGRADE.get()) && pLevel != tardisDimension) {
+                serverLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.BOTI_UPGRADE_SOUND.get(), SoundSource.BLOCKS, 1, 1, 0);
+
                 Set<String> keyList = data.getDataMap().keySet();
 
                 int greatest_x_coordinate = -1000000;
@@ -264,7 +270,9 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
         for (Connection pConnection : connectionList) {
             ClientboundAddEntityPacket entityPacket = new ClientboundAddEntityPacket(new LightningBolt(EntityType.LIGHTNING_BOLT, pLevel), 0, targetPosition);
             if (pConnection.isConnected()) {
-                pConnection.send(entityPacket);
+                if (pConnection.getPacketListener().isAcceptingMessages() && (pConnection.getPacketListener() instanceof ServerGamePacketListenerImpl)) {
+                    pConnection.send(entityPacket);
+                }
             }
         }
     }

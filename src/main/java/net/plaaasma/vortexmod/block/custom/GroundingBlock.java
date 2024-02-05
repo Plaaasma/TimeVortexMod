@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -26,6 +27,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.plaaasma.vortexmod.block.entity.EqualizerBlockEntity;
 import net.plaaasma.vortexmod.block.entity.ModBlockEntities;
+import net.plaaasma.vortexmod.sound.ModSounds;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -36,6 +38,13 @@ public class GroundingBlock extends HorizontalDirectionalBlock {
     public GroundingBlock(Properties pProperties) {
         super(pProperties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.EAST));
+    }
+
+    @Override
+    public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pMovedByPiston) {
+        pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.AUTO_SURFACE_PLACE_SOUND.get(), SoundSource.BLOCKS, 1, 1, 0);
+
+        super.onPlace(pState, pLevel, pPos, pOldState, pMovedByPiston);
     }
 
     @Override

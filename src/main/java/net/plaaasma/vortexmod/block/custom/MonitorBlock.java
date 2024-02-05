@@ -79,6 +79,7 @@ public class MonitorBlock extends HorizontalBaseEntityBlock {
 
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+        pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.MONITOR_TOGGLE_SOUND.get(), SoundSource.BLOCKS, 0.5f, 1, 0);
         if (pLevel.isClientSide) {
             pState.cycle(POWERED);
             return InteractionResult.SUCCESS;

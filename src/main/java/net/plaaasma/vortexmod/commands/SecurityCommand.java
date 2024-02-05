@@ -15,12 +15,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.block.entity.CoordinateDesignatorBlockEntity;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
 import net.plaaasma.vortexmod.mapdata.SecurityMapData;
+import net.plaaasma.vortexmod.sound.ModSounds;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 
 import java.util.Collection;
@@ -73,6 +75,7 @@ public class SecurityCommand {
         }
 
         boolean has_bio_module = false;
+        BlockPos bio_pos = null;
 
         for (int _x = -16; _x <= 16 && !has_bio_module; _x++) {
             for (int _y = -16; _y <= 16 && !has_bio_module; _y++) {
@@ -82,6 +85,7 @@ public class SecurityCommand {
                     BlockState blockState = pLevel.getBlockState(currentPos);
                     if (blockState.getBlock() == ModBlocks.BIOMETRIC_BLOCK.get()) {
                         has_bio_module = true;
+                        bio_pos = currentPos;
                     }
                 }
             }
@@ -93,6 +97,7 @@ public class SecurityCommand {
                     source.sendFailure(Component.literal("You cannot blacklist yourself"));
                 } else {
                     if (security_data.getDataMap().containsKey(profile_name.hashCode() + " " + player.getScoreboardName())) {
+                        pLevel.playSeededSound(null, bio_pos.getX(), bio_pos.getY(), bio_pos.getZ(), ModSounds.BIOSEC_PLAYER_REMOVED_SOUND.get(), SoundSource.BLOCKS, 1, 1, 0);
                         security_data.getDataMap().remove(profile_name.hashCode() + " " + player.getScoreboardName());
                         security_data.setDirty();
                         source.sendSuccess(() -> Component.literal("Removing " + profile_name + " from the whitelist."), false);
@@ -141,6 +146,7 @@ public class SecurityCommand {
         }
 
         boolean has_bio_module = false;
+        BlockPos bio_pos = null;
 
         for (int _x = -16; _x <= 16 && !has_bio_module; _x++) {
             for (int _y = -16; _y <= 16 && !has_bio_module; _y++) {
@@ -150,6 +156,7 @@ public class SecurityCommand {
                     BlockState blockState = pLevel.getBlockState(currentPos);
                     if (blockState.getBlock() == ModBlocks.BIOMETRIC_BLOCK.get()) {
                         has_bio_module = true;
+                        bio_pos = currentPos;
                     }
                 }
             }
@@ -160,6 +167,7 @@ public class SecurityCommand {
                 if (security_data.getDataMap().containsKey(profile_name.hashCode() + " " + player.getScoreboardName())) {
                     source.sendSuccess(() -> Component.literal(profile_name + " is already whitelisted."), false);
                 } else {
+                    pLevel.playSeededSound(null, bio_pos.getX(), bio_pos.getY(), bio_pos.getZ(), ModSounds.BIOSEC_PLAYER_ADDED_SOUND.get(), SoundSource.BLOCKS, 1, 1, 0);
                     security_data.getDataMap().put(profile_name.hashCode() + " " + player.getScoreboardName(), profile_name);
                     security_data.setDirty();
                     source.sendSuccess(() -> Component.literal("Adding " + profile_name + " to the whitelist."), false);

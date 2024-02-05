@@ -41,6 +41,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.plaaasma.vortexmod.block.ModBlockStateProperties;
 import net.plaaasma.vortexmod.block.entity.CoordinateDesignatorBlockEntity;
 import net.plaaasma.vortexmod.block.entity.ModBlockEntities;
 import net.plaaasma.vortexmod.sound.ModSounds;
@@ -52,6 +53,7 @@ import java.util.*;
 
 public class ThrottleBlock extends FaceAttachedHorizontalDirectionalBlock {
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
+    public static final BooleanProperty AUTO = ModBlockStateProperties.AUTO;
     protected static final VoxelShape NORTH_AABB = Block.box(5.0D, 4.0D, 10.0D, 11.0D, 12.0D, 16.0D);
     protected static final VoxelShape SOUTH_AABB = Block.box(5.0D, 4.0D, 0.0D, 11.0D, 12.0D, 6.0D);
     protected static final VoxelShape WEST_AABB = Block.box(10.0D, 4.0D, 5.0D, 16.0D, 12.0D, 11.0D);
@@ -63,7 +65,7 @@ public class ThrottleBlock extends FaceAttachedHorizontalDirectionalBlock {
 
     public ThrottleBlock(Properties pProperties) {
         super(pProperties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(POWERED, Boolean.FALSE).setValue(FACE, AttachFace.WALL));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(POWERED, Boolean.FALSE).setValue(FACE, AttachFace.WALL).setValue(AUTO, Boolean.FALSE));
     }
 
     @Override
@@ -122,21 +124,37 @@ public class ThrottleBlock extends FaceAttachedHorizontalDirectionalBlock {
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (pLevel.isClientSide) {
-            BlockState blockstate1 = pState.cycle(POWERED);
-            if (blockstate1.getValue(POWERED)) {
-                makeParticle(blockstate1, pLevel, pPos, 1.0F);
+            if (pPlayer.isCrouching()) {
+                pState.cycle(AUTO);
+            } else {
+                BlockState blockstate1 = pState.cycle(POWERED);
+                if (blockstate1.getValue(POWERED)) {
+                    makeParticle(blockstate1, pLevel, pPos, 1.0F);
+                }
             }
             return InteractionResult.SUCCESS;
         } else {
             Random random = new Random();
 
-            BlockState blockstate = this.pull(pState, pLevel, pPos);
-            pLevel.gameEvent(pPlayer, blockstate.getValue(POWERED) ? GameEvent.BLOCK_ACTIVATE : GameEvent.BLOCK_DEACTIVATE, pPos);
-            if (blockstate.getValue(POWERED)) {
-                pPlayer.displayClientMessage(Component.literal("Throttle Enabled"), true);
-                pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.THROTTLE_SOUND.get(), SoundSource.BLOCKS, 1f, random.nextFloat(0.8f, 1.2f), 0);
-            } else {
-                pPlayer.displayClientMessage(Component.literal("Throttle Disabled"), true);
+            if (pPlayer.isCrouching()) {
+                BlockState blockstate = this.pull_auto(pState, pLevel, pPos);
+                pLevel.gameEvent(pPlayer, blockstate.getValue(AUTO) ? GameEvent.BLOCK_ACTIVATE : GameEvent.BLOCK_DEACTIVATE, pPos);
+                if (blockstate.getValue(AUTO)) {
+                    pPlayer.displayClientMessage(Component.literal("Auto Landing Enabled"), true);
+                } else {
+                    pPlayer.displayClientMessage(Component.literal("Auto Landing Disabled"), true);
+                }
+            }
+            else {
+                BlockState blockstate = this.pull(pState, pLevel, pPos);
+                pLevel.gameEvent(pPlayer, blockstate.getValue(POWERED) ? GameEvent.BLOCK_ACTIVATE : GameEvent.BLOCK_DEACTIVATE, pPos);
+                if (blockstate.getValue(POWERED)) {
+                    pPlayer.displayClientMessage(Component.literal("Throttle Enabled"), true);
+                    pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.THROTTLE_SOUND.get(), SoundSource.BLOCKS, 1f, random.nextFloat(1f, 1.2f), 0);
+                } else {
+                    pPlayer.displayClientMessage(Component.literal("Throttle Disabled"), true);
+                    pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.THROTTLE_SOUND.get(), SoundSource.BLOCKS, 1f, random.nextFloat(0.7f, 0.9f), 0);
+                }
             }
             return InteractionResult.CONSUME;
         }
@@ -144,6 +162,12 @@ public class ThrottleBlock extends FaceAttachedHorizontalDirectionalBlock {
 
     public BlockState pull(BlockState pState, Level pLevel, BlockPos pPos) {
         pState = pState.cycle(POWERED);
+        pLevel.setBlock(pPos, pState, 3);
+        return pState;
+    }
+
+    public BlockState pull_auto(BlockState pState, Level pLevel, BlockPos pPos) {
+        pState = pState.cycle(AUTO);
         pLevel.setBlock(pPos, pState, 3);
         return pState;
     }
@@ -171,7 +195,7 @@ public class ThrottleBlock extends FaceAttachedHorizontalDirectionalBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        pBuilder.add(FACE, FACING, POWERED);
+        pBuilder.add(FACE, FACING, POWERED, AUTO);
         super.createBlockStateDefinition(pBuilder);
     }
 }
