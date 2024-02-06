@@ -51,6 +51,9 @@ import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.block.entity.*;
 import net.plaaasma.vortexmod.entities.ModEntities;
 import net.plaaasma.vortexmod.entities.custom.TardisEntity;
+import net.plaaasma.vortexmod.interior.registry.InteriorRegistry;
+import net.plaaasma.vortexmod.interior.util.InteriorGenerator;
+import net.plaaasma.vortexmod.interior.util.InteriorUtil;
 import net.plaaasma.vortexmod.item.ModItems;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
 import net.plaaasma.vortexmod.sound.ModSounds;
@@ -133,7 +136,9 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                 localBlockEntity.data.set(7, pPos.getY());
                 localBlockEntity.data.set(8, pPos.getZ());
 
-                BlockPos tardisTarget = new BlockPos(greatest_x_coordinate + 10000, -128, greatest_z_coordinate + 10000);
+                BlockPos tardisTarget = new BlockPos(greatest_x_coordinate + InteriorUtil.INTERIOR_SIZE, -128, greatest_z_coordinate + InteriorUtil.INTERIOR_SIZE);
+
+                data.getDataMap().put(Integer.toString(ownerCode), tardisTarget);
 
                 int size = 1;
 
@@ -260,6 +265,13 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                 data.setDirty();
 
                 serverLevel.removeBlock(pPos, false);
+
+                InteriorGenerator gen = new InteriorGenerator(InteriorRegistry.DEFAULT.get());
+
+                System.out.println(ownerCode);
+                System.out.println(pPlayer.getScoreboardName().hashCode());
+
+                gen.changeInterior(minecraftserver, Integer.toString(ownerCode));
             }
         }
 
