@@ -22,6 +22,7 @@ public class MonitorBlockEntity extends BlockEntity {
     public String target_dimension = "";
     private int target_rot = 0;
     private int target_time = 0;
+    private int target_energy = 0;
 
     private int remaining_time = 0;
     private int current_x = 0;
@@ -29,6 +30,7 @@ public class MonitorBlockEntity extends BlockEntity {
     private int current_z = 0;
     public String current_dimension = "";
     private int current_rot = 0;
+    private int current_energy = 0;
 
 
     public MonitorBlockEntity(BlockPos pPos, BlockState pBlockState) {
@@ -47,6 +49,8 @@ public class MonitorBlockEntity extends BlockEntity {
                     case 7 -> MonitorBlockEntity.this.current_y;
                     case 8 -> MonitorBlockEntity.this.current_z;
                     case 9 -> MonitorBlockEntity.this.current_rot;
+                    case 10 -> MonitorBlockEntity.this.target_energy;
+                    case 11 -> MonitorBlockEntity.this.current_energy;
                     default -> 0;
                 };
             }
@@ -64,12 +68,14 @@ public class MonitorBlockEntity extends BlockEntity {
                     case 7 -> MonitorBlockEntity.this.current_y = pValue;
                     case 8 -> MonitorBlockEntity.this.current_z = pValue;
                     case 9 -> MonitorBlockEntity.this.current_rot = pValue;
+                    case 10 -> MonitorBlockEntity.this.target_energy = pValue;
+                    case 11 -> MonitorBlockEntity.this.current_energy = pValue;
                 }
             }
 
             @Override
             public int getCount() {
-                return 10;
+                return 12;
             }
         };
     }
@@ -95,8 +101,13 @@ public class MonitorBlockEntity extends BlockEntity {
         this.target_z = vortexModData.getInt("target_z");
         this.target_rot = vortexModData.getInt("target_rot");
         this.target_time = vortexModData.getInt("target_time");
-
         this.remaining_time = vortexModData.getInt("remaining_time");
+        this.current_x = vortexModData.getInt("current_x");
+        this.current_y = vortexModData.getInt("current_y");
+        this.current_z = vortexModData.getInt("current_z");
+        this.current_rot = vortexModData.getInt("current_rot");
+        this.target_energy = vortexModData.getInt("target_energy");
+        this.current_energy = vortexModData.getInt("current_energy");
     }
 
     @Override
@@ -110,8 +121,13 @@ public class MonitorBlockEntity extends BlockEntity {
         vortexModData.putInt("target_z", this.target_z);
         vortexModData.putInt("target_rot", this.target_rot);
         vortexModData.putInt("target_time", this.target_time);
-
         vortexModData.putInt("remaining_time", this.remaining_time);
+        vortexModData.putInt("current_x", this.current_x);
+        vortexModData.putInt("current_y", this.current_y);
+        vortexModData.putInt("current_z", this.current_z);
+        vortexModData.putInt("current_rot", this.current_rot);
+        vortexModData.putInt("target_energy", this.target_energy);
+        vortexModData.putInt("current_energy", this.current_energy);
 
         pTag.put(VortexMod.MODID, vortexModData);
     }

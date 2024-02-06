@@ -407,6 +407,11 @@ public class TardisEntity extends Mob {
     }
 
     @Override
+    public boolean isPersistenceRequired() {
+        return true;
+    }
+
+    @Override
     public void tick() {
         if (this.level() instanceof ServerLevel serverLevel) {
             float increment = 0.025f;
