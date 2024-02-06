@@ -138,7 +138,7 @@ public class ThrottleBlock extends FaceAttachedHorizontalDirectionalBlock {
 
             if (pPlayer.isCrouching()) {
                 BlockState blockstate = this.pull_auto(pState, pLevel, pPos);
-                pLevel.gameEvent(pPlayer, blockstate.getValue(AUTO) ? GameEvent.BLOCK_ACTIVATE : GameEvent.BLOCK_DEACTIVATE, pPos);
+                pLevel.gameEvent(pPlayer, blockstate.getValue(AUTO) ? GameEvent.BLOCK_ACTIVATE : GameEvent.BLOCK_ACTIVATE, pPos);
                 if (blockstate.getValue(AUTO)) {
                     pPlayer.displayClientMessage(Component.literal("Auto Landing Enabled"), true);
                 } else {

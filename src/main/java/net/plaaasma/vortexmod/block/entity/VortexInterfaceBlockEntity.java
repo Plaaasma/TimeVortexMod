@@ -277,8 +277,6 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     }
 
     public void sendUpdate() {
-        setChanged();
-
         if (this.level != null) {
             this.level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         }
@@ -681,24 +679,22 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                             } else if (block == ModBlocks.EQUALIZER_BLOCK.get()) {
                                 has_equalizer = true;
                             } else if (block == ModBlocks.THROTTLE_BLOCK.get()) {
-                                if (blockState.getValue(BlockStateProperties.POWERED)) {
+                                if (blockState.getValue(ThrottleBlock.POWERED)) {
                                     throttle_on = 1;
-                                } else {
-                                    throttle_on = 0;
                                 }
-                                if (blockState.getValue(ModBlockStateProperties.AUTO)) {
+                                if (blockState.getValue(ThrottleBlock.AUTO)) {
                                     autoLand = true;
                                 }
                                 if (this.data.get(13) == 1) {
                                     throttle_on = 1;
-                                    if (!blockState.getValue(BlockStateProperties.POWERED)) {
+                                    if (!blockState.getValue(ThrottleBlock.POWERED)) {
                                         ((ThrottleBlock) blockState.getBlock()).pull(blockState, pLevel, currentPos);
                                     }
                                     this.data.set(13, 0);
                                 }
                                 else if (this.data.get(13) == 2) {
                                     throttle_on = 0;
-                                    if (blockState.getValue(BlockStateProperties.POWERED)) {
+                                    if (blockState.getValue(ThrottleBlock.POWERED)) {
                                         ((ThrottleBlock) blockState.getBlock()).pull(blockState, pLevel, currentPos);
                                     }
                                     this.data.set(13, 0);
@@ -762,24 +758,24 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                             } else if (block == ModBlocks.EQUALIZER_BLOCK.get()) {
                                 has_equalizer = true;
                             } else if (block == ModBlocks.THROTTLE_BLOCK.get()) {
-                                if (blockState.getValue(BlockStateProperties.POWERED)) {
+                                if (blockState.getValue(ThrottleBlock.POWERED)) {
                                     throttle_on = 1;
                                 } else {
                                     throttle_on = 0;
                                 }
-                                if (blockState.getValue(ModBlockStateProperties.AUTO)) {
+                                if (blockState.getValue(ThrottleBlock.AUTO)) {
                                     autoLand = true;
                                 }
                                 if (this.data.get(13) == 1) {
                                     throttle_on = 1;
-                                    if (!blockState.getValue(BlockStateProperties.POWERED)) {
+                                    if (!blockState.getValue(ThrottleBlock.POWERED)) {
                                         ((ThrottleBlock) blockState.getBlock()).pull(blockState, pLevel, currentPos);
                                     }
                                     this.data.set(13, 0);
                                 }
                                 else if (this.data.get(13) == 2) {
                                     throttle_on = 0;
-                                    if (blockState.getValue(BlockStateProperties.POWERED)) {
+                                    if (blockState.getValue(ThrottleBlock.POWERED)) {
                                         ((ThrottleBlock) blockState.getBlock()).pull(blockState, pLevel, currentPos);
                                     }
                                     this.data.set(13, 0);
@@ -995,7 +991,6 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
                 if (throttle_on == 1) {
                     this.energy.removeEnergy(1);
-                    sendUpdate();
                     if (monitorBlockEntity != null) {
                         monitorBlockEntity.data.set(5, remTime);
                     }
@@ -1074,13 +1069,11 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     if (currentDimension.dimension().location().getPath().equals(vortexDimension.dimension().location().getPath())) {
                         if (this.data.get(0) % 2 == 0) {
                             this.energy.addEnergy(2);
-                            sendUpdate();
                         }
                     }
                     else {
                         if (this.data.get(0) % 2 == 0) {
                             this.energy.addEnergy(1);
-                            sendUpdate();
                         }
                     }
                 }
@@ -1090,7 +1083,6 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     this.data.set(6, tardisEntity.getBlockX());
                     this.data.set(7, tardisEntity.getBlockY());
                     this.data.set(8, tardisEntity.getBlockZ());
-
                     if (throttle_on == 0) {
                         this.data.set(21, 0);
                         if (tardisEntity.isDemat()) {
@@ -1152,7 +1144,6 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         this.data.set(23, 0);
                         if (tardisEntity.isDemat()) {
                             this.energy.removeEnergy(1);
-                            sendUpdate();
                             tardisEntity.setInFlight(false);
                             handleDematCenterParticles(tardisDimension, pPos);
                             //handleEucDematParticles(currentDimension, exteriorPos);
@@ -1186,15 +1177,16 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 }
                                 if (this.data.get(0) % 2 == 0) {
                                     this.energy.addEnergy(2);
-                                    sendUpdate();
                                 }
                             }
                             else {
                                 this.energy.removeEnergy(1);
-                                sendUpdate();
                             }
 
                             tardisEntity.setNoGravity(true);
+
+                            ChunkPos chunkPos = currentDimension.getChunkAt(exteriorPos).getPos();
+                            ForgeChunkManager.forceChunk(currentDimension, VortexMod.MODID, exteriorPos, chunkPos.x, chunkPos.z, false, true);
 
                             tardisEntity.teleportToWithTicket(exteriorPos.getX(), -128, exteriorPos.getZ());
                             if (this.data.get(0) >= this.data.get(1) + demat_time + 1 && (this.data.get(0) - (this.data.get(1) + demat_time) > 0)) {
@@ -1224,10 +1216,6 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                             if (!tardisEntity.isRemat()) {
                                 this.data.set(1, this.data.get(0));
                                 tardisEntity.setDemat(true);
-                                ChunkPos chunkPos = currentDimension.getChunkAt(exteriorPos).getPos();
-                                ForgeChunkManager.forceChunk(currentDimension, VortexMod.MODID, exteriorPos, chunkPos.x, chunkPos.z, false, true);
-                                currentDimension.getChunkSource().addRegionTicket(TicketType.POST_TELEPORT, chunkPos, 0, tardisEntity.getId());
-                                currentDimension.getChunk(chunkPos.x, chunkPos.z);
                                 currentDimension.playSeededSound(null, exteriorPos.getX(), exteriorPos.getY(), exteriorPos.getZ(), ModSounds.DEMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
                                 pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.DEMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
                             }
@@ -1255,13 +1243,11 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         if (currentDimension.dimension().location().getPath().equals(vortexDimension.dimension().location().getPath())) {
                             if (this.data.get(0) % 2 == 0) {
                                 this.energy.addEnergy(2);
-                                sendUpdate();
                             }
                         }
                         else {
                             if (this.data.get(0) % 2 == 0) {
                                 this.energy.addEnergy(1);
-                                sendUpdate();
                             }
                         }
                         this.data.set(24, 0);
@@ -1365,6 +1351,10 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                 }
                 else {
                     this.data.set(0, this.data.get(0) - 1);
+
+                    BlockPos exteriorPos = new BlockPos(this.data.get(6), this.data.get(7), this.data.get(8));
+                    ChunkPos chunkPos = currentDimension.getChunkAt(exteriorPos).getPos();
+                    ForgeChunkManager.forceChunk(currentDimension, VortexMod.MODID, exteriorPos, chunkPos.x, chunkPos.z, true, true);
                 }
             }
             pLevel.blockUpdated(pPos, this.getBlockState().getBlock());
@@ -2334,7 +2324,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     for (int z = -size; z <= size; z++) {
                         BlockPos currentPos = pPos.offset(x, y, z);
 
-                        if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock) {
+                        if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof BedBlock || pLevel.getBlockState(currentPos).getBlock() instanceof CarpetBlock || pLevel.getBlockState(currentPos).getBlock() instanceof VineBlock) {
                             handleBlockRemoval(pLevel, currentPos);
                         } else {
                             if (currentPos != pPos) {
@@ -2383,7 +2373,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     for (int z = (int) overrideAABB.minZ; z <= (int) overrideAABB.maxZ; z++) {
                         BlockPos currentPos = pPos.offset(x, y, z);
 
-                        if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock) {
+                        if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof BedBlock || pLevel.getBlockState(currentPos).getBlock() instanceof CarpetBlock || pLevel.getBlockState(currentPos).getBlock() instanceof VineBlock) {
                             handleBlockRemoval(pLevel, currentPos);
                         } else {
                             if (currentPos != pPos) {
@@ -2450,7 +2440,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     for (int z = -size; z <= size; z++) {
                         BlockPos currentPos = pPos.offset(x, y, z);
 
-                        if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock) {
+                        if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof BedBlock || pLevel.getBlockState(currentPos).getBlock() instanceof CarpetBlock || pLevel.getBlockState(currentPos).getBlock() instanceof VineBlock) {
                             handleBlockRemoval(pLevel, currentPos);
                         } else {
                             if (currentPos != pPos) {
@@ -2499,7 +2489,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     for (int z = (int) overrideAABB.minZ; z <= (int) overrideAABB.maxZ; z++) {
                         BlockPos currentPos = pPos.offset(x, y, z);
 
-                        if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock) {
+                        if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof BedBlock || pLevel.getBlockState(currentPos).getBlock() instanceof CarpetBlock || pLevel.getBlockState(currentPos).getBlock() instanceof VineBlock) {
                             handleBlockRemoval(pLevel, currentPos);
                         }
                         else {
@@ -2563,7 +2553,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     for (int z = -size; z <= size; z++) {
                         BlockPos currentPos = pPos.offset(x, y, z);
 
-                        if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock) {
+                        if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof BedBlock || pLevel.getBlockState(currentPos).getBlock() instanceof CarpetBlock || pLevel.getBlockState(currentPos).getBlock() instanceof VineBlock) {
                             handleBlockRemoval(pLevel, currentPos);
                         } else {
                             if (currentPos != pPos) {
@@ -2608,7 +2598,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     for (int z = (int) overrideAABB.minZ; z <= (int) overrideAABB.maxZ; z++) {
                         BlockPos currentPos = pPos.offset(x, y, z);
 
-                        if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock) {
+                        if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof BedBlock || pLevel.getBlockState(currentPos).getBlock() instanceof CarpetBlock || pLevel.getBlockState(currentPos).getBlock() instanceof VineBlock) {
                             handleBlockRemoval(pLevel, currentPos);
                         } else {
                             if (currentPos != pPos) {
@@ -2780,6 +2770,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             BlockEntity blockEntity = pLevel.getBlockEntity(currentPos);
             if (blockEntity != null) {
                 blockEntity.load(new CompoundTag());
+                blockEntity.invalidateCaps();
             }
             pLevel.removeBlock(currentPos, false);
             pLevel.removeBlockEntity(currentPos);
