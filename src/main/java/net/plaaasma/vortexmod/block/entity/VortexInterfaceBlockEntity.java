@@ -355,6 +355,11 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
     }
 
     @LuaFunction
+    public final Integer getPower() throws LuaException {
+        return this.energy.getEnergyStored();
+    }
+
+    @LuaFunction
     public final Boolean enableThrottle() throws LuaException {
         this.data.set(13, 1);
 
