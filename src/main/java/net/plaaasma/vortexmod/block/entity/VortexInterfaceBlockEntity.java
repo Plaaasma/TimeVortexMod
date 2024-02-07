@@ -1084,7 +1084,6 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     this.data.set(7, tardisEntity.getBlockY());
                     this.data.set(8, tardisEntity.getBlockZ());
                     if (throttle_on == 0) {
-                        this.data.set(21, 0);
                         if (tardisEntity.isDemat()) {
                             tardisEntity.setDemat(false);
                             tardisEntity.setAlpha(1);
@@ -1123,8 +1122,6 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         monitorBlockEntity.data.set(10, (int) ticks_to_travel);
                     }
 
-                    this.data.set(21, 15);
-
                     if (throttle_on == 1) {
                         if (monitorBlockEntity != null) {
                             monitorBlockEntity.data.set(5, (int) time_remaining);
@@ -1143,6 +1140,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
 
                         this.data.set(23, 0);
                         if (tardisEntity.isDemat()) {
+                            this.data.set(21, 15);
                             this.energy.removeEnergy(1);
                             tardisEntity.setInFlight(false);
                             handleDematCenterParticles(tardisDimension, pPos);
@@ -1159,6 +1157,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 }
                             }
                         } else if (tardisEntity.isInFlight()) {
+                            this.data.set(21, 15);
                             if (this.data.get(0) >= this.data.get(1) + ticks_to_travel) {
                                 if (autoLand) {
                                     for (int x = -size; x <= size; x++) {
@@ -1220,6 +1219,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.DEMAT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
                             }
                             else {
+                                this.data.set(21, 15);
                                 tardisEntity.setInFlight(false);
                                 if (!has_equalizer && this.data.get(0) % 100 == 0) {
                                     handleLightningStrikes(targetDimension, new BlockPos(targetX, targetY, targetZ));
@@ -1252,6 +1252,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         }
                         this.data.set(24, 0);
                         if (tardisEntity.isRemat() || tardisEntity.isInFlight()) {
+                            this.data.set(21, 15);
                             tardisEntity.setInFlight(false);
                             if (!has_equalizer && this.data.get(0) % 100 == 0) {
                                 handleLightningStrikes(targetDimension, new BlockPos(targetX, targetY, targetZ));
@@ -1323,6 +1324,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                             }
                         }
                         else {
+                            this.data.set(21, 0);
                             if (this.data.get(23) == 0) {
                                 BlockPos flight_target = new BlockPos(targetX, targetY, targetZ);
                                 handleLandingEntities(targetDimension, tardisDimension, flight_target, this.getExtUUID());
