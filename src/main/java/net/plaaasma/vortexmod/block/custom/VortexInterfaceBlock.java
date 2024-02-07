@@ -136,7 +136,7 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                 localBlockEntity.data.set(7, pPos.getY());
                 localBlockEntity.data.set(8, pPos.getZ());
 
-                BlockPos tardisTarget = new BlockPos(greatest_x_coordinate + InteriorUtil.INTERIOR_SIZE, -128, greatest_z_coordinate + InteriorUtil.INTERIOR_SIZE);
+                BlockPos tardisTarget = InteriorUtil.findNewInteriorPosition();
 
                 data.getDataMap().put(Integer.toString(ownerCode), tardisTarget);
 
@@ -205,6 +205,20 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                                 if (newBlockEntity != null) {
                                     newBlockEntity.load(nbtData);
                                     newBlockEntity.invalidateCaps();
+                                }
+
+                                if (blockEntity instanceof VortexInterfaceBlockEntity entity) {
+                                    BlockPos[] corners = InteriorUtil.getCorners(minecraftserver, Integer.toString(ownerCode));
+                                    BlockPos centre = BlockPos.containing(InteriorUtil.toBox(corners[0], corners[1]).getCenter());
+
+                                    tardisDimension.setBlockAndUpdate(centre.above(5), blockState);
+
+
+                                    BlockEntity whatTheHell = serverLevel.getBlockEntity(centre.above(5));
+                                    if (whatTheHell != null) {
+                                        whatTheHell.load(nbtData);
+                                        whatTheHell.invalidateCaps();
+                                    }
                                 }
                             }
 

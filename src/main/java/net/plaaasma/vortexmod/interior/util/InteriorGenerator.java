@@ -6,6 +6,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
@@ -60,12 +61,10 @@ public class InteriorGenerator {
         BlockPos offset = new BlockPos(-(size.getX() / 2),0,-(size.getZ() / 2)); // We offset it by its own negative size divided by two to ensure it is properly placed around the centre
         BlockPos placedPos = centre.offset(offset);
 
-        System.out.println(centre);
-
         template.placeInWorld(
                 level, // The dimension this will be placed in
-                new BlockPos(0,0,0),
-                first,
+                template.getZeroPositionWithTransform(placedPos.atY(-128), Mirror.NONE, Rotation.NONE),
+                placedPos,
                 new StructurePlaceSettings(),
                 level.getRandom(),
                 Block.UPDATE_NONE
@@ -81,8 +80,6 @@ public class InteriorGenerator {
         if (door.isEmpty()) {
             VortexMod.P_LOGGER.warn("Could not find door in interior " + this.schema.id());
         }
-
-        System.out.println(first);
 
         return door.orElse(first);
     }
@@ -119,28 +116,30 @@ public class InteriorGenerator {
 
         // TODO temporarily removed for lag, who woulda thunk clearing out 10k blocks would cause that
 
-//        List<BlockPos> excluded =
-//            clearArea(
-//                level,
-//                corners[0],
-//                corners[1],
-//                ModBlocks.INTERFACE_BLOCK.get() // todo add more to the exclusion if necessary
-//            );
-//
-//        // Laggy code?
-//        BlockPos core = excluded.stream().filter(pos -> {
-//            BlockState state = level.getBlockState(pos);
-//            return state.is(ModBlocks.INTERFACE_BLOCK.get());
-//        }).findFirst().orElse(corners[0]);
+        List<BlockPos> excluded =
+            clearArea(
+                level,
+                corners[0],
+                corners[1],
+                ModBlocks.INTERFACE_BLOCK.get() // todo add more to the exclusion if necessary
+            );
 
-//        BlockState coreState = level.getBlockState(core);
-//        level.setBlock(core, Blocks.AIR.defaultBlockState(), Block.UPDATE_NONE);
+        // Laggy code? yes.
+        BlockPos core = excluded.stream().filter(pos -> {
+            BlockState state = level.getBlockState(pos);
+            return state.is(ModBlocks.INTERFACE_BLOCK.get());
+        }).findFirst().orElse(corners[0]);
+
+        BlockState coreState = level.getBlockState(core);
+        level.setBlock(core, Blocks.AIR.defaultBlockState(), Block.UPDATE_NONE);
 
         BlockPos centre = BlockPos.containing(InteriorUtil.toBox(corners[0], corners[1]).getCenter());
 
         BlockPos door = this.place(server, owner);
 
-//        level.setBlock(centre, coreState, Block.UPDATE_NONE);
+        level.setBlock(centre, coreState, Block.UPDATE_NONE);
+
+        System.out.println(centre);
 
         return door;
     }

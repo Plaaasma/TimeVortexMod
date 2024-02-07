@@ -8,10 +8,12 @@ import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
 
 import javax.swing.*;
+import java.util.Random;
 import java.util.Set;
 
 public class InteriorUtil {
-    public static final int INTERIOR_SIZE = 10000;
+    public static final Random RANDOM = new Random();
+    public static final int INTERIOR_SIZE = 256;
 
     /**
      * Gets the corners of a players interior
@@ -31,8 +33,9 @@ public class InteriorUtil {
 
         if (first == null) {
             // Bad code.
-            VortexMod.P_LOGGER.warn("Could not find interior for " + owner + " | Assuming next position is ours");
-            first = findFurthestInterior(server).offset(INTERIOR_SIZE, 0, INTERIOR_SIZE); // This is where the next interior will be, assume it'll be ours
+            VortexMod.P_LOGGER.warn("Could not find interior for " + owner + " | Giving this TARDIS a new position");
+            data.getDataMap().put(owner, findNewInteriorPosition());
+            first = data.getDataMap().get(owner);
         }
 
 
@@ -47,6 +50,10 @@ public class InteriorUtil {
      */
     public static AABB toBox(BlockPos first, BlockPos second) {
         return new AABB(first, second);
+    }
+
+    public static BlockPos findNewInteriorPosition() {
+        return new BlockPos(RANDOM.nextInt(-10000, 10000), -128, RANDOM.nextInt(-10000, 10000));
     }
 
     // Not my code, this was from VortexInterfaceBlock
