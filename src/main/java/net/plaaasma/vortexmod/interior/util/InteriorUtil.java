@@ -148,8 +148,8 @@ public class InteriorUtil {
         BlockPos found = null;
 
         BlockPos current = source;
-        BlockPos first = source.north(size).west(size);
-        BlockPos second = source.south(size).east(size);
+        BlockPos first = source.north(size).west(size).above(size);
+        BlockPos second = source.south(size).east(size).below(size);
 
         int iterations = 0;
         int maxIterations = 128; // This limits how many iterations occur so the server doesnt freeze
