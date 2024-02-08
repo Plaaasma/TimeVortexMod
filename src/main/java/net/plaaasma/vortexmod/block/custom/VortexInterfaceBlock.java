@@ -218,82 +218,67 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                                     newBlockEntity.invalidateCaps();
                                 }
 
-//                                if (blockEntity instanceof VortexInterfaceBlockEntity entity) {
-//                                    BlockPos[] corners = InteriorUtil.getCorners(minecraftserver, Integer.toString(ownerCode));
-//                                    BlockPos centre = BlockPos.containing(InteriorUtil.toBox(corners[0], corners[1]).getCenter());
-//
-//                                    tardisDimension.setBlockAndUpdate(centre.above(5), blockState);
-//
-//
-//                                    BlockEntity whatTheHell = serverLevel.getBlockEntity(centre.above(5));
-//                                    if (whatTheHell != null) {
-//                                        whatTheHell.load(nbtData);
-//                                        whatTheHell.invalidateCaps();
-//                                    }
-//                                }
-                            }
-
-                            if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof BedBlock || pLevel.getBlockState(currentPos).getBlock() instanceof CarpetBlock || pLevel.getBlockState(currentPos).getBlock() instanceof VineBlock) {
-                                serverLevel.removeBlock(currentPos, false);
-                                serverLevel.removeBlockEntity(currentPos);
-                            }
-                            else {
-                                if (serverLevel.getBlockState(currentPos).getBlock() != Blocks.BEDROCK && serverLevel.getBlockState(currentPos).getBlock() != Blocks.END_PORTAL && serverLevel.getBlockState(currentPos).getBlock() != Blocks.END_PORTAL_FRAME) {
-                                    if (currentPos != pPos) {
-                                        toBeRemoved.add(currentPos);
+                                if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof BedBlock || pLevel.getBlockState(currentPos).getBlock() instanceof CarpetBlock || pLevel.getBlockState(currentPos).getBlock() instanceof VineBlock) {
+                                    serverLevel.removeBlock(currentPos, false);
+                                    serverLevel.removeBlockEntity(currentPos);
+                                } else {
+                                    if (serverLevel.getBlockState(currentPos).getBlock() != Blocks.BEDROCK && serverLevel.getBlockState(currentPos).getBlock() != Blocks.END_PORTAL && serverLevel.getBlockState(currentPos).getBlock() != Blocks.END_PORTAL_FRAME) {
+                                        if (currentPos != pPos) {
+                                            toBeRemoved.add(currentPos);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
 
-                for (BlockPos positionToBeRemoved : toBeRemoved) {
-                    BlockEntity blockEntity = serverLevel.getBlockEntity(positionToBeRemoved);
-                    if (blockEntity != null) {
-                        blockEntity.load(new CompoundTag());
+                    for (BlockPos positionToBeRemoved : toBeRemoved) {
+                        BlockEntity blockEntity = serverLevel.getBlockEntity(positionToBeRemoved);
+                        if (blockEntity != null) {
+                            blockEntity.load(new CompoundTag());
+                        }
+                        serverLevel.removeBlock(positionToBeRemoved, false);
+                        serverLevel.removeBlockEntity(positionToBeRemoved);
                     }
-                    serverLevel.removeBlock(positionToBeRemoved, false);
-                    serverLevel.removeBlockEntity(positionToBeRemoved);
+
+                    // This is the code creating the STONE platform from door -> interface
+                    // for (int x = -1; x < door_distance; x++) {
+                    //     for (int z = -1; z < 2; z++) {
+                    //         BlockPos augmentedPos = tardisTarget.offset(x, -1, z);
+                    //         BlockState blockAt = tardisDimension.getBlockState(augmentedPos);
+                    //         if (blockAt.getBlock() == Blocks.AIR) {
+                    //             tardisDimension.setBlockAndUpdate(augmentedPos, Blocks.STONE.defaultBlockState());
+                    //         }
+                    //     }
+                    // }
+
+                    // tardisDimension.setBlockAndUpdate(tardisTarget, ModBlocks.DOOR_BLOCK.get().defaultBlockState());
+
+                    VortexInterfaceBlockEntity interfaceBlockEntity = (VortexInterfaceBlockEntity) tardisDimension.getBlockEntity(interfacePos);
+
+                    TardisEntity tardisMob = ModEntities.TARDIS.get().spawn(serverLevel, pPos, MobSpawnType.NATURAL);
+                    serverLevel.addFreshEntity(tardisMob);
+
+                    tardisMob.setOwnerID(ownerCode);
+                    interfaceBlockEntity.setExtUUID(tardisMob.getUUID());
+                    data.getDataMap().put(tardisMob.getUUID().toString(), tardisTarget);
+
+                    ChunkPos chunkPos = tardisDimension.getChunkAt(interfacePos).getPos();
+                    // fixme, you'll want to set these forces to false after your done or else youre gonna have performance issues - duzo
+                    ForgeChunkManager.forceChunk(tardisDimension, VortexMod.MODID, interfacePos, chunkPos.x, chunkPos.z, true, true);
+                    chunkPos = serverLevel.getChunkAt(pPos).getPos();
+                    ForgeChunkManager.forceChunk(serverLevel, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, true, true);
+
+                    pPlayer.setItemInHand(pHand, new ItemStack(ModItems.TARDIS_KEY.get(), 1));
+
+                    handleLightningStrikes(serverLevel, pPos);
+
+                    data.setDirty();
+
+                    serverLevel.removeBlock(pPos, false);
                 }
-
-                // This is the code creating the STONE platform from door -> interface
-                // for (int x = -1; x < door_distance; x++) {
-                //     for (int z = -1; z < 2; z++) {
-                //         BlockPos augmentedPos = tardisTarget.offset(x, -1, z);
-                //         BlockState blockAt = tardisDimension.getBlockState(augmentedPos);
-                //         if (blockAt.getBlock() == Blocks.AIR) {
-                //             tardisDimension.setBlockAndUpdate(augmentedPos, Blocks.STONE.defaultBlockState());
-                //         }
-                //     }
-                // }
-
-                // tardisDimension.setBlockAndUpdate(tardisTarget, ModBlocks.DOOR_BLOCK.get().defaultBlockState());
-
-                VortexInterfaceBlockEntity interfaceBlockEntity = (VortexInterfaceBlockEntity) tardisDimension.getBlockEntity(interfacePos);
-
-                TardisEntity tardisMob = ModEntities.TARDIS.get().spawn(serverLevel, pPos, MobSpawnType.NATURAL);
-                serverLevel.addFreshEntity(tardisMob);
-
-                tardisMob.setOwnerID(ownerCode);
-                interfaceBlockEntity.setExtUUID(tardisMob.getUUID());
-                data.getDataMap().put(tardisMob.getUUID().toString(), tardisTarget);
-
-                ChunkPos chunkPos = tardisDimension.getChunkAt(interfacePos).getPos();
-                ForgeChunkManager.forceChunk(tardisDimension, VortexMod.MODID, interfacePos, chunkPos.x, chunkPos.z, true, true);
-                chunkPos = serverLevel.getChunkAt(pPos).getPos();
-                ForgeChunkManager.forceChunk(serverLevel, VortexMod.MODID, pPos, chunkPos.x, chunkPos.z, true, true);
-
-                pPlayer.setItemInHand(pHand, new ItemStack(ModItems.TARDIS_KEY.get(), 1));
-
-                handleLightningStrikes(serverLevel, pPos);
-
-                data.setDirty();
-
-                serverLevel.removeBlock(pPos, false);
             }
         }
-
         return InteractionResult.CONSUME;
     }
 

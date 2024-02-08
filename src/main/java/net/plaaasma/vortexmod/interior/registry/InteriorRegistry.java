@@ -13,6 +13,11 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 // todo - i recommend making interiors registrable via datapacks - duzo
+
+/**
+ * A registry for interiors
+ * @author duzo
+ */
 public class InteriorRegistry {
     // fixme these are bad names for these variables - duzo
     public static final DeferredRegister<InteriorSchema> REGISTER = DeferredRegister.create(new ResourceLocation(VortexMod.MODID, "interior"), VortexMod.MODID);

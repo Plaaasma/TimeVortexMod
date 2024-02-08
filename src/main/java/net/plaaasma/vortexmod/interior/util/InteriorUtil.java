@@ -14,13 +14,18 @@ import javax.annotation.Nullable;
 import java.util.Random;
 import java.util.Set;
 
+/**
+ * A class containing many useful things for a TARDIS Interior
+ * Any method which has a {@code  String owner} as an argument can use a TARDIS mob's UUID in String form instead. Any issues with this should be reported to me.
+ * @author duzo
+ */
 public class InteriorUtil {
     public static final Random RANDOM = new Random();
     public static final int INTERIOR_SIZE = 256;
 
     /**
      * Gets the corners of a players interior
-     * TARDIS' will have a size of 10000 in each axis
+     * TARDIS' will have a size of INTERIOR_SIZE in each axis
      * @param server the current server, used for obtaining data
      * @param owner the tardis to look for
      * @return the corners found

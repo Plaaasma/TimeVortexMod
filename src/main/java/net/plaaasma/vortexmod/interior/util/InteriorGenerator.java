@@ -104,9 +104,9 @@ public class InteriorGenerator {
     /**
      * Changes the interior
      * This method
-     *  -> Clears all the existing blocks
+     *  -> Clears all the existing blocks if value is true
      *  -> Places the interior
-     *  -> Moves the interface to the centre of the interior, if there was already one in this interior
+     *  -> Returns the door position
      * @param clearInterior Whether to clear out the entire interior before placing a new one - if true this may cause lag!
      * @return the door position
      */
