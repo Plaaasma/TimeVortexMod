@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "vortexmod:block/exterior_scanner",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "vortexmod:block/exterior_scanner"
+    },
+    "facing=south": {
+      "model": "vortexmod:block/exterior_scanner",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "vortexmod:block/exterior_scanner",
+      "y": 270
+    }
+  }
+}
