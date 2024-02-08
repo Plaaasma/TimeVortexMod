@@ -21,7 +21,6 @@ import net.plaaasma.vortexmod.entities.client.renderers.DalekRenderer;
 import net.plaaasma.vortexmod.entities.client.renderers.LaserRenderer;
 import net.plaaasma.vortexmod.entities.client.renderers.LostTravelerRenderer;
 import net.plaaasma.vortexmod.entities.client.renderers.TardisRenderer;
-import net.plaaasma.vortexmod.interior.registry.InteriorRegistry;
 import net.plaaasma.vortexmod.item.ModCreativeModeTabs;
 import net.plaaasma.vortexmod.item.ModItems;
 import net.plaaasma.vortexmod.screen.custom.screen.KeypadScreen;
@@ -37,7 +36,6 @@ public class VortexMod {
     public static final String MODID = "vortexmod";
 
     // Directly reference a slf4j logger
-    // fixme i recommend making the logger public, it makes more sense to have just one especially if theyre referencing the same thing - duzu
     public static final Logger P_LOGGER = LogUtils.getLogger();
     private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -57,8 +55,6 @@ public class VortexMod {
         ModEntities.register(modEventBus);
 
         ModSounds.register(modEventBus);
-
-        InteriorRegistry.register(modEventBus);
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
@@ -82,6 +78,8 @@ public class VortexMod {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             // Some client setup code
+            LOGGER.info("HELLO FROM CLIENT SETUP");
+            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
 
             EntityRenderers.register(ModEntities.BLUE_TRADER.get(), LostTravelerRenderer::new);
             EntityRenderers.register(ModEntities.ORANGE_TRADER.get(), LostTravelerRenderer::new);
