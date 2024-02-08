@@ -136,9 +136,19 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                 localBlockEntity.data.set(7, pPos.getY());
                 localBlockEntity.data.set(8, pPos.getZ());
 
-                BlockPos tardisTarget = InteriorUtil.findNewInteriorPosition();
+                // Give the TARDIS an assigned interior position, with an area of 256cm^3
+                // fixme - there are so many variables here and so much indentation, it needs cleanup but this isnt my job - duzo
+                BlockPos interiorCorner = InteriorUtil.findNewInteriorPosition();
+                data.getDataMap().put(Integer.toString(ownerCode), interiorCorner);
 
-                data.getDataMap().put(Integer.toString(ownerCode), tardisTarget);
+
+                // Generate our interior using the util methods ( TODO - allow for selection of interior, right now it just uses default )
+                InteriorGenerator gen = new InteriorGenerator(InteriorRegistry.DEFAULT.get());
+
+                BlockPos door = gen.changeInterior(minecraftserver, Integer.toString(ownerCode));
+
+                BlockPos centre = InteriorUtil.getInteriorCentre(minecraftserver, Integer.toString(ownerCode));
+                BlockPos tardisTarget = centre.above(); // TODO add a check to find the first empty space above the centre
 
                 int size = 1;
 
@@ -178,7 +188,7 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                     for (int y = -1; y <= y_size + (y_size - 1); y++) {
                         for (int z = -size; z <= size; z++) {
                             BlockPos currentPos = pPos.offset(x, y, z);
-                            BlockPos currentTargetPos = tardisTarget.offset(x + door_distance, y, z);
+                            BlockPos currentTargetPos = tardisTarget.offset(x/* + door_distance*/, y, z);
 
                             BlockEntity blockEntity = serverLevel.getBlockEntity(currentPos);
 
@@ -207,19 +217,19 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                                     newBlockEntity.invalidateCaps();
                                 }
 
-                                if (blockEntity instanceof VortexInterfaceBlockEntity entity) {
-                                    BlockPos[] corners = InteriorUtil.getCorners(minecraftserver, Integer.toString(ownerCode));
-                                    BlockPos centre = BlockPos.containing(InteriorUtil.toBox(corners[0], corners[1]).getCenter());
-
-                                    tardisDimension.setBlockAndUpdate(centre.above(5), blockState);
-
-
-                                    BlockEntity whatTheHell = serverLevel.getBlockEntity(centre.above(5));
-                                    if (whatTheHell != null) {
-                                        whatTheHell.load(nbtData);
-                                        whatTheHell.invalidateCaps();
-                                    }
-                                }
+//                                if (blockEntity instanceof VortexInterfaceBlockEntity entity) {
+//                                    BlockPos[] corners = InteriorUtil.getCorners(minecraftserver, Integer.toString(ownerCode));
+//                                    BlockPos centre = BlockPos.containing(InteriorUtil.toBox(corners[0], corners[1]).getCenter());
+//
+//                                    tardisDimension.setBlockAndUpdate(centre.above(5), blockState);
+//
+//
+//                                    BlockEntity whatTheHell = serverLevel.getBlockEntity(centre.above(5));
+//                                    if (whatTheHell != null) {
+//                                        whatTheHell.load(nbtData);
+//                                        whatTheHell.invalidateCaps();
+//                                    }
+//                                }
                             }
 
                             if (pLevel.getBlockState(currentPos).getBlock() instanceof DoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof PressurePlateBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ButtonBlock || pLevel.getBlockState(currentPos).getBlock() instanceof LeverBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedstoneTorchBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TrapDoorBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallGrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof SeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallSeagrassBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TorchflowerCropBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ChorusFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof TallFlowerBlock || pLevel.getBlockState(currentPos).getBlock() instanceof FlowerPotBlock || pLevel.getBlockState(currentPos).getBlock() instanceof ThrottleBlock || pLevel.getBlockState(currentPos).getBlock() instanceof RedStoneWireBlock || pLevel.getBlockState(currentPos).getBlock() instanceof BedBlock || pLevel.getBlockState(currentPos).getBlock() instanceof CarpetBlock || pLevel.getBlockState(currentPos).getBlock() instanceof VineBlock) {
@@ -246,17 +256,18 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                     serverLevel.removeBlockEntity(positionToBeRemoved);
                 }
 
-                for (int x = -1; x < door_distance; x++) {
-                    for (int z = -1; z < 2; z++) {
-                        BlockPos augmentedPos = tardisTarget.offset(x, -1, z);
-                        BlockState blockAt = tardisDimension.getBlockState(augmentedPos);
-                        if (blockAt.getBlock() == Blocks.AIR) {
-                            tardisDimension.setBlockAndUpdate(augmentedPos, Blocks.STONE.defaultBlockState());
-                        }
-                    }
-                }
+                // This is the code creating the STONE platform from door -> interface
+                // for (int x = -1; x < door_distance; x++) {
+                //     for (int z = -1; z < 2; z++) {
+                //         BlockPos augmentedPos = tardisTarget.offset(x, -1, z);
+                //         BlockState blockAt = tardisDimension.getBlockState(augmentedPos);
+                //         if (blockAt.getBlock() == Blocks.AIR) {
+                //             tardisDimension.setBlockAndUpdate(augmentedPos, Blocks.STONE.defaultBlockState());
+                //         }
+                //     }
+                // }
 
-                tardisDimension.setBlockAndUpdate(tardisTarget, ModBlocks.DOOR_BLOCK.get().defaultBlockState());
+                // tardisDimension.setBlockAndUpdate(tardisTarget, ModBlocks.DOOR_BLOCK.get().defaultBlockState());
 
                 VortexInterfaceBlockEntity interfaceBlockEntity = (VortexInterfaceBlockEntity) tardisDimension.getBlockEntity(interfacePos);
 
@@ -279,13 +290,6 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                 data.setDirty();
 
                 serverLevel.removeBlock(pPos, false);
-
-                InteriorGenerator gen = new InteriorGenerator(InteriorRegistry.DEFAULT.get());
-
-                System.out.println(ownerCode);
-                System.out.println(pPlayer.getScoreboardName().hashCode());
-
-                gen.changeInterior(minecraftserver, Integer.toString(ownerCode));
             }
         }
 

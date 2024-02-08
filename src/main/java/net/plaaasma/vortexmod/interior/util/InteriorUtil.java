@@ -2,7 +2,10 @@ package net.plaaasma.vortexmod.interior.util;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
@@ -29,8 +32,6 @@ public class InteriorUtil {
         // Tardis' ( from what ive seen ) will have a size of 10000
         BlockPos first = data.getDataMap().get(owner);
 
-        System.out.println(data.getDataMap());
-
         if (first == null) {
             // Bad code.
             VortexMod.P_LOGGER.warn("Could not find interior for " + owner + " | Giving this TARDIS a new position");
@@ -52,11 +53,91 @@ public class InteriorUtil {
         return new AABB(first, second);
     }
 
+    /**
+     * @return A random position from range -10000 to 10000 in the x and z axis
+     */
     public static BlockPos findNewInteriorPosition() {
         return new BlockPos(RANDOM.nextInt(-10000, 10000), -128, RANDOM.nextInt(-10000, 10000));
     }
 
+    /**
+     * Returns whether a position is within a volume of coordinates
+     * @param pos the position to look for
+     * @param first lowest corner of the volume
+     * @param second largest corner of the volume
+     * @return whether the position is within the volume
+     */
+    public static boolean isInArea(BlockPos pos, BlockPos first, BlockPos second) {
+        return pos.getX() >= first.getX() && pos.getX() <= second.getX() && pos.getZ() >= first.getZ() && pos.getZ() <= second.getZ();
+    }
+
+    /**
+     * Returns whether an entity is within a volume of coordinates
+     * @param entity the entity to look for
+     * @param first lowest corner of the volume
+     * @param second largest corner of the volume
+     * @return whether the entity is within the volume
+     */
+    public static boolean isInArea(Entity entity, BlockPos first, BlockPos second) {
+        return isInArea(entity.blockPosition(), first, second);
+    }
+
+    /**
+     * Returns whether a position is within a TARDIS' interior
+     * @param pos the position to look for
+     * @param server server for grabbing location data
+     * @param owner the key in the LocationMapData for a TARDIS ( TODO - I've just realised now that we store interiors using Entity UUIDS, not Owner Hashcodes. Dammit )
+     * @return whether the position is within the interior
+     */
+    public static boolean isInInterior(BlockPos pos, MinecraftServer server, String owner) {
+        BlockPos[] corners = getCorners(server, owner);
+
+        return isInArea(pos, corners[0], corners[1]);
+    }
+    /**
+     * Returns whether an entity is within a TARDIS' interior
+     * @param entity the entity to look for
+     * @param server server for grabbing location data
+     * @param owner the key in the LocationMapData for a TARDIS ( TODO - I've just realised now that we store interiors using Entity UUIDS, not Owner Hashcodes. Dammit )
+     * @return whether the position is within the interior
+     */
+    public static boolean isInInterior(Entity entity, MinecraftServer server, String owner) {
+        return isInInterior(entity.blockPosition(), server, owner);
+    }
+
+    /**
+     * Gets the centre of two coordinates
+     * @param first the largest corner
+     * @param second the smallest corner
+     * @return the centre
+     */
+    public static BlockPos getCentre(BlockPos first, BlockPos second) {
+        return BlockPos.containing(InteriorUtil.toBox(first, second).getCenter());
+    }
+
+    /**
+     * Maths out the centre of an interior
+     * @param server server for grabbing location data
+     * @param owner the key for the TARDIS' interior corner
+     * @return the centre
+     */
+    public static BlockPos getInteriorCentre(MinecraftServer server, String owner) {
+        BlockPos[] corners = getCorners(server, owner);
+        return getCentre(corners[0], corners[1]);
+    }
+
+    /**
+     * Finds the nearest air block from a position
+     * @param level the world to look in
+     * @param pos the source position
+     * @return the position of the air block
+     */
+    public static BlockPos findNearestAir(ServerLevel level, BlockPos pos) {
+        return level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos);
+    }
+
     // Not my code, this was from VortexInterfaceBlock
+    @Deprecated
     public static BlockPos findFurthestInterior(MinecraftServer server) {
         LocationMapData data = LocationMapData.get(server.getLevel(Level.OVERWORLD));
         Set<String> keyList = data.getDataMap().keySet();
