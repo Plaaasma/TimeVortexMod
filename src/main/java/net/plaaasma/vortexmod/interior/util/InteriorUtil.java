@@ -10,7 +10,7 @@ import net.minecraft.world.phys.AABB;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
 
-import javax.swing.*;
+import javax.annotation.Nullable;
 import java.util.Random;
 import java.util.Set;
 
@@ -134,6 +134,43 @@ public class InteriorUtil {
      */
     public static BlockPos findNearestAir(ServerLevel level, BlockPos pos) {
         return level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos);
+    }
+
+    /**
+     * Finds the first valid centre for a size, goes upwards - warning may be laggy
+     * @param level the level to search in
+     * @param source the centre of the current air where the search starts
+     * @param size the area to check in
+     * @return the centre of the first valid air or null if none was found
+     */
+    @Nullable
+    public static BlockPos findAirForSize(ServerLevel level, BlockPos source, int size) {
+        BlockPos found = null;
+
+        BlockPos current = source;
+        BlockPos first = source.north(size).west(size);
+        BlockPos second = source.south(size).east(size);
+
+        int iterations = 0;
+        int maxIterations = 128; // This limits how many iterations occur so the server doesnt freeze
+
+        while (found == null && iterations < maxIterations) {
+            boolean isCurrentAir = level.getBlockState(current).canBeReplaced();
+
+            for (BlockPos pos : BlockPos.betweenClosed(first, second)) {
+                if (isCurrentAir && level.getBlockState(pos).canBeReplaced()) {
+                    found = pos;
+                    break;
+                }
+            }
+
+            current = current.above();
+            first = first.above();
+            second = second.above();
+            iterations++;
+        }
+
+        return found;
     }
 
     // Not my code, this was from VortexInterfaceBlock

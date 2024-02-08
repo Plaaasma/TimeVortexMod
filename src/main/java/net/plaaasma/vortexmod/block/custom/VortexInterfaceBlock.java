@@ -136,20 +136,6 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                 localBlockEntity.data.set(7, pPos.getY());
                 localBlockEntity.data.set(8, pPos.getZ());
 
-                // Give the TARDIS an assigned interior position, with an area of 256cm^3
-                // fixme - there are so many variables here and so much indentation, it needs cleanup but this isnt my job - duzo
-                BlockPos interiorCorner = InteriorUtil.findNewInteriorPosition();
-                data.getDataMap().put(Integer.toString(ownerCode), interiorCorner);
-
-
-                // Generate our interior using the util methods ( TODO - allow for selection of interior, right now it just uses default )
-                InteriorGenerator gen = new InteriorGenerator(InteriorRegistry.DEFAULT.get());
-
-                BlockPos door = gen.changeInterior(minecraftserver, Integer.toString(ownerCode), false);
-
-                BlockPos centre = InteriorUtil.getInteriorCentre(minecraftserver, Integer.toString(ownerCode));
-                BlockPos tardisTarget = centre.above(); // TODO add a check to find the first empty space above the centre
-
                 int size = 1;
 
                 for (int x = -size; x <= size; x++) {
@@ -178,6 +164,22 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                 if (size < 5) {
                     y_size = size;
                 }
+
+                // Give the TARDIS an assigned interior position, with an area of 256cm^3
+                // fixme - there are so many variables here and so much indentation and so much bulk code, it needs cleanup but this isnt my job - duzo
+                BlockPos interiorCorner = InteriorUtil.findNewInteriorPosition();
+                data.getDataMap().put(Integer.toString(ownerCode), interiorCorner);
+
+
+                // Generate our interior using the util methods ( TODO - allow for selection of interior, right now it just uses default )
+                InteriorGenerator gen = new InteriorGenerator(InteriorRegistry.DEFAULT.get());
+
+                BlockPos door = gen.changeInterior(minecraftserver, Integer.toString(ownerCode), false);
+
+                BlockPos centre = InteriorUtil.getInteriorCentre(minecraftserver, Integer.toString(ownerCode));
+                BlockPos found = InteriorUtil.findAirForSize(tardisDimension, centre, size);
+                BlockPos tardisTarget = (found == null) ? centre : found;
+                tardisTarget = tardisTarget.south(size).east(size);
 
                 int door_distance = 10 + size;
 
