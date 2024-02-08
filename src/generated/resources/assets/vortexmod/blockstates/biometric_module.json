@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "vortexmod:block/biometric_module",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "vortexmod:block/biometric_module"
+    },
+    "facing=south": {
+      "model": "vortexmod:block/biometric_module",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "vortexmod:block/biometric_module",
+      "y": 270
+    }
+  }
+}
