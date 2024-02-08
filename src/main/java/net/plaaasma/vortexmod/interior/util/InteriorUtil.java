@@ -151,16 +151,23 @@ public class InteriorUtil {
         BlockPos first = source.north(size).west(size).above(size);
         BlockPos second = source.south(size).east(size).below(size);
 
+        double areaSize = Math.pow(size * 3, 3);
+
         int iterations = 0;
-        int maxIterations = 128; // This limits how many iterations occur so the server doesnt freeze
+        int maxIterations = 2048; // This limits how many iterations occur so the server doesnt freeze
 
         while (found == null && iterations < maxIterations) {
             boolean isCurrentAir = level.getBlockState(current).canBeReplaced();
+            int airCount = 0;
 
             for (BlockPos pos : BlockPos.betweenClosed(first, second)) {
                 if (isCurrentAir && level.getBlockState(pos).canBeReplaced()) {
-                    found = pos;
-                    break;
+                    airCount++;
+
+                    if (airCount >= areaSize) {
+                        found = current;
+                        break;
+                    }
                 }
             }
 

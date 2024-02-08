@@ -179,7 +179,6 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                 BlockPos centre = InteriorUtil.getInteriorCentre(minecraftserver, Integer.toString(ownerCode));
                 BlockPos found = InteriorUtil.findAirForSize(tardisDimension, centre, size);
                 BlockPos tardisTarget = (found == null) ? centre : found;
-                tardisTarget = tardisTarget.south(size).east(size);
 
                 int door_distance = 10 + size;
 
