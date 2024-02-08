@@ -1,0 +1,5 @@
+// 1.20.1	2024-02-06T20:09:12.2419831	Tags for minecraft:block mod id vortexmod
+348f7fe01a59be0411c38ba3dbbb7a3b28e99ace data/minecraft/tags/blocks/mineable/axe.json
+333f01f8c948dabb3e6bc27e12a045c97c313fc0 data/minecraft/tags/blocks/mineable/pickaxe.json
+156cc1f572a9ed3d222d79108065ca07c8a3ace2 data/minecraft/tags/blocks/needs_iron_tool.json
+9986ba6607b7dc818e19c0751f4c646344b5ee46 data/minecraft/tags/blocks/needs_stone_tool.json

@@ -1,0 +1,60 @@
+{
+  "type": "vortexmod:skarodim_type",
+  "generator": {
+    "type": "minecraft:noise",
+    "biome_source": {
+      "type": "minecraft:multi_noise",
+      "biomes": [
+        {
+          "biome": "vortexmod:irradiated_forest_biome",
+          "parameters": {
+            "continentalness": 0.8,
+            "depth": 0.0,
+            "erosion": 0.0,
+            "humidity": 0.0,
+            "offset": 0.0,
+            "temperature": 0.9,
+            "weirdness": 0.0
+          }
+        },
+        {
+          "biome": "vortexmod:super_irradiated_forest_biome",
+          "parameters": {
+            "continentalness": 0.8,
+            "depth": 0.0,
+            "erosion": 0.0,
+            "humidity": 0.9,
+            "offset": 0.0,
+            "temperature": 0.0,
+            "weirdness": 0.0
+          }
+        },
+        {
+          "biome": "vortexmod:irradiated_desert_biome",
+          "parameters": {
+            "continentalness": 0.0,
+            "depth": 0.7,
+            "erosion": 1.0,
+            "humidity": 0.0,
+            "offset": 0.0,
+            "temperature": 0.0,
+            "weirdness": 0.0
+          }
+        },
+        {
+          "biome": "vortexmod:irradiated_badlands_biome",
+          "parameters": {
+            "continentalness": 0.8,
+            "depth": 0.0,
+            "erosion": 0.0,
+            "humidity": 0.5,
+            "offset": 0.0,
+            "temperature": 0.5,
+            "weirdness": 0.0
+          }
+        }
+      ]
+    },
+    "settings": "vortexmod:overworld"
+  }
+}
