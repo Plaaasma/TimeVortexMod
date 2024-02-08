@@ -107,41 +107,38 @@ public class InteriorGenerator {
      *  -> Clears all the existing blocks
      *  -> Places the interior
      *  -> Moves the interface to the centre of the interior, if there was already one in this interior
+     * @param clearInterior Whether to clear out the entire interior before placing a new one - if true this may cause lag!
      * @return the door position
      */
-    public BlockPos changeInterior(MinecraftServer server, String owner) {
+    public BlockPos changeInterior(MinecraftServer server, String owner, boolean clearInterior) {
         BlockPos[] corners = InteriorUtil.getCorners(server, owner);
 
         ServerLevel level = server.getLevel(ModDimensions.tardisDIM_LEVEL_KEY);
 
-        // TODO temporarily removed for lag, who woulda thunk clearing out 10k blocks would cause that
-
-        List<BlockPos> excluded =
-            clearArea(
-                level,
-                corners[0],
-                corners[1],
-                ModBlocks.INTERFACE_BLOCK.get() // todo add more to the exclusion if necessary
-            );
-
-        // Laggy code? yes.
-        BlockPos core = excluded.stream().filter(pos -> {
-            BlockState state = level.getBlockState(pos);
-            return state.is(ModBlocks.INTERFACE_BLOCK.get());
-        }).findFirst().orElse(corners[0]);
-
-        BlockState coreState = level.getBlockState(core);
-        level.setBlock(core, Blocks.AIR.defaultBlockState(), Block.UPDATE_NONE);
-
         BlockPos centre = BlockPos.containing(InteriorUtil.toBox(corners[0], corners[1]).getCenter());
 
-        BlockPos door = this.place(server, owner);
+        if (clearInterior) {
+            List<BlockPos> excluded =
+                    clearArea(
+                            level,
+                            corners[0],
+                            corners[1],
+                            ModBlocks.INTERFACE_BLOCK.get() // todo add more to the exclusion if necessary
+                    );
 
-        level.setBlock(centre, coreState, Block.UPDATE_NONE);
+            // Laggy code? yes.
+            BlockPos core = excluded.stream().filter(pos -> {
+                BlockState state = level.getBlockState(pos);
+                return state.is(ModBlocks.INTERFACE_BLOCK.get());
+            }).findFirst().orElse(corners[0]);
 
-        System.out.println(centre);
+            // Dont think this code works / is needed.
+            BlockState coreState = level.getBlockState(core);
+            level.setBlock(core, Blocks.AIR.defaultBlockState(), Block.UPDATE_NONE);
+            level.setBlock(centre, coreState, Block.UPDATE_NONE);
+        }
 
-        return door;
+        return this.place(server, owner);
     }
 
 

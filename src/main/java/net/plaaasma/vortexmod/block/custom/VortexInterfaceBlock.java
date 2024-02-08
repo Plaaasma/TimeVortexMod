@@ -145,7 +145,7 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                 // Generate our interior using the util methods ( TODO - allow for selection of interior, right now it just uses default )
                 InteriorGenerator gen = new InteriorGenerator(InteriorRegistry.DEFAULT.get());
 
-                BlockPos door = gen.changeInterior(minecraftserver, Integer.toString(ownerCode));
+                BlockPos door = gen.changeInterior(minecraftserver, Integer.toString(ownerCode), false);
 
                 BlockPos centre = InteriorUtil.getInteriorCentre(minecraftserver, Integer.toString(ownerCode));
                 BlockPos tardisTarget = centre.above(); // TODO add a check to find the first empty space above the centre
