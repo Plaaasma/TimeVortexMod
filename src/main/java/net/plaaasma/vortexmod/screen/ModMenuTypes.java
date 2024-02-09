@@ -10,6 +10,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.plaaasma.vortexmod.screen.custom.menu.KeypadMenu;
+import net.plaaasma.vortexmod.screen.custom.menu.ScannerMenu;
 import net.plaaasma.vortexmod.screen.custom.menu.SizeManipulatorMenu;
 
 public class ModMenuTypes {
@@ -21,6 +22,8 @@ public class ModMenuTypes {
     public static final RegistryObject<MenuType<KeypadMenu>> KEYPAD_MENU =
             registerMenuType("keypad_menu", KeypadMenu::new);
 
+    public static final RegistryObject<MenuType<ScannerMenu>> SCANNER_MENU =
+            registerMenuType("scanner_menu", ScannerMenu::new);
 
     private static <T extends AbstractContainerMenu>RegistryObject<MenuType<T>> registerMenuType(String name, IContainerFactory<T> factory) {
         return MENUS.register(name, () -> IForgeMenuType.create(factory));
