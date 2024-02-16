@@ -188,18 +188,14 @@ public class VortexInterfaceBlock extends BaseEntityBlock {
                             CompoundTag nbtData = null;
                             if (blockEntity != null) {
                                 nbtData = blockEntity.saveWithFullMetadata();
-                                if (blockEntity instanceof SizeManipulatorBlockEntity sizeManipulatorBlockEntity) {
-                                    sizeManipulatorBlockEntity.itemHandler.setStackInSlot(0, new ItemStack(Items.AIR, 0));
-                                }
                             }
 
                             tardisDimension.setBlockAndUpdate(currentTargetPos, blockState);
 
                             if (nbtData != null) {
-                                BlockEntity newBlockEntity = serverLevel.getBlockEntity(currentPos);
+                                BlockEntity newBlockEntity = tardisDimension.getBlockEntity(currentTargetPos);
                                 if (newBlockEntity != null) {
                                     newBlockEntity.load(nbtData);
-                                    newBlockEntity.invalidateCaps();
                                 }
                             }
 

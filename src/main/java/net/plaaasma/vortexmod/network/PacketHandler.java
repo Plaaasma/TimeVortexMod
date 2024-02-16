@@ -38,17 +38,22 @@ public class PacketHandler {
                 .decoder(ServerboundDeleteTargetPacket::new)
                 .consumerMainThread(ServerboundDeleteTargetPacket::handle)
                 .add();
-        INSTANCE.messageBuilder(ClientboundTargetMapPacket.class, 3)
+        INSTANCE.messageBuilder(ServerboundAngelSeenPacket.class, 3)
+                .encoder(ServerboundAngelSeenPacket::encode)
+                .decoder(ServerboundAngelSeenPacket::new)
+                .consumerMainThread(ServerboundAngelSeenPacket::handle)
+                .add();
+        INSTANCE.messageBuilder(ClientboundTargetMapPacket.class, 4)
                 .encoder(ClientboundTargetMapPacket::encode)
                 .decoder(ClientboundTargetMapPacket::new)
                 .consumerMainThread(ClientboundTargetMapPacket::handle)
                 .add();
-        INSTANCE.messageBuilder(ClientboundDimListPacket.class, 4)
+        INSTANCE.messageBuilder(ClientboundDimListPacket.class, 5)
                 .encoder(ClientboundDimListPacket::encode)
                 .decoder(ClientboundDimListPacket::new)
                 .consumerMainThread(ClientboundDimListPacket::handle)
                 .add();
-        INSTANCE.messageBuilder(ClientboundMonitorDataPacket.class, 5)
+        INSTANCE.messageBuilder(ClientboundMonitorDataPacket.class, 6)
                 .encoder(ClientboundMonitorDataPacket::encode)
                 .decoder(ClientboundMonitorDataPacket::new)
                 .consumerMainThread(ClientboundMonitorDataPacket::handle)

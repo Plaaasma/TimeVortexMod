@@ -55,6 +55,11 @@ public class ModBlockEntities {
                     BlockEntityType.Builder.of(MonitorBlockEntity::new,
                             ModBlocks.MONITOR_BLOCK.get()).build(null));
 
+    public static final RegistryObject<BlockEntityType<AngelBlockEntity>> ANGEL_BE =
+            BLOCK_ENTITIES.register("angel_be", () ->
+                    BlockEntityType.Builder.of(AngelBlockEntity::new,
+                            ModBlocks.ANGEL_BLOCK.get()).build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }

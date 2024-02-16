@@ -1192,7 +1192,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                             ChunkPos chunkPos = currentDimension.getChunkAt(exteriorPos).getPos();
                             ForgeChunkManager.forceChunk(currentDimension, VortexMod.MODID, exteriorPos, chunkPos.x, chunkPos.z, false, true);
 
-                            tardisEntity.teleportToWithTicket(exteriorPos.getX(), -128, exteriorPos.getZ());
+                            tardisEntity.teleportToWithTicket(exteriorPos.getX() + 0.5, -128, exteriorPos.getZ() + 0.5);
                             if (this.data.get(0) >= this.data.get(1) + demat_time + 1 && (this.data.get(0) - (this.data.get(1) + demat_time) > 0)) {
                                 if (this.data.get(0) >= this.data.get(22) + (tickSpeed * 1.35)) {
                                     pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.EUC_FLIGHT_SOUND.get(), SoundSource.BLOCKS, 1f, 1f, 0);
@@ -1306,7 +1306,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 }
                                 tardisEntity.setYRot(rotation_yaw);
                                 tardisEntity.setNoGravity(false);
-                                tardisEntity.teleportToWithTicket(targetDimension, flight_target.getX(), flight_target.getY(), flight_target.getZ(), rotation_yaw, 0);
+                                tardisEntity.teleportToWithTicket(targetDimension, flight_target.getX() + 0.5, flight_target.getY(), flight_target.getZ() + 0.5, rotation_yaw, 0);
                                 if (!targetDimension.dimension().location().getPath().equals(currentDimension.dimension().location().getPath())) {
                                     targetDimension.addFreshEntity(tardisEntity);
                                 }
