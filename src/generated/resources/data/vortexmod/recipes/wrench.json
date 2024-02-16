@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "  R",
+    " I ",
+    "I  "
+  ],
+  "result": {
+    "item": "vortexmod:wrench"
+  },
+  "show_notification": true
+}

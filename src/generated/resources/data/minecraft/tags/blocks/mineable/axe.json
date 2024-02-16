@@ -1,0 +1,24 @@
+{
+  "values": [
+    "vortexmod:throttle_block",
+    "vortexmod:coordinate_block",
+    "vortexmod:keypad_block",
+    "vortexmod:equalizer_block",
+    "vortexmod:door_block",
+    "vortexmod:scanner_block",
+    "vortexmod:grounding_block",
+    "vortexmod:biometric_module",
+    "vortexmod:tardis_sign_block",
+    "vortexmod:monitor_block",
+    "vortexmod:oak_roundel_block",
+    "vortexmod:spruce_roundel_block",
+    "vortexmod:acacia_roundel_block",
+    "vortexmod:birch_roundel_block",
+    "vortexmod:cherry_roundel_block",
+    "vortexmod:dark_oak_roundel_block",
+    "vortexmod:jungle_roundel_block",
+    "vortexmod:mangrove_roundel_block",
+    "vortexmod:crimson_roundel_block",
+    "vortexmod:warped_roundel_block"
+  ]
+}

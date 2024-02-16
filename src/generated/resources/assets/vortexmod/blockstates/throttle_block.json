@@ -1,0 +1,216 @@
+{
+  "variants": {
+    "auto_land=false,face=ceiling,facing=east,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "x": 180,
+      "y": 270
+    },
+    "auto_land=false,face=ceiling,facing=east,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "x": 180,
+      "y": 270
+    },
+    "auto_land=false,face=ceiling,facing=north,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "x": 180,
+      "y": 180
+    },
+    "auto_land=false,face=ceiling,facing=north,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "x": 180,
+      "y": 180
+    },
+    "auto_land=false,face=ceiling,facing=south,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "x": 180
+    },
+    "auto_land=false,face=ceiling,facing=south,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "x": 180
+    },
+    "auto_land=false,face=ceiling,facing=west,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "x": 180,
+      "y": 90
+    },
+    "auto_land=false,face=ceiling,facing=west,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "x": 180,
+      "y": 90
+    },
+    "auto_land=false,face=floor,facing=east,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "y": 90
+    },
+    "auto_land=false,face=floor,facing=east,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "y": 90
+    },
+    "auto_land=false,face=floor,facing=north,powered=false": {
+      "model": "vortexmod:block/tardis_throttle"
+    },
+    "auto_land=false,face=floor,facing=north,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered"
+    },
+    "auto_land=false,face=floor,facing=south,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "y": 180
+    },
+    "auto_land=false,face=floor,facing=south,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "y": 180
+    },
+    "auto_land=false,face=floor,facing=west,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "y": 270
+    },
+    "auto_land=false,face=floor,facing=west,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "y": 270
+    },
+    "auto_land=false,face=wall,facing=east,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "x": 90,
+      "y": 90
+    },
+    "auto_land=false,face=wall,facing=east,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "x": 90,
+      "y": 90
+    },
+    "auto_land=false,face=wall,facing=north,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "x": 90
+    },
+    "auto_land=false,face=wall,facing=north,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "x": 90
+    },
+    "auto_land=false,face=wall,facing=south,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "x": 90,
+      "y": 180
+    },
+    "auto_land=false,face=wall,facing=south,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "x": 90,
+      "y": 180
+    },
+    "auto_land=false,face=wall,facing=west,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "x": 90,
+      "y": 270
+    },
+    "auto_land=false,face=wall,facing=west,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "x": 90,
+      "y": 270
+    },
+    "auto_land=true,face=ceiling,facing=east,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "x": 180,
+      "y": 270
+    },
+    "auto_land=true,face=ceiling,facing=east,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "x": 180,
+      "y": 270
+    },
+    "auto_land=true,face=ceiling,facing=north,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "x": 180,
+      "y": 180
+    },
+    "auto_land=true,face=ceiling,facing=north,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "x": 180,
+      "y": 180
+    },
+    "auto_land=true,face=ceiling,facing=south,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "x": 180
+    },
+    "auto_land=true,face=ceiling,facing=south,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "x": 180
+    },
+    "auto_land=true,face=ceiling,facing=west,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "x": 180,
+      "y": 90
+    },
+    "auto_land=true,face=ceiling,facing=west,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "x": 180,
+      "y": 90
+    },
+    "auto_land=true,face=floor,facing=east,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "y": 90
+    },
+    "auto_land=true,face=floor,facing=east,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "y": 90
+    },
+    "auto_land=true,face=floor,facing=north,powered=false": {
+      "model": "vortexmod:block/tardis_throttle"
+    },
+    "auto_land=true,face=floor,facing=north,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered"
+    },
+    "auto_land=true,face=floor,facing=south,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "y": 180
+    },
+    "auto_land=true,face=floor,facing=south,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "y": 180
+    },
+    "auto_land=true,face=floor,facing=west,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "y": 270
+    },
+    "auto_land=true,face=floor,facing=west,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "y": 270
+    },
+    "auto_land=true,face=wall,facing=east,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "x": 90,
+      "y": 90
+    },
+    "auto_land=true,face=wall,facing=east,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "x": 90,
+      "y": 90
+    },
+    "auto_land=true,face=wall,facing=north,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "x": 90
+    },
+    "auto_land=true,face=wall,facing=north,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "x": 90
+    },
+    "auto_land=true,face=wall,facing=south,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "x": 90,
+      "y": 180
+    },
+    "auto_land=true,face=wall,facing=south,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "x": 90,
+      "y": 180
+    },
+    "auto_land=true,face=wall,facing=west,powered=false": {
+      "model": "vortexmod:block/tardis_throttle",
+      "x": 90,
+      "y": 270
+    },
+    "auto_land=true,face=wall,facing=west,powered=true": {
+      "model": "vortexmod:block/tardis_throttle_powered",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

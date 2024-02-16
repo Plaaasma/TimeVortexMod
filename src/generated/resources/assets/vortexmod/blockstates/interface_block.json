@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "vortexmod:block/vortex_interface"
+    }
+  }
+}

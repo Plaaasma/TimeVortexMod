@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "S": {
+      "item": "minecraft:smooth_stone"
+    },
+    "W": {
+      "item": "minecraft:warped_stem"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "SWS",
+    "SSS"
+  ],
+  "result": {
+    "count": 8,
+    "item": "vortexmod:warped_roundel_block"
+  },
+  "show_notification": true
+}

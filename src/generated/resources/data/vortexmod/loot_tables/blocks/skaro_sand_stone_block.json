@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "vortexmod:skaro_sand_stone_block"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "vortexmod:blocks/skaro_sand_stone_block"
+}

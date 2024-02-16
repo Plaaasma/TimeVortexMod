@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:iron_block"
+    },
+    "C": {
+      "item": "vortexmod:vortex_core"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    }
+  },
+  "pattern": [
+    "OBO",
+    "BCB",
+    "OBO"
+  ],
+  "result": {
+    "item": "vortexmod:interface_block"
+  },
+  "show_notification": true
+}

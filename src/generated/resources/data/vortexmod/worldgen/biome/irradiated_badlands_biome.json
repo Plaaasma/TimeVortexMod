@@ -1,0 +1,120 @@
+{
+  "carvers": {},
+  "downfall": 0.0,
+  "effects": {
+    "additions_sound": {
+      "sound": "minecraft:ambient.basalt_deltas.additions",
+      "tick_chance": 0.0111
+    },
+    "ambient_sound": "minecraft:ambient.basalt_deltas.loop",
+    "fog_color": 2368291,
+    "foliage_color": 2699296,
+    "grass_color": 3158829,
+    "mood_sound": {
+      "block_search_extent": 8,
+      "offset": 2.0,
+      "sound": "minecraft:ambient.basalt_deltas.mood",
+      "tick_delay": 6000
+    },
+    "music": {
+      "max_delay": 24000,
+      "min_delay": 12000,
+      "replace_current_music": false,
+      "sound": "minecraft:music.nether.basalt_deltas"
+    },
+    "particle": {
+      "options": {
+        "type": "minecraft:white_ash"
+      },
+      "probability": 0.118093334
+    },
+    "sky_color": 2697256,
+    "water_color": 2961981,
+    "water_fog_color": 3355186
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [
+      "minecraft:fossil_upper",
+      "minecraft:fossil_lower"
+    ],
+    [],
+    [],
+    [
+      "minecraft:ore_coal_upper",
+      "minecraft:ore_coal_lower",
+      "minecraft:ore_iron_upper",
+      "minecraft:ore_iron_middle",
+      "minecraft:ore_iron_small",
+      "minecraft:ore_gold",
+      "minecraft:ore_gold_lower",
+      "minecraft:ore_redstone",
+      "minecraft:ore_redstone_lower",
+      "minecraft:ore_diamond",
+      "minecraft:ore_diamond_large",
+      "minecraft:ore_diamond_buried",
+      "minecraft:ore_lapis",
+      "minecraft:ore_lapis_buried",
+      "minecraft:ore_copper",
+      "minecraft:underwater_magma",
+      "minecraft:disk_sand",
+      "minecraft:disk_clay",
+      "minecraft:disk_gravel"
+    ],
+    [
+      "minecraft:ore_gravel_nether",
+      "minecraft:ore_blackstone",
+      "minecraft:ore_gold_nether",
+      "minecraft:ore_quartz_nether",
+      "minecraft:ore_ancient_debris_large",
+      "minecraft:ore_debris_small"
+    ],
+    [],
+    [
+      "minecraft:patch_dead_bush_2",
+      "minecraft:patch_sugar_cane_desert",
+      "minecraft:patch_pumpkin",
+      "minecraft:patch_cactus_desert"
+    ]
+  ],
+  "has_precipitation": false,
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "vortexmod:gold_dalek",
+        "maxCount": 2,
+        "minCount": 1,
+        "weight": 1000
+      },
+      {
+        "type": "vortexmod:silver_dalek",
+        "maxCount": 2,
+        "minCount": 1,
+        "weight": 1000
+      },
+      {
+        "type": "vortexmod:black_dalek",
+        "maxCount": 2,
+        "minCount": 1,
+        "weight": 1000
+      },
+      {
+        "type": "vortexmod:silver_black_dalek",
+        "maxCount": 2,
+        "minCount": 1,
+        "weight": 1000
+      }
+    ],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [],
+    "water_creature": []
+  },
+  "temperature": -10.0
+}

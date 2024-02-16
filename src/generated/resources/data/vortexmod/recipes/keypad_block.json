@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "E": {
+      "item": "minecraft:end_stone"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "M": {
+      "item": "minecraft:cartography_table"
+    },
+    "N": {
+      "item": "minecraft:netherrack"
+    },
+    "R": {
+      "item": "minecraft:redstone_torch"
+    },
+    "W": {
+      "tag": "minecraft:wooden_slabs"
+    }
+  },
+  "pattern": [
+    "IRI",
+    "NME",
+    "WWW"
+  ],
+  "result": {
+    "item": "vortexmod:keypad_block"
+  },
+  "show_notification": true
+}

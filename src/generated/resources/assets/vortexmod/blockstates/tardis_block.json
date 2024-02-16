@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "vortexmod:block/tardis",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "vortexmod:block/tardis"
+    },
+    "facing=south": {
+      "model": "vortexmod:block/tardis",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "vortexmod:block/tardis",
+      "y": 270
+    }
+  }
+}

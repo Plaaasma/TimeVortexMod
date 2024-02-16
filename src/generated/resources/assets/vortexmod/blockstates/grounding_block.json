@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "vortexmod:block/grounding_block",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "vortexmod:block/grounding_block"
+    },
+    "facing=south": {
+      "model": "vortexmod:block/grounding_block",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "vortexmod:block/grounding_block",
+      "y": 270
+    }
+  }
+}
