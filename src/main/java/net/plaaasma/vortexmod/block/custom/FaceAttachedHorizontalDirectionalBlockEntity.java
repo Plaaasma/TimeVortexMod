@@ -22,12 +22,7 @@ public abstract class FaceAttachedHorizontalDirectionalBlockEntity extends Horiz
     }
 
     public boolean canSurvive(BlockState pState, LevelReader pLevel, BlockPos pPos) {
-        return canAttach(pLevel, pPos, getConnectedDirection(pState).getOpposite());
-    }
-
-    public static boolean canAttach(LevelReader pReader, BlockPos pPos, Direction pDirection) {
-        BlockPos blockpos = pPos.relative(pDirection);
-        return pReader.getBlockState(blockpos).isFaceSturdy(pReader, blockpos, pDirection.getOpposite());
+        return true;
     }
 
     @Nullable
