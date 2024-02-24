@@ -1,0 +1,18 @@
+{
+  "parent": "minecraft:item/handheld",
+  "loader": "forge:separate_transforms",
+  "base": {
+    "parent": "vortexmod:item/wrench_3d"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "vortexmod:item/wrench_2d"
+    },
+    "ground": {
+      "parent": "vortexmod:item/wrench_2d"
+    },
+    "fixed": {
+      "parent": "vortexmod:item/wrench_2d"
+    }
+  }
+}

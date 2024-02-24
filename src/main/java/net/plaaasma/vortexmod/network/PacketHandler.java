@@ -58,6 +58,11 @@ public class PacketHandler {
                 .decoder(ClientboundMonitorDataPacket::new)
                 .consumerMainThread(ClientboundMonitorDataPacket::handle)
                 .add();
+        INSTANCE.messageBuilder(ClientboundIncrementPacket.class, 7)
+                .encoder(ClientboundIncrementPacket::encode)
+                .decoder(ClientboundIncrementPacket::new)
+                .consumerMainThread(ClientboundIncrementPacket::handle)
+                .add();
     }
 
     public static void sendToServer(Object msg) {

@@ -20,6 +20,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.block.ModBlocks;
+import net.plaaasma.vortexmod.block.custom.CoordinateDesignatorBlock;
 import net.plaaasma.vortexmod.block.custom.ThrottleBlock;
 
 import java.util.function.Consumer;
@@ -32,10 +33,13 @@ public class ModBlockStateProvider extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         // TARDIS PARTS
+        simpleBlockWithItem(ModBlocks.INTERFACE_BLOCK.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/vortex_interface")));
+
         getVariantBuilder(ModBlocks.THROTTLE_BLOCK.get())
                 .forAllStates(blockState -> {
                    boolean powered = blockState.getValue(ThrottleBlock.POWERED);
-                   String model = powered ? "tardis_throttle_powered" : "tardis_throttle";
+                   String model = powered ? "tardis_throttle" : "tardis_throttle_powered";
                     return ConfiguredModel.builder()
                             .modelFile(new ModelFile.UncheckedModelFile(modLoc("block/" + model)))
                             .rotationX(blockState.getValue(BlockStateProperties.ATTACH_FACE).ordinal() * 90)
@@ -43,18 +47,30 @@ public class ModBlockStateProvider extends BlockStateProvider {
                             .build();
                 });
         simpleBlockItem(ModBlocks.THROTTLE_BLOCK.get(),
-                new ModelFile.UncheckedModelFile(modLoc("block/tardis_throttle")));
+                new ModelFile.UncheckedModelFile(modLoc("block/tardis_throttle_powered")));
 
-        simpleBlockWithItem(ModBlocks.INTERFACE_BLOCK.get(),
-                new ModelFile.UncheckedModelFile(modLoc("block/vortex_interface")));
-
-        horizontalBlock(ModBlocks.COORDINATE_BLOCK.get(),
-                new ModelFile.UncheckedModelFile(modLoc("block/tardis_designator")));
+        getVariantBuilder(ModBlocks.COORDINATE_BLOCK.get())
+                .forAllStates(blockState -> {
+                    int increment_step = blockState.getValue(CoordinateDesignatorBlock.INCREMENT) + 1;
+                    String model = "desig_state" + increment_step;
+                    return ConfiguredModel.builder()
+                            .modelFile(new ModelFile.UncheckedModelFile(modLoc("block/coord_desig_states/" + model)))
+                            .rotationX(blockState.getValue(BlockStateProperties.ATTACH_FACE).ordinal() * 90)
+                            .rotationY((((int) blockState.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180) + (blockState.getValue(BlockStateProperties.ATTACH_FACE) == AttachFace.CEILING ? 180 : 0)) % 360)
+                            .build();
+                });
         simpleBlockItem(ModBlocks.COORDINATE_BLOCK.get(),
-                new ModelFile.UncheckedModelFile(modLoc("block/tardis_designator")));
+                new ModelFile.UncheckedModelFile(modLoc("block/coord_desig_states/desig_state1")));
 
-        horizontalBlock(ModBlocks.KEYPAD_BLOCK.get(),
-                new ModelFile.UncheckedModelFile(modLoc("block/tardis_keypad")));
+        getVariantBuilder(ModBlocks.KEYPAD_BLOCK.get())
+                .forAllStates(blockState -> {
+                    String model = "tardis_keypad";
+                    return ConfiguredModel.builder()
+                            .modelFile(new ModelFile.UncheckedModelFile(modLoc("block/" + model)))
+                            .rotationX(blockState.getValue(BlockStateProperties.ATTACH_FACE).ordinal() * 90)
+                            .rotationY((((int) blockState.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180) + (blockState.getValue(BlockStateProperties.ATTACH_FACE) == AttachFace.CEILING ? 180 : 0)) % 360)
+                            .build();
+                });
         simpleBlockItem(ModBlocks.KEYPAD_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/tardis_keypad")));
 
@@ -63,8 +79,15 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockItem(ModBlocks.SIZE_MANIPULATOR_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/size_manipulator")));
 
-        horizontalBlock(ModBlocks.EQUALIZER_BLOCK.get(),
-                new ModelFile.UncheckedModelFile(modLoc("block/equalizer")));
+        getVariantBuilder(ModBlocks.EQUALIZER_BLOCK.get())
+                .forAllStates(blockState -> {
+                    String model = "equalizer";
+                    return ConfiguredModel.builder()
+                            .modelFile(new ModelFile.UncheckedModelFile(modLoc("block/" + model)))
+                            .rotationX(blockState.getValue(BlockStateProperties.ATTACH_FACE).ordinal() * 90)
+                            .rotationY((((int) blockState.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180) + (blockState.getValue(BlockStateProperties.ATTACH_FACE) == AttachFace.CEILING ? 180 : 0)) % 360)
+                            .build();
+                });
         simpleBlockItem(ModBlocks.EQUALIZER_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/equalizer")));
 
@@ -76,18 +99,39 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockWithItem(ModBlocks.DOOR_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/door_block")));
 
-        horizontalBlock(ModBlocks.SCANNER_BLOCK.get(),
-                new ModelFile.UncheckedModelFile(modLoc("block/exterior_scanner")));
+        getVariantBuilder(ModBlocks.SCANNER_BLOCK.get())
+                .forAllStates(blockState -> {
+                    String model = "exterior_scanner";
+                    return ConfiguredModel.builder()
+                            .modelFile(new ModelFile.UncheckedModelFile(modLoc("block/" + model)))
+                            .rotationX(blockState.getValue(BlockStateProperties.ATTACH_FACE).ordinal() * 90)
+                            .rotationY((((int) blockState.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180) + (blockState.getValue(BlockStateProperties.ATTACH_FACE) == AttachFace.CEILING ? 180 : 0)) % 360)
+                            .build();
+                });
         simpleBlockItem(ModBlocks.SCANNER_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/exterior_scanner")));
 
-        horizontalBlock(ModBlocks.GROUNDING_BLOCK.get(),
-                new ModelFile.UncheckedModelFile(modLoc("block/grounding_block")));
+        getVariantBuilder(ModBlocks.GROUNDING_BLOCK.get())
+                .forAllStates(blockState -> {
+                    String model = "grounding_block";
+                    return ConfiguredModel.builder()
+                            .modelFile(new ModelFile.UncheckedModelFile(modLoc("block/" + model)))
+                            .rotationX(blockState.getValue(BlockStateProperties.ATTACH_FACE).ordinal() * 90)
+                            .rotationY((((int) blockState.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180) + (blockState.getValue(BlockStateProperties.ATTACH_FACE) == AttachFace.CEILING ? 180 : 0)) % 360)
+                            .build();
+                });
         simpleBlockItem(ModBlocks.GROUNDING_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/grounding_block")));
 
-        horizontalBlock(ModBlocks.BIOMETRIC_BLOCK.get(),
-                new ModelFile.UncheckedModelFile(modLoc("block/biometric_module")));
+        getVariantBuilder(ModBlocks.BIOMETRIC_BLOCK.get())
+                .forAllStates(blockState -> {
+                    String model = "biometric_module";
+                    return ConfiguredModel.builder()
+                            .modelFile(new ModelFile.UncheckedModelFile(modLoc("block/" + model)))
+                            .rotationX(blockState.getValue(BlockStateProperties.ATTACH_FACE).ordinal() * 90)
+                            .rotationY((((int) blockState.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180) + (blockState.getValue(BlockStateProperties.ATTACH_FACE) == AttachFace.CEILING ? 180 : 0)) % 360)
+                            .build();
+                });
         simpleBlockItem(ModBlocks.BIOMETRIC_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/biometric_module")));
 

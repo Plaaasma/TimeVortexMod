@@ -54,14 +54,14 @@ import java.util.*;
 public class ThrottleBlock extends FaceAttachedHorizontalDirectionalBlock {
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
     public static final BooleanProperty AUTO = ModBlockStateProperties.AUTO;
-    protected static final VoxelShape NORTH_AABB = Block.box(5.0D, 4.0D, 10.0D, 11.0D, 12.0D, 16.0D);
-    protected static final VoxelShape SOUTH_AABB = Block.box(5.0D, 4.0D, 0.0D, 11.0D, 12.0D, 6.0D);
-    protected static final VoxelShape WEST_AABB = Block.box(10.0D, 4.0D, 5.0D, 16.0D, 12.0D, 11.0D);
-    protected static final VoxelShape EAST_AABB = Block.box(0.0D, 4.0D, 5.0D, 6.0D, 12.0D, 11.0D);
-    protected static final VoxelShape UP_AABB_Z = Block.box(5.0D, 0.0D, 4.0D, 11.0D, 6.0D, 12.0D);
-    protected static final VoxelShape UP_AABB_X = Block.box(4.0D, 0.0D, 5.0D, 12.0D, 6.0D, 11.0D);
-    protected static final VoxelShape DOWN_AABB_Z = Block.box(5.0D, 10.0D, 4.0D, 11.0D, 16.0D, 12.0D);
-    protected static final VoxelShape DOWN_AABB_X = Block.box(4.0D, 10.0D, 5.0D, 12.0D, 16.0D, 11.0D);
+    protected static final VoxelShape NORTH_AABB = Block.box(5.5D, 5.0D, 11.0D, 10.5D, 11.0D, 16.0D);
+    protected static final VoxelShape SOUTH_AABB = Block.box(5.5D, 5.0D, 0.0D, 10.5D, 11.0D, 5.0D);
+    protected static final VoxelShape WEST_AABB = Block.box(11.0D, 5.0D, 5.5D, 16.0D, 11.0D, 10.5D);
+    protected static final VoxelShape EAST_AABB = Block.box(0.0D, 5.0D, 5.5D, 5.0D, 11.0D, 10.5D);
+    protected static final VoxelShape UP_AABB_Z = Block.box(5.5D, 0.0D, 5.0D, 10.5D, 5.0D, 11.0D);
+    protected static final VoxelShape UP_AABB_X = Block.box(5.0D, 0.0D, 5.5D, 11.0D, 5.0D, 10.5D);
+    protected static final VoxelShape DOWN_AABB_Z = Block.box(5.5D, 11.0D, 5.0D, 10.5D, 16.0D, 11.0D);
+    protected static final VoxelShape DOWN_AABB_X = Block.box(5.0D, 11.0D, 5.5D, 11.0D, 16.0D, 10.5D);
 
     public ThrottleBlock(Properties pProperties) {
         super(pProperties);

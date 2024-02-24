@@ -9,8 +9,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.plaaasma.vortexmod.VortexMod;
+import net.plaaasma.vortexmod.block.entity.BiometricBlockEntity;
 import net.plaaasma.vortexmod.block.entity.ModBlockEntities;
 import net.plaaasma.vortexmod.block.entity.renderer.AngelBlockEntityRenderer;
+import net.plaaasma.vortexmod.block.entity.renderer.BioscannerBlockEntityRenderer;
 import net.plaaasma.vortexmod.block.entity.renderer.MonitorBlockEntityRenderer;
 import net.plaaasma.vortexmod.entities.client.models.DalekModel;
 import net.plaaasma.vortexmod.entities.client.models.LaserModel;
@@ -35,6 +37,7 @@ public class ModEventBusClientEvents {
 
     @SubscribeEvent
     public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerBlockEntityRenderer(ModBlockEntities.BIOMETRIC_BLOCK_BE.get(), BioscannerBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.MONITOR_BE.get(), MonitorBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.ANGEL_BE.get(), AngelBlockEntityRenderer::new);
     }

@@ -72,11 +72,11 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .save(pWriter);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, ModBlocks.KEYPAD_BLOCK.get())
-                .pattern("IRI")
+                .pattern("CBC")
                 .pattern("NME")
                 .pattern("WWW")
-                .define('R', Items.REDSTONE_TORCH)
-                .define('I', Items.IRON_INGOT)
+                .define('C', Items.COPPER_INGOT)
+                .define('B', Items.STONE_BUTTON)
                 .define('M', Items.CARTOGRAPHY_TABLE)
                 .define('E', Items.END_STONE)
                 .define('N', Items.NETHERRACK)
@@ -133,12 +133,13 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .save(pWriter);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, ModBlocks.SCANNER_BLOCK.get())
-                .pattern("IRI")
-                .pattern("RDR")
+                .pattern("CEC")
+                .pattern("RAR")
                 .pattern("WWW")
+                .define('C', Items.COPPER_BLOCK)
+                .define('E', Items.ENDER_EYE)
                 .define('R', Items.REDSTONE)
-                .define('D', Items.DIAMOND)
-                .define('I', Items.IRON_BLOCK)
+                .define('A', Items.AMETHYST_SHARD)
                 .define('W', ItemTags.WOODEN_SLABS)
                 .unlockedBy(getHasName(ModItems.EUCLIDEAN_UPGRADE.get()), has(ModItems.EUCLIDEAN_UPGRADE.get()))
                 .save(pWriter);
@@ -156,9 +157,11 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, ModBlocks.BIOMETRIC_BLOCK.get())
                 .pattern("DRD")
-                .pattern("DID")
-                .pattern("WWW")
-                .define('I', Items.ITEM_FRAME)
+                .pattern("COC")
+                .pattern("WGW")
+                .define('C', Items.COPPER_BLOCK)
+                .define('O', Items.OBSERVER)
+                .define('G', Items.TINTED_GLASS)
                 .define('R', Items.REDSTONE)
                 .define('D', Items.DIAMOND)
                 .define('W', ItemTags.WOODEN_SLABS)

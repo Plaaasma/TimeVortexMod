@@ -21,7 +21,6 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ModItems.CORE);
         simpleItem(ModItems.SIZE_UPGRADE);
         simpleItem(ModItems.EUCLIDEAN_UPGRADE);
-        simpleItem(ModItems.WRENCH);
 
         withExistingParent(ModItems.BLUE_TRADER_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));
         withExistingParent(ModItems.ORANGE_TRADER_SPAWN_EGG.getId().getPath(), mcLoc("item/template_spawn_egg"));

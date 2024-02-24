@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
-		"0": "vortexmod:block/grounding_texutre",
-		"particle": "vortexmod:block/grounding_texutre"
+		"0": "vortexmod:block/grounding_texture",
+		"particle": "vortexmod:block/grounding_texture"
 	},
 	"elements": [
 		{
@@ -67,13 +67,5 @@
 		"fixed": {
 			"translation": [0, 7, 0]
 		}
-	},
-	"groups": [
-		{
-			"name": "everything",
-			"origin": [8, 8, 8],
-			"color": 0,
-			"children": [0, 1]
-		}
-	]
+	}
 }

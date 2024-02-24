@@ -4,6 +4,8 @@ import com.mojang.logging.LogUtils;
 import dan200.computercraft.impl.ComputerCraftAPIService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -97,6 +99,9 @@ public class VortexMod {
 
             MenuScreens.register(ModMenuTypes.SIZE_MANIPULATOR_MENU.get(), SizeManipulatorScreen::new);
             MenuScreens.register(ModMenuTypes.KEYPAD_MENU.get(), KeypadScreen::new);
+
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.SIZE_MANIPULATOR_BLOCK.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.EQUALIZER_BLOCK.get(), RenderType.translucent());
         }
     }
 }
