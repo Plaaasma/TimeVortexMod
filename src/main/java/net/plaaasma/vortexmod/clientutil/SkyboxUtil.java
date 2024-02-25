@@ -1,4 +1,4 @@
-package net.plaaasma.vortexmod.util;
+package net.plaaasma.vortexmod.clientutil;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -10,7 +10,7 @@ import org.joml.Matrix4f;
 
 /**
  * Utilities regarding the skybox
- * Client side only, fixme move this class
+ * Client side only
  *
  * @author duzo
  */

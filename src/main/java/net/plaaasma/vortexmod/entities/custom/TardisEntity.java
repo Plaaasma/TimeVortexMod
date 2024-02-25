@@ -379,8 +379,15 @@ public class TardisEntity extends Mob {
                                     serverLevel.setBlockAndUpdate(doorTarget, ModBlocks.DOOR_BLOCK.get().defaultBlockState());
                                 }
 
-                                pPlayer.setYRot(playerRotation);
-                                pPlayer.changeDimension(dimension, new ModTeleporter(tardisTarget));
+                                if (pPlayer.getVehicle() != null) {
+                                    Entity rootEntity = pPlayer.getRootVehicle();
+                                    rootEntity.setYRot(playerRotation);
+                                    rootEntity.changeDimension(dimension, new ModTeleporter(tardisTarget));
+                                }
+                                else {
+                                    pPlayer.setYRot(playerRotation);
+                                    pPlayer.changeDimension(dimension, new ModTeleporter(tardisTarget));
+                                }
                             } else {
                                 pPlayer.displayClientMessage(Component.literal("You are not whitelisted in this TARDIS").withStyle(ChatFormatting.RED), true);
                             }

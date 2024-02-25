@@ -9,6 +9,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -111,8 +112,15 @@ public class DoorBlock extends Block {
 
                                             exitPosition = new Vec3(newX, blockExitPos.getY(), newZ);
 
-                                            pPlayer.setYRot(yaw + 180f);
-                                            pPlayer.changeDimension(targetDimension, new ModTeleporter(exitPosition));
+                                            if (pPlayer.getVehicle() != null) {
+                                                Entity rootEntity = pPlayer.getRootVehicle();
+                                                rootEntity.setYRot(yaw + 180f);
+                                                rootEntity.changeDimension(targetDimension, new ModTeleporter(exitPosition));
+                                            }
+                                            else {
+                                                pPlayer.setYRot(yaw + 180f);
+                                                pPlayer.changeDimension(targetDimension, new ModTeleporter(exitPosition));
+                                            }
                                         }
                                         else {
                                             pPlayer.displayClientMessage(Component.literal("You cannot exit while in flight.").withStyle(ChatFormatting.RED), true);

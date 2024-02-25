@@ -6,7 +6,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.plaaasma.vortexmod.util.SkyboxUtil;
+import net.plaaasma.vortexmod.clientutil.SkyboxUtil;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
