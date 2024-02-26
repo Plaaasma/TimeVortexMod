@@ -2,10 +2,15 @@ package net.plaaasma.vortexmod.screen.custom.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.navigation.FocusNavigationEvent;
+import net.minecraft.client.gui.navigation.ScreenDirection;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.player.KeyboardInput;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.CommonComponents;
@@ -14,6 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
+import net.minecraftforge.client.event.InputEvent;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.network.PacketHandler;
 import net.plaaasma.vortexmod.network.ServerboundDeleteTargetPacket;
@@ -367,7 +373,105 @@ public class KeypadScreen extends AbstractContainerScreen<KeypadMenu> {
             this.minecraft.player.closeContainer();
         }
 
+        if (this.dimension.isHovered()) {
+            List<String> oldLevels = new ArrayList<>(this.menu.blockEntity.serverLevels);
+            List<String> levels = new ArrayList<>();
+
+            for (String levelName : oldLevels) {
+                if (levelName.contains(this.dimension.getValue()) || this.dimension.getValue().equals("")) {
+                    levels.add(levelName);
+                }
+            }
+
+            if (pKeyCode == 265) {
+                this.selected_dim_index -= 1;
+            }
+            else if (pKeyCode == 264) {
+                this.selected_dim_index += 1;
+            }
+
+            if (this.selected_dim_index > levels.size()) {
+                this.selected_dim_index = levels.size();
+            }
+            else if (this.selected_dim_index < 0) {
+                this.selected_dim_index = 0;
+            }
+            else {
+                this.minecraft.player.playSound(SoundEvents.UI_BUTTON_CLICK.get(), 0.5f, 2f);
+            }
+            if (this.selected_dim_index == 0) {
+                this.dimension.setValue("");
+            }
+        }
+        if (this.name.isHovered()) {
+            Set<String> coordKeys = this.menu.blockEntity.coordData.keySet();
+            List<String> locationStrings = new ArrayList<>();
+            String playerName = this.minecraft.player.getScoreboardName();
+            for (String coordKey : coordKeys) {
+                if (coordKey.startsWith(playerName)) {
+                    String pointName = coordKey.substring(playerName.length()) + ": ";
+                    BlockPos pointPos = this.menu.blockEntity.coordData.get(coordKey);
+                    String pointCoords = pointPos.getX() + " " + pointPos.getY() + " " + pointPos.getZ() + " | ";
+                    String pointDimension = this.menu.blockEntity.dimData.get(coordKey);
+
+                    String locString = pointName + pointCoords + pointDimension;
+
+                    if (locString.contains(this.name.getValue()) || this.name.getValue().equals("")) {
+                        locationStrings.add(locString);
+                    }
+                }
+            }
+            if (pKeyCode == 265) {
+                this.selected_dim_index -= 1;
+            }
+            else if (pKeyCode == 264) {
+                this.selected_dim_index += 1;
+            }
+
+            if (this.selected_location_index > locationStrings.size()) {
+                this.selected_location_index = locationStrings.size();
+            }
+            else if (this.selected_location_index < 0) {
+                this.selected_location_index = 0;
+            }
+            else {
+                this.minecraft.player.playSound(SoundEvents.UI_BUTTON_CLICK.get(), 0.5f, 2f);
+            }
+            if (this.selected_location_index == 0) {
+                this.name.setValue("");
+            }
+        }
+        if (pKeyCode == 258) {
+            Object object = this.createTabEvent();
+
+            FocusNavigationEvent focusnavigationevent = (FocusNavigationEvent)object;
+            if (focusnavigationevent != null) {
+                ComponentPath componentpath = super.nextFocusPath(focusnavigationevent);
+                if (componentpath == null && focusnavigationevent instanceof FocusNavigationEvent.TabNavigation) {
+                    this.clearFocus();
+                    componentpath = super.nextFocusPath(focusnavigationevent);
+                }
+
+                if (componentpath != null) {
+                    this.changeFocus(componentpath);
+                }
+            }
+        }
+
         return (!this.x.keyPressed(pKeyCode, pScanCode, pModifiers) && !this.x.canConsumeInput()) && (!this.y.keyPressed(pKeyCode, pScanCode, pModifiers) && !this.y.canConsumeInput()) && (!this.z.keyPressed(pKeyCode, pScanCode, pModifiers) && !this.z.canConsumeInput()) && (!this.rotation.keyPressed(pKeyCode, pScanCode, pModifiers) && !this.rotation.canConsumeInput()) && (!this.dimension.keyPressed(pKeyCode, pScanCode, pModifiers) && !this.dimension.canConsumeInput()) && (!this.name.keyPressed(pKeyCode, pScanCode, pModifiers) && !this.name.canConsumeInput()) ? super.keyPressed(pKeyCode, pScanCode, pModifiers) : true;
+    }
+
+    private FocusNavigationEvent.TabNavigation createTabEvent() {
+        boolean flag = !hasShiftDown();
+        return new FocusNavigationEvent.TabNavigation(flag);
+    }
+
+    private void clearFocus() {
+        ComponentPath componentpath = this.getCurrentFocusPath();
+        if (componentpath != null) {
+            componentpath.applyFocus(false);
+        }
+
     }
 
     @Override
@@ -531,7 +635,7 @@ public class KeypadScreen extends AbstractContainerScreen<KeypadMenu> {
                 }
                 iterationNumber++;
             }
-            dimComponent = dimComponent.copy().append(Component.literal(centerTooltipText("*Scroll+R-Click to Pick*", maxWidth)).withStyle(ChatFormatting.GRAY));
+            dimComponent = dimComponent.copy().append(Component.literal(centerTooltipText("*Scroll/Arrows+R-Click*", maxWidth)).withStyle(ChatFormatting.GRAY));
 
             this.dimension.setTooltip(Tooltip.create(dimComponent));
 
@@ -634,7 +738,7 @@ public class KeypadScreen extends AbstractContainerScreen<KeypadMenu> {
                 }
                 iterationNumber++;
             }
-            String centeredTutorialText = centerTooltipText("*Scroll+R-Click to Pick*", maxWidth);
+            String centeredTutorialText = centerTooltipText("*Scroll/Arrows+R-Click*", maxWidth);
             locationsComponent = locationsComponent.copy().append(Component.literal(centeredTutorialText).withStyle(ChatFormatting.GRAY));
 
             this.name.setTooltip(Tooltip.create(locationsComponent));

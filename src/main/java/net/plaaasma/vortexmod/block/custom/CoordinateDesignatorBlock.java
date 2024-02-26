@@ -282,20 +282,38 @@ public class CoordinateDesignatorBlock extends FaceAttachedHorizontalDirectional
                     }
                 } else if (closestComponent == inc_button_location) {
                     pLevel.playSeededSound(null, pPos.getX(), pPos.getY(), pPos.getZ(), ModSounds.DESIGNATOR_BUTTON_SOUND.get(), SoundSource.BLOCKS, 1, 1, 0);
-                    if (increment >= 10000) {
-                        increment = 1;
-                    } else {
-                        increment *= 10;
+                    if (pPlayer.isCrouching()) {
+                        if (increment <= 1) {
+                            increment = 10000;
+                        } else {
+                            increment /= 10;
+                        }
+
+                        coordinateDesignatorBlockEntity.data.set(4, increment);
+                        pPlayer.displayClientMessage(Component.literal("Increment is now set to: " + increment), true);
+
+                        pState = pState.setValue(INCREMENT, (int) Math.log10(increment));
+                        PacketHandler.sendToAllClients(new ClientboundIncrementPacket(pPos, increment, pLevel.dimension().location().getPath()));
+                        pLevel.setBlock(pPos, pState, 3);
+                        pLevel.setBlockEntity(coordinateDesignatorBlockEntity);
+                        pLevel.gameEvent(pPlayer, GameEvent.BLOCK_ACTIVATE, pPos);
                     }
+                    else {
+                        if (increment >= 10000) {
+                            increment = 1;
+                        } else {
+                            increment *= 10;
+                        }
 
-                    coordinateDesignatorBlockEntity.data.set(4, increment);
-                    pPlayer.displayClientMessage(Component.literal("Increment is now set to: " + increment), true);
+                        coordinateDesignatorBlockEntity.data.set(4, increment);
+                        pPlayer.displayClientMessage(Component.literal("Increment is now set to: " + increment), true);
 
-                    pState = pState.setValue(INCREMENT, (int) Math.log10(increment));
-                    PacketHandler.sendToAllClients(new ClientboundIncrementPacket(pPos, increment, pLevel.dimension().location().getPath()));
-                    pLevel.setBlock(pPos, pState, 3);
-                    pLevel.setBlockEntity(coordinateDesignatorBlockEntity);
-                    pLevel.gameEvent(pPlayer, GameEvent.BLOCK_ACTIVATE, pPos);
+                        pState = pState.setValue(INCREMENT, (int) Math.log10(increment));
+                        PacketHandler.sendToAllClients(new ClientboundIncrementPacket(pPos, increment, pLevel.dimension().location().getPath()));
+                        pLevel.setBlock(pPos, pState, 3);
+                        pLevel.setBlockEntity(coordinateDesignatorBlockEntity);
+                        pLevel.gameEvent(pPlayer, GameEvent.BLOCK_ACTIVATE, pPos);
+                    }
                 }
             }
         }
