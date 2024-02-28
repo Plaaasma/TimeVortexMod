@@ -12,10 +12,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.entities.ModEntities;
-import net.plaaasma.vortexmod.entities.custom.DalekEntity;
-import net.plaaasma.vortexmod.entities.custom.LaserEntity;
-import net.plaaasma.vortexmod.entities.custom.LostTravelerEntity;
-import net.plaaasma.vortexmod.entities.custom.TardisEntity;
+import net.plaaasma.vortexmod.entities.custom.*;
 import net.plaaasma.vortexmod.network.PacketHandler;
 import oshi.util.tuples.Pair;
 
@@ -37,6 +34,8 @@ public class ModEventBusEvents {
         event.put(ModEntities.SILVER_BLACK_DALEK.get(), DalekEntity.createAttributes().build());
 
         event.put(ModEntities.TARDIS.get(), TardisEntity.createAttributes().build());
+
+        event.put(ModEntities.ANGEL.get(), AngelEntity.createAttributes().build());
     }
 
     public static void registerSpawnPlacement(SpawnPlacementRegisterEvent event) {

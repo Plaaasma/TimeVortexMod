@@ -25,7 +25,7 @@ public abstract class HorizontalBaseEntityBlock extends HorizontalDirectionalBlo
         return RenderShape.INVISIBLE;
     }
 
-    @Deprecated
+    @Override
     public boolean triggerEvent(BlockState pState, Level pLevel, BlockPos pPos, int pId, int pParam) {
         super.triggerEvent(pState, pLevel, pPos, pId, pParam);
         BlockEntity blockentity = pLevel.getBlockEntity(pPos);

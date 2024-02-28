@@ -11,14 +11,10 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.block.entity.BiometricBlockEntity;
 import net.plaaasma.vortexmod.block.entity.ModBlockEntities;
-import net.plaaasma.vortexmod.block.entity.renderer.AngelBlockEntityRenderer;
 import net.plaaasma.vortexmod.block.entity.renderer.BioscannerBlockEntityRenderer;
 import net.plaaasma.vortexmod.block.entity.renderer.MonitorBlockEntityRenderer;
-import net.plaaasma.vortexmod.entities.client.models.DalekModel;
-import net.plaaasma.vortexmod.entities.client.models.LaserModel;
-import net.plaaasma.vortexmod.entities.client.models.LostTravelerModel;
+import net.plaaasma.vortexmod.entities.client.models.*;
 import net.plaaasma.vortexmod.entities.client.ModModelLayers;
-import net.plaaasma.vortexmod.entities.client.models.TardisModel;
 import net.plaaasma.vortexmod.network.PacketHandler;
 
 import java.util.ArrayList;
@@ -33,12 +29,12 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(ModModelLayers.DALEK_LAYER, DalekModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.LASER_LAYER, LaserModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.TARDIS_LAYER, TardisModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.ANGEL_LAYER, AngelModel::createBodyLayer);
     }
 
     @SubscribeEvent
     public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.BIOMETRIC_BLOCK_BE.get(), BioscannerBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.MONITOR_BE.get(), MonitorBlockEntityRenderer::new);
-        event.registerBlockEntityRenderer(ModBlockEntities.ANGEL_BE.get(), AngelBlockEntityRenderer::new);
     }
 }

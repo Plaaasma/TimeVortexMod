@@ -19,10 +19,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.block.entity.*;
 import net.plaaasma.vortexmod.entities.ModEntities;
-import net.plaaasma.vortexmod.entities.client.renderers.DalekRenderer;
-import net.plaaasma.vortexmod.entities.client.renderers.LaserRenderer;
-import net.plaaasma.vortexmod.entities.client.renderers.LostTravelerRenderer;
-import net.plaaasma.vortexmod.entities.client.renderers.TardisRenderer;
+import net.plaaasma.vortexmod.entities.client.renderers.*;
 import net.plaaasma.vortexmod.item.ModCreativeModeTabs;
 import net.plaaasma.vortexmod.item.ModItems;
 import net.plaaasma.vortexmod.screen.custom.screen.KeypadScreen;
@@ -96,6 +93,8 @@ public class VortexMod {
             EntityRenderers.register(ModEntities.LASER_ENTITY.get(), LaserRenderer::new);
 
             EntityRenderers.register(ModEntities.TARDIS.get(), TardisRenderer::new);
+
+            EntityRenderers.register(ModEntities.ANGEL.get(), AngelRenderer::new);
 
             MenuScreens.register(ModMenuTypes.SIZE_MANIPULATOR_MENU.get(), SizeManipulatorScreen::new);
             MenuScreens.register(ModMenuTypes.KEYPAD_MENU.get(), KeypadScreen::new);

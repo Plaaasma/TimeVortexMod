@@ -145,11 +145,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockItem(ModBlocks.MONITOR_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/monitor_block")));
 
-        horizontalBlock(ModBlocks.ANGEL_BLOCK.get(),
-                new ModelFile.UncheckedModelFile(modLoc("block/weeping_angel")));
-        simpleBlockItem(ModBlocks.ANGEL_BLOCK.get(),
-                new ModelFile.UncheckedModelFile(modLoc("block/weeping_angel")));
-
         // ROUNDELS
         simpleBlockWithItem(ModBlocks.OAK_ROUNDEL.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/roundels/oak_roundel_block")));

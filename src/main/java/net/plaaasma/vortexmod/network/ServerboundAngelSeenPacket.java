@@ -6,40 +6,48 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.Level;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.NetworkEvent;
 import net.plaaasma.vortexmod.block.ModBlocks;
-import net.plaaasma.vortexmod.block.entity.AngelBlockEntity;
 import net.plaaasma.vortexmod.block.entity.CoordinateDesignatorBlockEntity;
 import net.plaaasma.vortexmod.block.entity.VortexInterfaceBlockEntity;
-import net.plaaasma.vortexmod.mapdata.DimensionMapData;
-import net.plaaasma.vortexmod.mapdata.LocationMapData;
-import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
+import net.plaaasma.vortexmod.entities.custom.AngelEntity;
+import net.plaaasma.vortexmod.sound.ModSounds;
 
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class ServerboundAngelSeenPacket {
-    private final BlockPos angel_pos;
+    private final UUID angel_uuid;
+    private final String from_dimension;
 
-    public ServerboundAngelSeenPacket(BlockPos angel_pos) {
-        this.angel_pos = angel_pos;
+    public ServerboundAngelSeenPacket(UUID angel_uuid, String from_dimension) {
+        this.angel_uuid = angel_uuid;
+        this.from_dimension = from_dimension;
     }
 
     public ServerboundAngelSeenPacket(FriendlyByteBuf buffer) {
-        this(buffer.readBlockPos());
+        this(buffer.readUUID(), buffer.readUtf());
     }
 
     public void encode(FriendlyByteBuf buffer) {
-        buffer.writeBlockPos(this.angel_pos);
+        buffer.writeUUID(this.angel_uuid);
+        buffer.writeUtf(this.from_dimension);
     }
 
     public void handle(Supplier<NetworkEvent.ServerCustomPayloadEvent.Context> context) {
         NetworkEvent.Context realContext = context.get();
-        ServerLevel contextLevel = realContext.getSender().serverLevel();
-        AngelBlockEntity angelBlockEntity = (AngelBlockEntity) contextLevel.getBlockEntity(angel_pos);
-        angelBlockEntity.data.set(0, 1);
+        MinecraftServer minecraftServer = realContext.getSender().getServer();
+        ServerLevel level = null;
+        for (ServerLevel cLevel : minecraftServer.getAllLevels()) {
+            if (cLevel.dimension().location().getPath().equals(this.from_dimension)) {
+                level = cLevel;
+            }
+        }
+
+        AngelEntity angelEntity = (AngelEntity) level.getEntity(this.angel_uuid);
+        angelEntity.setObserved(true);
 
         realContext.setPacketHandled(true);
     }

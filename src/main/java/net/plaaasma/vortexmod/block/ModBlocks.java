@@ -50,8 +50,6 @@ public class ModBlocks {
             () -> new TardisSignBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
     public static final RegistryObject<Block> MONITOR_BLOCK = registerBlock("monitor_block",
             () -> new MonitorBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
-    public static final RegistryObject<Block> ANGEL_BLOCK = registerBlock("weeping_angel",
-            () -> new AngelBlock(BlockBehaviour.Properties.copy(Blocks.BEDROCK).noOcclusion()));
 
     // ROUNDELS
     public static final RegistryObject<Block> OAK_ROUNDEL = registerBlock("oak_roundel_block",

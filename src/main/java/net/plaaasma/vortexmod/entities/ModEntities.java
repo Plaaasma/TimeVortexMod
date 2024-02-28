@@ -101,6 +101,13 @@ public class ModEntities {
                     .sized(1.3f, 2.6f)
                     .build("tardis"));
 
+    // ANGEL
+
+    public static final RegistryObject<EntityType<AngelEntity>> ANGEL =
+            ENTITY_TYPES.register("angel", () -> EntityType.Builder.of(AngelEntity::new, MobCategory.MONSTER)
+                    .sized(1f, 2f)
+                    .build("angel"));
+
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
     }
