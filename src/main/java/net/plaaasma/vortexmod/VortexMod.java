@@ -76,9 +76,7 @@ public class VortexMod {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-            // Some client setup code
-            LOGGER.info("HELLO FROM CLIENT SETUP");
-            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+            LOGGER.info("VORTEXMOD CLIENT SETUP STARTED");
 
             EntityRenderers.register(ModEntities.BLUE_TRADER.get(), LostTravelerRenderer::new);
             EntityRenderers.register(ModEntities.ORANGE_TRADER.get(), LostTravelerRenderer::new);
@@ -95,6 +93,8 @@ public class VortexMod {
             EntityRenderers.register(ModEntities.TARDIS.get(), TardisRenderer::new);
 
             EntityRenderers.register(ModEntities.ANGEL.get(), AngelRenderer::new);
+
+            EntityRenderers.register(ModEntities.RIFT.get(), RiftRenderer::new);
 
             MenuScreens.register(ModMenuTypes.SIZE_MANIPULATOR_MENU.get(), SizeManipulatorScreen::new);
             MenuScreens.register(ModMenuTypes.KEYPAD_MENU.get(), KeypadScreen::new);

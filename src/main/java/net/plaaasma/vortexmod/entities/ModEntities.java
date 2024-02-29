@@ -108,6 +108,13 @@ public class ModEntities {
                     .sized(1f, 2f)
                     .build("angel"));
 
+    // RIFT
+
+    public static final RegistryObject<EntityType<RiftEntity>> RIFT =
+            ENTITY_TYPES.register("rift", () -> EntityType.Builder.of(RiftEntity::new, MobCategory.CREATURE)
+                    .sized(3f, 3f)
+                    .build("rift"));
+
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
     }

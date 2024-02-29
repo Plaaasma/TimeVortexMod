@@ -15,4 +15,6 @@ public class ModModelLayers {
             new ResourceLocation(VortexMod.MODID, "tardis_layer"), "main");
     public static final ModelLayerLocation ANGEL_LAYER = new ModelLayerLocation(
             new ResourceLocation(VortexMod.MODID, "angel_layer"), "main");
+    public static final ModelLayerLocation RIFT_LAYER = new ModelLayerLocation(
+            new ResourceLocation(VortexMod.MODID, "rift_layer"), "main");
 }

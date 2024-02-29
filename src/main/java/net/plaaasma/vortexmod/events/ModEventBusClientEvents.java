@@ -30,6 +30,7 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(ModModelLayers.LASER_LAYER, LaserModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.TARDIS_LAYER, TardisModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.ANGEL_LAYER, AngelModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.RIFT_LAYER, RiftModel::createBodyLayer);
     }
 
     @SubscribeEvent

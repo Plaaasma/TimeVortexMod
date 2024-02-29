@@ -36,6 +36,8 @@ public class ModEventBusEvents {
         event.put(ModEntities.TARDIS.get(), TardisEntity.createAttributes().build());
 
         event.put(ModEntities.ANGEL.get(), AngelEntity.createAttributes().build());
+
+        event.put(ModEntities.RIFT.get(), RiftEntity.createAttributes().build());
     }
 
     public static void registerSpawnPlacement(SpawnPlacementRegisterEvent event) {

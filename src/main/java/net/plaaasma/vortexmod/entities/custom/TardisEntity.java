@@ -35,6 +35,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LightBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -239,7 +240,12 @@ public class TardisEntity extends Mob {
 
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
-        return false;
+        if (pSource != this.damageSources().genericKill()) {
+            return false;
+        }
+        else {
+            return super.hurt(pSource, pAmount);
+        }
     }
 
     @Override

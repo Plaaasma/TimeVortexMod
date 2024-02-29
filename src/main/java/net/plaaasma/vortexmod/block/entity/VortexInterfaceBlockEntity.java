@@ -41,6 +41,9 @@ import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.block.ModBlockStateProperties;
 import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.block.custom.ThrottleBlock;
+import net.plaaasma.vortexmod.entities.ModEntities;
+import net.plaaasma.vortexmod.entities.custom.AngelEntity;
+import net.plaaasma.vortexmod.entities.custom.RiftEntity;
 import net.plaaasma.vortexmod.entities.custom.TardisEntity;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
 import net.plaaasma.vortexmod.sound.ModSounds;
@@ -520,6 +523,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
             ServerLevel vortexDimension = minecraftserver.getLevel(ModDimensions.vortexDIM_LEVEL_KEY);
             ServerLevel tardisDimension = minecraftserver.getLevel(ModDimensions.tardisDIM_LEVEL_KEY);
             ServerLevel overworldDimension = minecraftserver.getLevel(Level.OVERWORLD);
+            Random random = new Random();
 
             this.data.set(0, this.data.get(0) + 1);
 
@@ -1061,6 +1065,10 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                                 if (!has_equalizer) {
                                     handleLightningStrikes(targetDimension, new BlockPos(targetX, targetY, targetZ));
                                 }
+                                if (random.nextDouble() < 0.005) {  // Spawn rift
+                                    RiftEntity riftEntity = ModEntities.RIFT.get().spawn(targetDimension, new BlockPos(targetX + random.nextInt(-64, 64), targetY, targetZ + random.nextInt(-64, 64)), MobSpawnType.NATURAL);
+                                    targetDimension.addFreshEntity(riftEntity);
+                                }
                             }
                         }
                         handleVortexParticles(size, vortexDimension, pPos, new BlockPos(targetX, targetY, targetZ));
@@ -1226,8 +1234,12 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                             else {
                                 this.data.set(21, 15);
                                 tardisEntity.setInFlight(false);
-                                if (!has_equalizer && this.data.get(0) % 100 == 0) {
+                                if (!has_equalizer && this.data.get(0) % (4 * tickSpeed) == 0) {
                                     handleLightningStrikes(targetDimension, new BlockPos(targetX, targetY, targetZ));
+                                    if (random.nextDouble() < 0.005) {  // Spawn rift
+                                        RiftEntity riftEntity = ModEntities.RIFT.get().spawn(targetDimension, new BlockPos(targetX + random.nextInt(-64, 64), targetY, targetZ + random.nextInt(-64, 64)), MobSpawnType.NATURAL);
+                                        targetDimension.addFreshEntity(riftEntity);
+                                    }
                                 }
                                 handleRematCenterParticles(tardisDimension, pPos);
                                 for (int x = -size; x <= size; x++) {
@@ -1259,8 +1271,12 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                         if (tardisEntity.isRemat() || tardisEntity.isInFlight()) {
                             this.data.set(21, 15);
                             tardisEntity.setInFlight(false);
-                            if (!has_equalizer && this.data.get(0) % 100 == 0) {
+                            if (!has_equalizer && this.data.get(0) % (4 * tickSpeed) == 0) {
                                 handleLightningStrikes(targetDimension, new BlockPos(targetX, targetY, targetZ));
+                                if (random.nextDouble() < 0.005) {  // Spawn rift
+                                    RiftEntity riftEntity = ModEntities.RIFT.get().spawn(targetDimension, new BlockPos(targetX + random.nextInt(-64, 64), targetY, targetZ + random.nextInt(-64, 64)), MobSpawnType.NATURAL);
+                                    targetDimension.addFreshEntity(riftEntity);
+                                }
                             }
                             handleRematCenterParticles(tardisDimension, pPos);
                             for (int x = -size; x <= size; x++) {

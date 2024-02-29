@@ -35,6 +35,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.item.ModItems;
@@ -112,10 +113,15 @@ public class AngelEntity extends Monster {
 
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
-        if (pSource.getEntity() instanceof LivingEntity) {
+        if (pSource.getEntity() instanceof LivingEntity && pSource.getEntity().level() instanceof ServerLevel) {
             doTeleport((LivingEntity) pSource.getEntity(), (ServerLevel) pSource.getEntity().level());
         }
-        return false;
+        if (pSource != this.damageSources().genericKill()) {
+            return false;
+        }
+        else {
+            return super.hurt(pSource, pAmount);
+        }
     }
 
     @Override
@@ -161,39 +167,7 @@ public class AngelEntity extends Monster {
 
         ServerLevel chosenLevel = levelsToChoose.get(random.nextInt(0, levelsToChoose.size()));
 
-        BlockPos temp_target = new BlockPos(player.getBlockX() + random.nextInt(-10000, 10000), chosenLevel.getMaxBuildHeight(), player.getBlockZ() + random.nextInt(-10000, 10000));
-
-        BlockPos new_target = temp_target.below();
-        if (chosenLevel.getBlockState(new_target).getBlock() == Blocks.AIR) {
-            boolean is_air = true;
-            boolean going_down = true;
-            boolean exhausted_search = false;
-            while (is_air) {
-                if (new_target.getY() <= chosenLevel.dimensionType().minY()) {
-                    going_down = false;
-                }
-                if (new_target.getY() >= chosenLevel.dimensionType().height() && !going_down) {
-                    exhausted_search = true;
-                    break;
-                }
-
-                if (going_down) {
-                    new_target = new_target.below();
-                } else {
-                    new_target = new_target.above();
-                }
-                if (chosenLevel.getBlockState(new_target).getBlock() != Blocks.AIR) {
-                    is_air = false;
-                }
-            }
-            if (!exhausted_search) {
-                if (going_down) {
-                    temp_target = new_target.above();
-                } else {
-                    temp_target = new_target.below();
-                }
-            }
-        }
+        BlockPos temp_target = new BlockPos(player.getBlockX() + random.nextInt(-10000, 10000), random.nextInt(chosenLevel.getMinBuildHeight(), chosenLevel.getMaxBuildHeight()), player.getBlockZ() + random.nextInt(-10000, 10000));
 
         player.teleportTo(chosenLevel, temp_target.getX(), temp_target.getY(), temp_target.getZ(), RelativeMovement.ALL, player.getYRot(), player.getXRot());
     }
@@ -206,7 +180,7 @@ public class AngelEntity extends Monster {
                 Vec3 thisPos = this.position();
                 Vec3 targetPos = getTarget().position();
 
-                if (thisPos.distanceTo(targetPos) > 1.1D) {
+                if (thisPos.distanceTo(targetPos) > 1.3D) {
                     if (path != null) {
                         if (path.getNodeCount() > 1) {
                             int nextIndex = path.getNextNodeIndex() + 1;
@@ -216,16 +190,25 @@ public class AngelEntity extends Monster {
                                 if (nodePos != null) {
                                     Vec3 tpPos = new Vec3(nodePos.getX(), nodePos.getY(), nodePos.getZ());
 
-                                    this.setPosRaw(tpPos.x(), tpPos.y(), tpPos.z());
+                                    boolean containsAngel = false;
+                                    for (Entity entity : serverLevel.getEntities(this, new AABB(tpPos.add(1.5, 1.5, 1.5), tpPos.add(-1.5, 0, -1.5)))) {
+                                        if (entity instanceof AngelEntity) {
+                                            containsAngel = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!containsAngel) {
+                                        this.setPosRaw(tpPos.x(), tpPos.y(), tpPos.z());
+                                    }
                                 }
                             }
-                        }
-                        else {
-                            doTeleport(getTarget(), serverLevel);
+                        } else {
+                            if (thisPos.distanceTo(targetPos) < 2.0D) {
+                                doTeleport(getTarget(), serverLevel);
+                            }
                         }
                     }
-                }
-                else {
+                } else {
                     doTeleport(getTarget(), serverLevel);
                 }
 
