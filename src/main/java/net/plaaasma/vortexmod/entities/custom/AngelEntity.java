@@ -7,13 +7,20 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Position;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.TicketType;
+import net.minecraft.server.players.PlayerList;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -31,19 +38,25 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.plaaasma.vortexmod.VortexMod;
 import net.plaaasma.vortexmod.block.ModBlocks;
+import net.plaaasma.vortexmod.entities.ModEntities;
 import net.plaaasma.vortexmod.item.ModItems;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
 import net.plaaasma.vortexmod.mapdata.SecurityMapData;
+import net.plaaasma.vortexmod.network.PacketHandler;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 import net.plaaasma.vortexmod.worldgen.portal.ModTeleporter;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3d;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,10 +64,11 @@ import java.util.Random;
 import java.util.Set;
 
 public class AngelEntity extends Monster {
-    private static final EntityDataAccessor<Boolean> DATA_OBSERVED = SynchedEntityData.defineId(AngelEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Float> DATA_ROTATION = SynchedEntityData.defineId(AngelEntity.class, EntityDataSerializers.FLOAT);
 
     @Nullable
     private BlockPos wanderTarget;
+    private int currentPathProgress = 0;
 
     public AngelEntity(EntityType<? extends Monster> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -63,32 +77,52 @@ public class AngelEntity extends Monster {
     @Override
     public void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
-        pCompound.putBoolean("Observed", this.entityData.get(DATA_OBSERVED));
+        pCompound.putFloat("Rotation", this.entityData.get(DATA_ROTATION));
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
-        this.entityData.set(DATA_OBSERVED, pCompound.getBoolean("Observed"));
+        this.entityData.set(DATA_ROTATION, pCompound.getFloat("Rotation"));
     }
 
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(DATA_OBSERVED, false);
+        this.entityData.define(DATA_ROTATION, 0f);
     }
 
-    public void setObserved(boolean observed) {
-        this.entityData.set(DATA_OBSERVED, observed);
-    }
+    public double getDotProduct(ServerLevel serverLevel, Vec3 targetPosition, BlockPos targetBlockPosition) {
+        double dot_product = Integer.MIN_VALUE;
 
-    public boolean getObserved() {
-        return this.entityData.get(DATA_OBSERVED);
+        MinecraftServer minecraftServer = serverLevel.getServer();
+        PlayerList playerList = minecraftServer.getPlayerList();
+        List<ServerPlayer> serverPlayers = playerList.getPlayers();
+
+        for (ServerPlayer serverPlayer : serverPlayers) {
+            if (Math.sqrt(serverPlayer.blockPosition().distToCenterSqr(targetBlockPosition.getX(), targetBlockPosition.getY(), targetBlockPosition.getZ())) <= 512
+            && serverPlayer.gameMode.isSurvival()) {
+                Vec3 playerPos = serverPlayer.position();
+                Vec3 angelVec = new Vec3(targetPosition.x() - playerPos.x(), targetPosition.y() - playerPos.y(), targetPosition.z() - playerPos.z());
+
+                angelVec = angelVec.normalize();
+
+                Vec3 lookVec = serverPlayer.getLookAngle();
+
+                double dotProduct = lookVec.dot(angelVec);
+
+                if (dotProduct > dot_product) {
+                    dot_product = dotProduct;
+                }
+            }
+        }
+
+        return dot_product;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, Integer.MAX_VALUE)
+                .add(Attributes.MAX_HEALTH, 1)
                 .add(Attributes.ARMOR_TOUGHNESS, Integer.MAX_VALUE)
                 .add(Attributes.MOVEMENT_SPEED, 1)
                 .add(Attributes.FOLLOW_RANGE, Integer.MAX_VALUE)
@@ -173,49 +207,114 @@ public class AngelEntity extends Monster {
     }
 
     @Override
+    protected SoundEvent getDeathSound() {
+        return null;
+    }
+
+    @Override
+    public void setTarget(@Nullable LivingEntity pTarget) {
+        super.setTarget(pTarget);
+    }
+
+    @Override
+    public void die(DamageSource pDamageSource) {
+        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, pDamageSource)) return;
+        if (!this.isRemoved() && !this.dead) {
+            Entity entity = pDamageSource.getEntity();
+            LivingEntity livingentity = this.getKillCredit();
+            if (this.deathScore >= 0 && livingentity != null) {
+                livingentity.awardKillScore(this, this.deathScore, pDamageSource);
+            }
+
+            if (this.isSleeping()) {
+                this.stopSleeping();
+            }
+
+            if (!this.level().isClientSide && this.hasCustomName()) {
+                VortexMod.P_LOGGER.info("Named entity {} died: {}", this, this.getCombatTracker().getDeathMessage().getString());
+            }
+
+            this.dead = true;
+            this.getCombatTracker().recheckStatus();
+            Level level = this.level();
+            if (level instanceof ServerLevel) {
+                ServerLevel serverlevel = (ServerLevel)level;
+                if (entity == null || entity.killedEntity(serverlevel, this)) {
+                    this.gameEvent(GameEvent.ENTITY_DIE);
+                    this.dropAllDeathLoot(pDamageSource);
+                    this.createWitherRose(livingentity);
+                }
+
+                this.level().broadcastEntityEvent(this, (byte)3);
+            }
+        }
+    }
+
+    @Override
     public void tick() {
         if (this.level() instanceof ServerLevel serverLevel) {
-            if (getTarget() != null && !this.getObserved()) {
+            if (getTarget() != null) {
+                double dotProduct = this.getDotProduct(serverLevel, this.position(), this.blockPosition());
                 Path path = this.getNavigation().createPath(getTarget(), 1);
-                Vec3 thisPos = this.position();
-                Vec3 targetPos = getTarget().position();
+                if (path != null) {
+                    if (dotProduct < 0.2) {
+                        Vec3 targetPos = getTarget().position();
+                        Vec3 simPos = path.getNodePos(this.currentPathProgress).getCenter();
+                        if (simPos.distanceTo(targetPos) > 1.3D) {
+                            if (this.currentPathProgress < path.getNodeCount() - 1) {
+                                this.currentPathProgress += 1;
+                            }
+                            else {
+                                if (simPos.distanceTo(targetPos) < 2.25D) {
+                                    doTeleport(getTarget(), serverLevel);
+                                    BlockPos nodePos = path.getNodePos(this.currentPathProgress);
 
-                if (thisPos.distanceTo(targetPos) > 1.3D) {
-                    if (path != null) {
-                        if (path.getNodeCount() > 1) {
-                            int nextIndex = path.getNextNodeIndex() + 1;
-                            if (nextIndex < path.getNodeCount()) {
-                                BlockPos nodePos = path.getNodePos(nextIndex);
-
-                                if (nodePos != null) {
-                                    Vec3 tpPos = new Vec3(nodePos.getX(), nodePos.getY(), nodePos.getZ());
-
-                                    boolean containsAngel = false;
-                                    for (Entity entity : serverLevel.getEntities(this, new AABB(tpPos.add(1.5, 1.5, 1.5), tpPos.add(-1.5, 0, -1.5)))) {
-                                        if (entity instanceof AngelEntity) {
-                                            containsAngel = true;
-                                            break;
-                                        }
+                                    if (nodePos != null) {
+                                        this.kill();
+                                        this.setInvisible(true);
+                                        this.setPosRaw(this.getX(), -500, this.getZ());
+                                        AngelEntity newAngelEntity = ModEntities.ANGEL.get().spawn(serverLevel, nodePos, MobSpawnType.NATURAL);
+                                        newAngelEntity.lookAt(getTarget(), 360, 360);
                                     }
-                                    if (!containsAngel) {
-                                        this.setPosRaw(tpPos.x(), tpPos.y(), tpPos.z());
-                                    }
+                                    this.currentPathProgress = 0;
                                 }
                             }
                         } else {
-                            if (thisPos.distanceTo(targetPos) < 2.0D) {
-                                doTeleport(getTarget(), serverLevel);
+                            doTeleport(getTarget(), serverLevel);
+                            BlockPos nodePos = path.getNodePos(this.currentPathProgress);
+
+                            if (nodePos != null) {
+                                this.kill();
+                                this.setInvisible(true);
+                                this.setPosRaw(this.getX(), -500, this.getZ());
+                                AngelEntity newAngelEntity = ModEntities.ANGEL.get().spawn(serverLevel, nodePos, MobSpawnType.NATURAL);
+                                newAngelEntity.lookAt(getTarget(), 360, 360);
+                            }
+                            this.currentPathProgress = 0;
+                        }
+
+                        this.lookAt(getTarget(), 360, 360);
+                    }
+                    if (dotProduct > -0.5) {
+                        if (dotProduct < 0.25) {
+                            if (this.currentPathProgress < path.getNodeCount()) {
+                                BlockPos nodePos = path.getNodePos(this.currentPathProgress);
+
+                                if (nodePos != null) {
+                                    this.kill();
+                                    this.setInvisible(true);
+                                    this.setPosRaw(this.getX(), -500, this.getZ());
+                                    AngelEntity newAngelEntity = ModEntities.ANGEL.get().spawn(serverLevel, nodePos, MobSpawnType.NATURAL);
+                                    newAngelEntity.lookAt(getTarget(), 360, 360);
+                                }
                             }
                         }
+
+                        this.currentPathProgress = 0;
                     }
-                } else {
-                    doTeleport(getTarget(), serverLevel);
                 }
-
-                this.lookAt(getTarget(), 360, 360);
             }
-
-            this.setObserved(false);
+            this.entityData.set(DATA_ROTATION, this.getYRot());
         }
 
         super.tick();

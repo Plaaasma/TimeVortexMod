@@ -1449,7 +1449,7 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         List<Entity> nearbyEntities = serverLevel.getEntitiesOfClass(Entity.class, searchBB, entity -> !(entity instanceof Player));
 
         for (Entity nearbyEntity : nearbyEntities) {
-            if (!(nearbyEntity instanceof TardisEntity)) {
+            if (!(nearbyEntity instanceof TardisEntity) && !(nearbyEntity instanceof RiftEntity)) {
                 MinecraftServer minecraftserver = pLevel.getServer();
                 ServerLevel overworld = minecraftserver.getLevel(Level.OVERWORLD);
                 LocationMapData data = LocationMapData.get(overworld);

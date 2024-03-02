@@ -105,7 +105,7 @@ public class ModEntities {
 
     public static final RegistryObject<EntityType<AngelEntity>> ANGEL =
             ENTITY_TYPES.register("angel", () -> EntityType.Builder.of(AngelEntity::new, MobCategory.MONSTER)
-                    .sized(1f, 2f)
+                    .sized(0.8f, 2f)
                     .build("angel"));
 
     // RIFT

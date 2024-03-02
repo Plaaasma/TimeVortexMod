@@ -47,7 +47,6 @@ public class ServerboundAngelSeenPacket {
         }
 
         AngelEntity angelEntity = (AngelEntity) level.getEntity(this.angel_uuid);
-        angelEntity.setObserved(true);
 
         realContext.setPacketHandled(true);
     }

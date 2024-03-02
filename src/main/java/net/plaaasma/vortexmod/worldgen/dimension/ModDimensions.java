@@ -11,6 +11,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.*;
+import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
@@ -130,7 +131,6 @@ public class ModDimensions {
         NoiseBasedChunkGenerator tardisNoiseBasedChunkGenerator = new NoiseBasedChunkGenerator(
                 new FixedBiomeSource(biomeRegistry.getOrThrow(ModBiomes.TARDIS_BIOME)),
                 noiseGenSettings.getOrThrow(ModNoiseGenerator.VOID));
-
         LevelStem tardisStem = new LevelStem(dimTypes.getOrThrow(ModDimensions.tardis_DIM_TYPE), tardisNoiseBasedChunkGenerator);
 
         context.register(tardisDIM_KEY, tardisStem);

@@ -31,9 +31,9 @@ public class AngelRenderer extends MobRenderer<AngelEntity, AngelModel<AngelEnti
 
     @Override
     public void render(AngelEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
-        if (!Minecraft.getInstance().gameMode.getPlayerMode().isCreative()) {
-            PacketHandler.sendToServer(new ServerboundAngelSeenPacket(pEntity.getUUID(), pEntity.level().dimension().location().getPath()));
-        }
+//        if (!Minecraft.getInstance().gameMode.getPlayerMode().isCreative()) {
+//            PacketHandler.sendToServer(new ServerboundAngelSeenPacket(pEntity.getUUID(), pEntity.level().dimension().location().getPath()));
+//        }
         super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);
     }
 
