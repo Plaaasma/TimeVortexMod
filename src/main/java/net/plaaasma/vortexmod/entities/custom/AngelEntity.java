@@ -6,6 +6,9 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Position;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.FloatTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -18,8 +21,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.TicketType;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -64,10 +69,10 @@ import java.util.Random;
 import java.util.Set;
 
 public class AngelEntity extends Monster {
-    private static final EntityDataAccessor<Float> DATA_ROTATION = SynchedEntityData.defineId(AngelEntity.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Boolean> DATA_CLOSE = SynchedEntityData.defineId(AngelEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Float> DATA_ROTATION_X = SynchedEntityData.defineId(AngelEntity.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Float> DATA_ROTATION_Y = SynchedEntityData.defineId(AngelEntity.class, EntityDataSerializers.FLOAT);
 
-    @Nullable
-    private BlockPos wanderTarget;
     private int currentPathProgress = 0;
 
     public AngelEntity(EntityType<? extends Monster> pEntityType, Level pLevel) {
@@ -77,19 +82,25 @@ public class AngelEntity extends Monster {
     @Override
     public void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
-        pCompound.putFloat("Rotation", this.entityData.get(DATA_ROTATION));
+        pCompound.putBoolean("Close", this.entityData.get(DATA_CLOSE));
+        pCompound.putFloat("RotX", this.entityData.get(DATA_ROTATION_X));
+        pCompound.putFloat("RotY", this.entityData.get(DATA_ROTATION_Y));
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
-        this.entityData.set(DATA_ROTATION, pCompound.getFloat("Rotation"));
+        this.entityData.set(DATA_CLOSE, pCompound.getBoolean("Close"));
+        this.entityData.set(DATA_ROTATION_X, pCompound.getFloat("RotX"));
+        this.entityData.set(DATA_ROTATION_Y, pCompound.getFloat("RotY"));
     }
 
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(DATA_ROTATION, 0f);
+        this.entityData.define(DATA_CLOSE, false);
+        this.entityData.define(DATA_ROTATION_X, 0f);
+        this.entityData.define(DATA_ROTATION_Y, 0f);
     }
 
     public double getDotProduct(ServerLevel serverLevel, Vec3 targetPosition, BlockPos targetBlockPosition) {
@@ -100,8 +111,8 @@ public class AngelEntity extends Monster {
         List<ServerPlayer> serverPlayers = playerList.getPlayers();
 
         for (ServerPlayer serverPlayer : serverPlayers) {
-            if (Math.sqrt(serverPlayer.blockPosition().distToCenterSqr(targetBlockPosition.getX(), targetBlockPosition.getY(), targetBlockPosition.getZ())) <= 512
-            && serverPlayer.gameMode.isSurvival()) {
+            double distance = Math.sqrt(serverPlayer.blockPosition().distToCenterSqr(targetBlockPosition.getX(), targetBlockPosition.getY(), targetBlockPosition.getZ()));
+            if (distance <= 512 && serverPlayer.gameMode.isSurvival()) {
                 Vec3 playerPos = serverPlayer.position();
                 Vec3 angelVec = new Vec3(targetPosition.x() - playerPos.x(), targetPosition.y() - playerPos.y(), targetPosition.z() - playerPos.z());
 
@@ -118,6 +129,27 @@ public class AngelEntity extends Monster {
         }
 
         return dot_product;
+    }
+
+    public ServerPlayer getNearestPlayer(ServerLevel serverLevel, BlockPos targetBlockPosition) {
+        double closestDistance = Integer.MAX_VALUE;
+        ServerPlayer closestPlayer = null;
+
+        MinecraftServer minecraftServer = serverLevel.getServer();
+        PlayerList playerList = minecraftServer.getPlayerList();
+        List<ServerPlayer> serverPlayers = playerList.getPlayers();
+
+        for (ServerPlayer serverPlayer : serverPlayers) {
+            double distance = Math.sqrt(serverPlayer.blockPosition().distToCenterSqr(targetBlockPosition.getX(), targetBlockPosition.getY(), targetBlockPosition.getZ()));
+            if (distance <= 512 && serverPlayer.gameMode.isSurvival()) {
+                if (distance <= closestDistance) {
+                    closestDistance = distance;
+                    closestPlayer = serverPlayer;
+                }
+            }
+        }
+
+        return closestPlayer;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -146,11 +178,16 @@ public class AngelEntity extends Monster {
     }
 
     @Override
+    public void animateHurt(float pYaw) {
+
+    }
+
+    @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
-        if (pSource.getEntity() instanceof LivingEntity && pSource.getEntity().level() instanceof ServerLevel) {
+        if (pSource.getEntity() instanceof LivingEntity && pSource.getEntity().level() instanceof ServerLevel && !pSource.isIndirect()) {
             doTeleport((LivingEntity) pSource.getEntity(), (ServerLevel) pSource.getEntity().level());
         }
-        if (pSource != this.damageSources().genericKill()) {
+        if (pSource != this.damageSources().genericKill() && pSource != this.damageSources().fellOutOfWorld()) {
             return false;
         }
         else {
@@ -250,73 +287,128 @@ public class AngelEntity extends Monster {
         }
     }
 
+    private float vrotlerp(float pAngle, float pTargetAngle, float pMaxIncrease) {
+        float f = Mth.wrapDegrees(pTargetAngle - pAngle);
+        if (f > pMaxIncrease) {
+            f = pMaxIncrease;
+        }
+
+        if (f < -pMaxIncrease) {
+            f = -pMaxIncrease;
+        }
+
+        return pAngle + f;
+    }
+
+    public float calculateLookRot(Entity pEntity, float pMaxYRotIncrease) {
+        if (pEntity != null) {
+            double d0 = pEntity.getX() - this.getX();
+            double d2 = pEntity.getZ() - this.getZ();
+
+            float f = (float) (Mth.atan2(d2, d0) * (double) (180F / (float) Math.PI)) - 90.0F;
+            return this.vrotlerp(this.getYRot(), f, pMaxYRotIncrease);
+        }
+        else {
+            return 0f;
+        }
+    }
+
+    @Nullable
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
+        Random random = new Random();
+        ServerPlayer nearestPlayer = this.getNearestPlayer(pLevel.getLevel(), this.blockPosition());
+        float rotToSet = this.calculateLookRot(nearestPlayer, 360);
+        float rotOffset = random.nextFloat(-20, 20);
+        this.setYBodyRot(rotToSet + rotOffset);
+        this.setYHeadRot(rotToSet + rotOffset);
+        this.entityData.set(DATA_ROTATION_Y, rotOffset);
+        if (nearestPlayer != null) {
+            if (nearestPlayer.distanceTo(this) <= 2) {
+                this.entityData.set(DATA_CLOSE, true);
+            }
+        }
+        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+    }
+
+    public final void teleportToWithTicket(ServerLevel level, double pX, double pY, double pZ, float y_rotation, float x_rotation) {
+        ChunkPos chunkpos = new ChunkPos(BlockPos.containing(pX, pY, pZ));
+        level.getChunkSource().addRegionTicket(TicketType.POST_TELEPORT, chunkpos, 0, this.getId());
+        level.getChunk(chunkpos.x, chunkpos.z);
+        this.teleportTo(level, pX, pY, pZ, RelativeMovement.ALL, y_rotation, x_rotation);
+    }
+
     @Override
     public void tick() {
-        if (this.level() instanceof ServerLevel serverLevel) {
-            if (getTarget() != null) {
-                double dotProduct = this.getDotProduct(serverLevel, this.position(), this.blockPosition());
-                Path path = this.getNavigation().createPath(getTarget(), 1);
-                if (path != null) {
-                    if (dotProduct < 0.2) {
-                        Vec3 targetPos = getTarget().position();
-                        Vec3 simPos = path.getNodePos(this.currentPathProgress).getCenter();
-                        if (simPos.distanceTo(targetPos) > 1.3D) {
-                            if (this.currentPathProgress < path.getNodeCount() - 1) {
-                                this.currentPathProgress += 1;
-                            }
-                            else {
-                                if (simPos.distanceTo(targetPos) < 2.25D) {
-                                    doTeleport(getTarget(), serverLevel);
+        if (this.getY() > -500) {
+            if (this.level() instanceof ServerLevel serverLevel) {
+                ServerPlayer targetEntity = this.getNearestPlayer(serverLevel, this.blockPosition());
+                if (targetEntity != null) {
+                    double dotProduct = this.getDotProduct(serverLevel, this.position(), this.blockPosition());
+                    Path path = this.getNavigation().createPath(targetEntity, 1);
+                    if (path != null) {
+                        if (this.currentPathProgress < path.getNodeCount()) {
+                            if (dotProduct < 0.2) {
+                                Vec3 targetPos = targetEntity.position();
+                                Vec3 simPos = path.getNodePos(this.currentPathProgress).getCenter();
+                                if (simPos.distanceTo(targetPos) > 1.3D) {
+                                    if (this.currentPathProgress < path.getNodeCount() - 1) {
+                                        this.currentPathProgress += 1;
+                                    } else {
+                                        if (simPos.distanceTo(targetPos) < 2.25D) {
+                                            BlockPos nodePos = path.getNodePos(this.currentPathProgress);
+
+                                            if (nodePos != null) {
+                                                this.setInvisible(true);
+                                                this.setPosRaw(targetEntity.getX(), -500, targetEntity.getZ());
+                                                this.kill();
+                                                ModEntities.ANGEL.get().spawn(serverLevel, nodePos, MobSpawnType.NATURAL);
+                                            }
+                                            this.currentPathProgress = 0;
+                                            this.entityData.set(DATA_CLOSE, true);
+                                            doTeleport(targetEntity, serverLevel);
+                                        }
+                                    }
+                                } else {
                                     BlockPos nodePos = path.getNodePos(this.currentPathProgress);
 
                                     if (nodePos != null) {
-                                        this.kill();
                                         this.setInvisible(true);
-                                        this.setPosRaw(this.getX(), -500, this.getZ());
-                                        AngelEntity newAngelEntity = ModEntities.ANGEL.get().spawn(serverLevel, nodePos, MobSpawnType.NATURAL);
-                                        newAngelEntity.lookAt(getTarget(), 360, 360);
+                                        this.setPosRaw(targetEntity.getX(), -500, targetEntity.getZ());
+                                        this.kill();
+                                        ModEntities.ANGEL.get().spawn(serverLevel, nodePos, MobSpawnType.NATURAL);
                                     }
                                     this.currentPathProgress = 0;
+                                    this.entityData.set(DATA_CLOSE, true);
+                                    doTeleport(targetEntity, serverLevel);
                                 }
-                            }
-                        } else {
-                            doTeleport(getTarget(), serverLevel);
-                            BlockPos nodePos = path.getNodePos(this.currentPathProgress);
 
-                            if (nodePos != null) {
-                                this.kill();
-                                this.setInvisible(true);
-                                this.setPosRaw(this.getX(), -500, this.getZ());
-                                AngelEntity newAngelEntity = ModEntities.ANGEL.get().spawn(serverLevel, nodePos, MobSpawnType.NATURAL);
-                                newAngelEntity.lookAt(getTarget(), 360, 360);
+                                this.lookAt(targetEntity, 360, 360);
                             }
+                            if (dotProduct > -0.5) {
+                                if (dotProduct < 0.25) {
+                                    if (this.currentPathProgress < path.getNodeCount()) {
+                                        BlockPos nodePos = path.getNodePos(this.currentPathProgress);
+
+                                        if (nodePos != null) {
+                                            this.setInvisible(true);
+                                            this.setPosRaw(targetEntity.getX(), -500, targetEntity.getZ());
+                                            this.kill();
+                                            ModEntities.ANGEL.get().spawn(serverLevel, nodePos, MobSpawnType.NATURAL);
+                                        }
+                                    }
+                                }
+
+                                this.currentPathProgress = 0;
+                            }
+                        }
+                        else {
                             this.currentPathProgress = 0;
                         }
-
-                        this.lookAt(getTarget(), 360, 360);
-                    }
-                    if (dotProduct > -0.5) {
-                        if (dotProduct < 0.25) {
-                            if (this.currentPathProgress < path.getNodeCount()) {
-                                BlockPos nodePos = path.getNodePos(this.currentPathProgress);
-
-                                if (nodePos != null) {
-                                    this.kill();
-                                    this.setInvisible(true);
-                                    this.setPosRaw(this.getX(), -500, this.getZ());
-                                    AngelEntity newAngelEntity = ModEntities.ANGEL.get().spawn(serverLevel, nodePos, MobSpawnType.NATURAL);
-                                    newAngelEntity.lookAt(getTarget(), 360, 360);
-                                }
-                            }
-                        }
-
-                        this.currentPathProgress = 0;
                     }
                 }
             }
-            this.entityData.set(DATA_ROTATION, this.getYRot());
         }
-
         super.tick();
     }
 }

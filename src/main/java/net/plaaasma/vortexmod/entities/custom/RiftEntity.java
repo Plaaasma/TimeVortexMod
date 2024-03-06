@@ -116,24 +116,24 @@ public class RiftEntity extends Mob {
         java.util.Random random = new java.util.Random();
 
         if (this.level() instanceof ServerLevel serverLevel) {
-//            if (this.level().getGameTime() % 400 == 0) {
-//                List<Entity> entities = this.level().getEntities(this, new AABB(
-//                        this.blockPosition().getX() - 128, this.blockPosition().getY() - 128, this.blockPosition().getZ() - 128,
-//                        this.blockPosition().getX() + 128, this.blockPosition().getY() + 128, this.blockPosition().getZ() + 128
-//                ));
-//
-//                int angelCount = 0;
-//                for (Entity entity : entities) {
-//                    if (entity instanceof AngelEntity) {
-//                        angelCount += 1;
-//                    }
-//                }
-//
-//                if (angelCount < 3) {
-//                    AngelEntity angelEntity = ModEntities.ANGEL.get().spawn(serverLevel, new BlockPos(this.blockPosition().getX() + random.nextInt(-2, 2), this.blockPosition().getY(), this.blockPosition().getZ() + random.nextInt(-2, 2)), MobSpawnType.NATURAL);
-//                    serverLevel.addFreshEntity(angelEntity);
-//                }
-//            }
+            if (this.level().getGameTime() % 400 == 0) {
+                List<Entity> entities = this.level().getEntities(this, new AABB(
+                        this.blockPosition().getX() - 128, this.blockPosition().getY() - 128, this.blockPosition().getZ() - 128,
+                        this.blockPosition().getX() + 128, this.blockPosition().getY() + 128, this.blockPosition().getZ() + 128
+                ));
+
+                int angelCount = 0;
+                for (Entity entity : entities) {
+                    if (entity instanceof AngelEntity) {
+                        angelCount += 1;
+                    }
+                }
+
+                if (angelCount < 3) {
+                    AngelEntity angelEntity = ModEntities.ANGEL.get().spawn(serverLevel, new BlockPos(this.blockPosition().getX() + random.nextInt(-2, 2), this.blockPosition().getY(), this.blockPosition().getZ() + random.nextInt(-2, 2)), MobSpawnType.NATURAL);
+                    serverLevel.addFreshEntity(angelEntity);
+                }
+            }
         }
         else {
             List<Vector3f> points = generateCrackPoints();
