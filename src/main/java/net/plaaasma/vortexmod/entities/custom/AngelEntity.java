@@ -226,21 +226,9 @@ public class AngelEntity extends Monster {
     public void doTeleport(LivingEntity player, ServerLevel serverLevel) {
         Random random = new Random();
 
-        MinecraftServer minecraftServer = serverLevel.getServer();
-        Iterable<ServerLevel> levels = minecraftServer.getAllLevels();
-        List<ServerLevel> levelsToChoose = new ArrayList<>();
+        BlockPos temp_target = new BlockPos(player.getBlockX() + random.nextInt(-10000, 10000), random.nextInt(serverLevel.getMinBuildHeight(), serverLevel.getMaxBuildHeight()), player.getBlockZ() + random.nextInt(-10000, 10000));
 
-        for (ServerLevel serverLevel1 : levels) {
-            if (serverLevel1.dimension() != ModDimensions.tardisDIM_LEVEL_KEY) {
-                levelsToChoose.add(serverLevel1);
-            }
-        }
-
-        ServerLevel chosenLevel = levelsToChoose.get(random.nextInt(0, levelsToChoose.size()));
-
-        BlockPos temp_target = new BlockPos(player.getBlockX() + random.nextInt(-10000, 10000), random.nextInt(chosenLevel.getMinBuildHeight(), chosenLevel.getMaxBuildHeight()), player.getBlockZ() + random.nextInt(-10000, 10000));
-
-        player.teleportTo(chosenLevel, temp_target.getX(), temp_target.getY(), temp_target.getZ(), RelativeMovement.ALL, player.getYRot(), player.getXRot());
+        player.teleportTo(serverLevel, temp_target.getX(), temp_target.getY(), temp_target.getZ(), RelativeMovement.ALL, player.getYRot(), player.getXRot());
     }
 
     @Override
@@ -319,7 +307,7 @@ public class AngelEntity extends Monster {
         Random random = new Random();
         ServerPlayer nearestPlayer = this.getNearestPlayer(pLevel.getLevel(), this.blockPosition());
         float rotToSet = this.calculateLookRot(nearestPlayer, 360);
-        float rotOffset = random.nextFloat(-20, 20);
+        float rotOffset = random.nextFloat(-10, 10);
         this.setYBodyRot(rotToSet + rotOffset);
         this.setYHeadRot(rotToSet + rotOffset);
         this.entityData.set(DATA_ROTATION_Y, rotOffset);
