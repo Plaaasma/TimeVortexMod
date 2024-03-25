@@ -90,22 +90,8 @@ public class SetRotationCommand {
             }
         }
         if (core_found && has_components && designatorEntity != null) {
-            DimensionMapData dim_data = DimensionMapData.get(overworld);
             interfaceEntity.data.set(12, targetRot);
-            Direction rotationDirection;
-            if (targetRot >= 0 && targetRot < 90) {
-                rotationDirection = Direction.NORTH;
-            }
-            else if (targetRot >= 90 && targetRot < 180) {
-                rotationDirection = Direction.EAST;
-            }
-            else if (targetRot >= 180 && targetRot < 270) {
-                rotationDirection = Direction.SOUTH;
-            }
-            else {
-                rotationDirection = Direction.WEST;
-            }
-            source.sendSuccess(() -> Component.literal("Updating target rotation to: ").append(Component.literal(rotationDirection.getOpposite().toString()).withStyle(ChatFormatting.GOLD)), false);
+            source.sendSuccess(() -> Component.literal("Updating target rotation to: ").append(Integer.toString(targetRot)).withStyle(ChatFormatting.GOLD), false);
         }
         else {
             if (!core_found) {

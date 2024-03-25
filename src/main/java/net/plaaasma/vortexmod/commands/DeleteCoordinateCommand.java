@@ -16,6 +16,7 @@ import net.plaaasma.vortexmod.block.entity.CoordinateDesignatorBlockEntity;
 import net.plaaasma.vortexmod.block.entity.VortexInterfaceBlockEntity;
 import net.plaaasma.vortexmod.mapdata.DimensionMapData;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
+import net.plaaasma.vortexmod.mapdata.RotationMapData;
 import net.plaaasma.vortexmod.network.ClientboundTargetMapPacket;
 import net.plaaasma.vortexmod.network.PacketHandler;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
@@ -39,6 +40,7 @@ public class DeleteCoordinateCommand {
         ServerLevel tardis_dim = minecraftserver.getLevel(ModDimensions.tardisDIM_LEVEL_KEY);
         ServerLevel vortex = minecraftserver.getLevel(ModDimensions.vortexDIM_LEVEL_KEY);
         LocationMapData coord_data = LocationMapData.get(vortex);
+        RotationMapData rotation_data = RotationMapData.get(vortex);
         DimensionMapData dim_data = DimensionMapData.get(tardis_dim);
 
         boolean core_found = false;
@@ -97,10 +99,12 @@ public class DeleteCoordinateCommand {
                 String savedDimName = dim_data.getDataMap().get(dataKey);
 
                 coord_data.getDataMap().remove(dataKey);
+                rotation_data.getDataMap().remove(dataKey);
                 dim_data.getDataMap().remove(dataKey);
                 source.sendSuccess(() -> Component.literal("Deleting " + locName.getString() + ". (" + savedPos.getX() + " " + savedPos.getY() + " " + savedPos.getZ() + " | " + savedDimName + ")"), false);
 
                 coord_data.setDirty();
+                rotation_data.setDirty();
                 dim_data.setDirty();
                 PacketHandler.sendToAllClients(new ClientboundTargetMapPacket(pLevel.dimension().location().getPath(), keypadPos, coord_data.getDataMap(), dim_data.getDataMap()));
             }

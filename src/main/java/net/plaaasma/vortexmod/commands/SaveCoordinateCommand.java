@@ -19,6 +19,7 @@ import net.plaaasma.vortexmod.block.entity.CoordinateDesignatorBlockEntity;
 import net.plaaasma.vortexmod.block.entity.VortexInterfaceBlockEntity;
 import net.plaaasma.vortexmod.mapdata.DimensionMapData;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
+import net.plaaasma.vortexmod.mapdata.RotationMapData;
 import net.plaaasma.vortexmod.network.ClientboundTargetMapPacket;
 import net.plaaasma.vortexmod.network.PacketHandler;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
@@ -42,6 +43,7 @@ public class SaveCoordinateCommand {
         ServerLevel tardis_dim = minecraftserver.getLevel(ModDimensions.tardisDIM_LEVEL_KEY);
         ServerLevel vortex = minecraftserver.getLevel(ModDimensions.vortexDIM_LEVEL_KEY);
         LocationMapData coord_data = LocationMapData.get(vortex);
+        RotationMapData rotation_data = RotationMapData.get(vortex);
         DimensionMapData dim_data = DimensionMapData.get(tardis_dim);
 
         boolean core_found = false;
@@ -108,9 +110,11 @@ public class SaveCoordinateCommand {
             BlockPos targetVec = new BlockPos(vortexInterfaceBlockEntity.data.get(3), vortexInterfaceBlockEntity.data.get(4), vortexInterfaceBlockEntity.data.get(5));
 
             coord_data.getDataMap().put(player.getScoreboardName() + locName.getString(), targetVec);
+            rotation_data.getDataMap().put(player.getScoreboardName() + locName.getString(), vortexInterfaceBlockEntity.data.get(12));
             dim_data.getDataMap().put(player.getScoreboardName() + locName.getString(), currentLevel.dimension().location().getPath());
             ServerLevel finalCurrentLevel = currentLevel;
-            source.sendSuccess(() -> Component.literal("Adding the current target coordinates (" + targetVec.getX() + " " + targetVec.getY() + " " + targetVec.getZ() +  " | " + finalCurrentLevel.dimension().location().getPath() + ") as " + locName.getString()), false);
+            VortexInterfaceBlockEntity finalVortexInterfaceBlockEntity = vortexInterfaceBlockEntity;
+            source.sendSuccess(() -> Component.literal("Adding the current target coordinates (" + targetVec.getX() + " " + targetVec.getY() + " " + targetVec.getZ() +  " | " + finalVortexInterfaceBlockEntity.data.get(12) + "°" +  " | " + finalCurrentLevel.dimension().location().getPath() + ") as " + locName.getString()), false);
 
             PacketHandler.sendToAllClients(new ClientboundTargetMapPacket(pLevel.dimension().location().getPath(), keypadPos, coord_data.getDataMap(), dim_data.getDataMap()));
         }

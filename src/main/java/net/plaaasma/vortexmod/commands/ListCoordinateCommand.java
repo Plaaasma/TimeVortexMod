@@ -17,6 +17,7 @@ import net.plaaasma.vortexmod.block.entity.CoordinateDesignatorBlockEntity;
 import net.plaaasma.vortexmod.block.entity.VortexInterfaceBlockEntity;
 import net.plaaasma.vortexmod.mapdata.DimensionMapData;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
+import net.plaaasma.vortexmod.mapdata.RotationMapData;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 
 import java.security.Key;
@@ -42,6 +43,7 @@ public class ListCoordinateCommand {
         ServerLevel tardis_dim = minecraftserver.getLevel(ModDimensions.tardisDIM_LEVEL_KEY);
         ServerLevel vortex = minecraftserver.getLevel(ModDimensions.vortexDIM_LEVEL_KEY);
         LocationMapData coord_data = LocationMapData.get(vortex);
+        RotationMapData rotation_data = RotationMapData.get(vortex);
         DimensionMapData dim_data = DimensionMapData.get(tardis_dim);
 
         List<Component> locationStrings = new ArrayList<>();
@@ -51,7 +53,8 @@ public class ListCoordinateCommand {
             if (coordKey.startsWith(playerName)) {
                 String pointName = coordKey.substring(playerName.length()) + ": ";
                 BlockPos pointPos = coord_data.getDataMap().get(coordKey);
-                String pointCoords = pointPos.getX() + " " + pointPos.getY() + " " + pointPos.getZ() + " | ";
+                int pointRot = rotation_data.getDataMap().get(coordKey) == null ? 0 : rotation_data.getDataMap().get(coordKey);
+                String pointCoords = pointPos.getX() + " " + pointPos.getY() + " " + pointPos.getZ() + " | " + pointRot + "°" + " | ";
                 String pointDimension = dim_data.getDataMap().get(coordKey);
 
                 Component pointComponent = Component.literal(pointName).withStyle(ChatFormatting.GRAY).append(Component.literal(pointCoords + pointDimension).withStyle(ChatFormatting.GOLD));

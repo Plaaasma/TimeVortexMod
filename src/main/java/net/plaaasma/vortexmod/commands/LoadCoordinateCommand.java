@@ -17,7 +17,9 @@ import net.plaaasma.vortexmod.block.entity.CoordinateDesignatorBlockEntity;
 import net.plaaasma.vortexmod.block.entity.VortexInterfaceBlockEntity;
 import net.plaaasma.vortexmod.mapdata.DimensionMapData;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
+import net.plaaasma.vortexmod.mapdata.RotationMapData;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
+import org.jetbrains.annotations.Nullable;
 
 public class LoadCoordinateCommand {
     public LoadCoordinateCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -38,6 +40,7 @@ public class LoadCoordinateCommand {
         ServerLevel tardis_dim = minecraftserver.getLevel(ModDimensions.tardisDIM_LEVEL_KEY);
         ServerLevel vortex = minecraftserver.getLevel(ModDimensions.vortexDIM_LEVEL_KEY);
         LocationMapData coord_data = LocationMapData.get(vortex);
+        RotationMapData rotation_data = RotationMapData.get(vortex);
         DimensionMapData dim_data = DimensionMapData.get(tardis_dim);
 
         boolean core_found = false;
@@ -87,9 +90,11 @@ public class LoadCoordinateCommand {
             }
         }
         if (core_found && has_components && designatorEntity != null) {
-            if (coord_data.getDataMap().containsKey(player.getScoreboardName() + locName.getString())) {
-                BlockPos savedPos = coord_data.getDataMap().get(player.getScoreboardName() + locName.getString());
-                String savedDimName = dim_data.getDataMap().get(player.getScoreboardName() + locName.getString());
+            String coordKey = player.getScoreboardName() + locName.getString();
+            if (coord_data.getDataMap().containsKey(coordKey)) {
+                BlockPos savedPos = coord_data.getDataMap().get(coordKey);
+                int savedRotation = rotation_data.getDataMap().get(coordKey) == null ? 0 : rotation_data.getDataMap().get(coordKey);
+                String savedDimName = dim_data.getDataMap().get(coordKey);
                 int savedDimHash = 0;
                 Iterable<ServerLevel> serverLevels = minecraftserver.getAllLevels();
 
@@ -99,13 +104,14 @@ public class LoadCoordinateCommand {
                     }
                 }
 
+                vortexInterfaceBlockEntity.data.set(12, savedRotation);
                 vortexInterfaceBlockEntity.data.set(14, 1);
                 vortexInterfaceBlockEntity.data.set(15, savedPos.getX());
                 vortexInterfaceBlockEntity.data.set(16, savedPos.getY());
                 vortexInterfaceBlockEntity.data.set(17, savedPos.getZ());
                 vortexInterfaceBlockEntity.data.set(18, savedDimHash);
 
-                source.sendSuccess(() -> Component.literal("Loading " + locName.getString() + " to the designator. (" + savedPos.getX() + " " + savedPos.getY() + " " + savedPos.getZ() + " | " + savedDimName + ")"), false);
+                source.sendSuccess(() -> Component.literal("Loading " + locName.getString() + " to the designator. (" + savedPos.getX() + " " + savedPos.getY() + " " + savedPos.getZ() + " | " + savedRotation + "°" + " | " + savedDimName + ")"), false);
             }
             else {
                 source.sendFailure(Component.literal("You do not have a saved destination called " + locName.getString() + ", you can list your destinations with /tardis list"));

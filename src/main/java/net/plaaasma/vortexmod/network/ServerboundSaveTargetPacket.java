@@ -11,9 +11,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.NetworkEvent;
 import net.plaaasma.vortexmod.block.ModBlocks;
 import net.plaaasma.vortexmod.block.entity.CoordinateDesignatorBlockEntity;
+import net.plaaasma.vortexmod.block.entity.KeypadBlockEntity;
 import net.plaaasma.vortexmod.block.entity.VortexInterfaceBlockEntity;
 import net.plaaasma.vortexmod.mapdata.DimensionMapData;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
+import net.plaaasma.vortexmod.mapdata.RotationMapData;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 
 import java.util.function.Supplier;
@@ -51,6 +53,7 @@ public class ServerboundSaveTargetPacket {
                 ServerLevel vortex = minecraftserver.getLevel(ModDimensions.vortexDIM_LEVEL_KEY);
                 ServerPlayer player = realContext.getSender();
                 LocationMapData coord_data = LocationMapData.get(vortex);
+                RotationMapData rotation_data = RotationMapData.get(vortex);
                 DimensionMapData dim_data = DimensionMapData.get(tardis_dim);
                 ServerLevel level = realContext.getSender().serverLevel();
 
@@ -79,6 +82,7 @@ public class ServerboundSaveTargetPacket {
                 boolean has_designator = false;
 
                 CoordinateDesignatorBlockEntity designatorEntity = null;
+                KeypadBlockEntity keypadBlockEntity = null;
 
                 for (int _x = -16; _x <= 16 && !has_components; _x++) {
                     for (int _y = -16; _y <= 16 && !has_components; _y++) {
@@ -87,6 +91,7 @@ public class ServerboundSaveTargetPacket {
 
                             BlockState blockState = level.getBlockState(currentPos);
                             if (blockState.getBlock() == ModBlocks.KEYPAD_BLOCK.get()) {
+                                keypadBlockEntity = (KeypadBlockEntity) level.getBlockEntity(currentPos);
                                 has_keypad = true;
                             } else if (blockState.getBlock() == ModBlocks.COORDINATE_BLOCK.get()) {
                                 designatorEntity = (CoordinateDesignatorBlockEntity) level.getBlockEntity(currentPos);
@@ -114,11 +119,15 @@ public class ServerboundSaveTargetPacket {
                     BlockPos targetVec = new BlockPos(vortexInterfaceBlockEntity.data.get(3), vortexInterfaceBlockEntity.data.get(4), vortexInterfaceBlockEntity.data.get(5));
 
                     coord_data.getDataMap().put(player.getScoreboardName() + this.save_name, targetVec);
+                    rotation_data.getDataMap().put(player.getScoreboardName() + this.save_name, vortexInterfaceBlockEntity.data.get(12));
                     dim_data.getDataMap().put(player.getScoreboardName() + this.save_name, currentLevel.dimension().location().getPath());
 
                     realContext.getSender().displayClientMessage(Component.literal("Adding the current target coordinates (" + targetVec.getX() + " " + targetVec.getY() + " " + targetVec.getZ() + " | " + currentLevel.dimension().location().getPath() + ") as " + this.save_name), false);
                     coord_data.setDirty();
+                    rotation_data.setDirty();
                     dim_data.setDirty();
+                    keypadBlockEntity.coordData = coord_data.getDataMap();
+                    keypadBlockEntity.dimData = dim_data.getDataMap();
                     PacketHandler.sendToAllClients(new ClientboundTargetMapPacket(level.dimension().location().getPath(), this.from_pos, coord_data.getDataMap(), dim_data.getDataMap()));
                 } else {
                     if (!core_found) {

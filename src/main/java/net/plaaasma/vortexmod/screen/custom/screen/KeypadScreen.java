@@ -422,10 +422,10 @@ public class KeypadScreen extends AbstractContainerScreen<KeypadMenu> {
                 }
             }
             if (pKeyCode == 265) {
-                this.selected_dim_index -= 1;
+                this.selected_location_index -= 1;
             }
             else if (pKeyCode == 264) {
-                this.selected_dim_index += 1;
+                this.selected_location_index += 1;
             }
 
             if (this.selected_location_index > locationStrings.size()) {
