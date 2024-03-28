@@ -31,6 +31,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.KEYPAD_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.SIZE_MANIPULATOR_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.EQUALIZER_BLOCK.get().asItem());
+                        pOutput.accept(ModBlocks.DISRUPTOR_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.SCANNER_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.GROUNDING_BLOCK.get().asItem());
                         pOutput.accept(ModBlocks.BIOMETRIC_BLOCK.get().asItem());

@@ -45,11 +45,13 @@ import net.plaaasma.vortexmod.entities.ModEntities;
 import net.plaaasma.vortexmod.entities.custom.AngelEntity;
 import net.plaaasma.vortexmod.entities.custom.RiftEntity;
 import net.plaaasma.vortexmod.entities.custom.TardisEntity;
+import net.plaaasma.vortexmod.mapdata.DisruptorMapData;
 import net.plaaasma.vortexmod.mapdata.LocationMapData;
 import net.plaaasma.vortexmod.sound.ModSounds;
 import net.plaaasma.vortexmod.util.ModEnergyStorage;
 import net.plaaasma.vortexmod.worldgen.dimension.ModDimensions;
 import net.plaaasma.vortexmod.worldgen.portal.ModTeleporter;
+import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -323,7 +325,6 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
         this.data.set(18, param.hashCode());
     }
 
-    @LuaFunction
     public final void setCoordsJ(BlockPos targetPos) {
         this.data.set(14, 1);
         this.data.set(15, targetPos.getX());
@@ -564,6 +565,9 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     tardisEntity = newTardisEntity;
                 }
             }
+
+            DisruptorMapData disruptorMapData = DisruptorMapData.get(targetDimension);
+            HashMap<String, Boolean> disruptorDataMap = disruptorMapData.getDataMap();
 
             if (tardisEntity == null) {
                 tardisEntity = (TardisEntity) currentDimension.getEntity(this.exterior_uuid);
@@ -1380,8 +1384,36 @@ public class VortexInterfaceBlockEntity extends BlockEntity {
                     ForgeChunkManager.forceChunk(currentDimension, VortexMod.MODID, exteriorPos, chunkPos.x, chunkPos.z, true, true);
                 }
             }
+            doDisruption(temp_target, disruptorDataMap, random, pLevel, pPos, size, y_size);
             pLevel.blockUpdated(pPos, this.getBlockState().getBlock());
             setChanged(pLevel, pPos, pState);
+        }
+    }
+
+    private void doDisruption(BlockPos temp_target, HashMap<String, Boolean> disruptorDataMap, Random random, Level pLevel, BlockPos pPos, int size, int y_size) {
+        ChunkPos targetChunk = new ChunkPos(temp_target);
+        boolean disrupted = false;
+        while (disruptorDataMap.containsKey(targetChunk.toString())) {
+            temp_target = new BlockPos(temp_target.getX() + random.nextInt(-20, 20), temp_target.getY(), temp_target.getZ() + random.nextInt(-20, 20));
+
+            targetChunk = new ChunkPos(temp_target);
+            setCoordsJ(temp_target);
+            disrupted = true;
+        }
+        if (disrupted) {
+            List<Player> messagedPlayers = new ArrayList<>();
+            for (int x = -size; x <= size; x++) {
+                for (int y = -1; y <= y_size + (y_size - 1); y++) {
+                    for (int z = -size; z <= size; z++) {
+                        BlockPos currentPos = pPos.offset(x, y, z);
+                        Player player = pLevel.getNearestPlayer(currentPos.getX(), currentPos.getY(), currentPos.getZ(), 1, false);
+                        if (player != null && !messagedPlayers.contains(player)) {
+                            messagedPlayers.add(player);
+                            player.displayClientMessage(Component.literal("Your target destination was disrupted! Your target is now: " + temp_target.getX() + "," + temp_target.getY() + "," + temp_target.getZ()).withStyle(ChatFormatting.RED), false);
+                        }
+                    }
+                }
+            }
         }
     }
 

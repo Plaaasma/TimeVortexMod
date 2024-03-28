@@ -16,12 +16,14 @@ public class ModBlockLootTables extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
+        // MODULES
         this.dropSelf(ModBlocks.THROTTLE_BLOCK.get());
         this.dropSelf(ModBlocks.INTERFACE_BLOCK.get());
         this.dropSelf(ModBlocks.COORDINATE_BLOCK.get());
         this.dropSelf(ModBlocks.KEYPAD_BLOCK.get());
         this.dropSelf(ModBlocks.SIZE_MANIPULATOR_BLOCK.get());
         this.dropSelf(ModBlocks.EQUALIZER_BLOCK.get());
+        this.dropSelf(ModBlocks.DISRUPTOR_BLOCK.get());
         this.dropSelf(ModBlocks.TARDIS_BLOCK.get());
         this.dropSelf(ModBlocks.DOOR_BLOCK.get());
         this.dropSelf(ModBlocks.TARDIS_SIGN_BLOCK.get());

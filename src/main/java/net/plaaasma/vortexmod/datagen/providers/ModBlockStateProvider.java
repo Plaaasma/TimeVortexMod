@@ -91,6 +91,18 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockItem(ModBlocks.EQUALIZER_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/equalizer")));
 
+        getVariantBuilder(ModBlocks.DISRUPTOR_BLOCK.get())
+                .forAllStates(blockState -> {
+                    String model = "artron_disruptor";
+                    return ConfiguredModel.builder()
+                            .modelFile(new ModelFile.UncheckedModelFile(modLoc("block/" + model)))
+                            .rotationX(blockState.getValue(BlockStateProperties.ATTACH_FACE).ordinal() * 90)
+                            .rotationY((((int) blockState.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180) + (blockState.getValue(BlockStateProperties.ATTACH_FACE) == AttachFace.CEILING ? 180 : 0)) % 360)
+                            .build();
+                });
+        simpleBlockItem(ModBlocks.DISRUPTOR_BLOCK.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/artron_disruptor")));
+
         horizontalBlock(ModBlocks.TARDIS_BLOCK.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/tardis")));
         simpleBlockItem(ModBlocks.TARDIS_BLOCK.get(),

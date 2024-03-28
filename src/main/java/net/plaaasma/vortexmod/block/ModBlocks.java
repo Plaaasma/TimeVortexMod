@@ -36,6 +36,8 @@ public class ModBlocks {
             () -> new SizeManipulatorBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
     public static final RegistryObject<Block> EQUALIZER_BLOCK = registerBlock("equalizer_block",
             () -> new EqualizerBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
+    public static final RegistryObject<Block> DISRUPTOR_BLOCK = registerBlock("disruptor_block",
+            () -> new DisruptorBlock(BlockBehaviour.Properties.copy(Blocks.STONE).noOcclusion()));
     public static final RegistryObject<Block> TARDIS_BLOCK = registerBlock("tardis_block",
             () -> new TardisBlock(BlockBehaviour.Properties.copy(Blocks.BEDROCK).noOcclusion()));
     public static final RegistryObject<Block> DOOR_BLOCK = registerBlock("door_block",

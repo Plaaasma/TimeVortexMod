@@ -32,6 +32,7 @@ public class ModEvents {
         new ListCoordinateCommand(event.getDispatcher());
         new SecurityCommand(event.getDispatcher());
         new ExteriorCommand(event.getDispatcher());
+        new DisruptorCommand(event.getDispatcher());
 
         ConfigCommand.register(event.getDispatcher());
     }

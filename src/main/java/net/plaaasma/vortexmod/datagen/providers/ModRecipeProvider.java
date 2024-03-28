@@ -113,6 +113,15 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy(getHasName(ModBlocks.INTERFACE_BLOCK.get()), has(ModBlocks.INTERFACE_BLOCK.get()))
                 .save(pWriter);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, ModBlocks.DISRUPTOR_BLOCK.get())
+                .pattern("   ")
+                .pattern(" L ")
+                .pattern("WWW")
+                .define('L', Items.LIGHTNING_ROD)
+                .define('W', ItemTags.WOODEN_SLABS)
+                .unlockedBy(getHasName(ModBlocks.INTERFACE_BLOCK.get()), has(ModBlocks.INTERFACE_BLOCK.get()))
+                .save(pWriter);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, ModItems.EUCLIDEAN_UPGRADE.get())
                 .pattern("RDR")
                 .pattern("DED")
