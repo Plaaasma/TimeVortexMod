@@ -46,9 +46,9 @@ public class DisruptorCommand {
         ChunkPos eChunkPos = new ChunkPos(ePlayerPos);
         ServerLevel pLevel = source.getPlayer().serverLevel();
         DisruptorMapData disruptorMapData = DisruptorMapData.get(pLevel);
-        HashMap<String, Boolean> dataMap = disruptorMapData.getDataMap();
+        HashMap<String, Integer> dataMap = disruptorMapData.getDataMap();
 
-        dataMap.put(eChunkPos.toString(), true);
+        dataMap.put(eChunkPos.toString(), 0);
         source.sendSuccess(() -> Component.literal("Adding " + eChunkPos + " to the disrupt list."), false);
 
         disruptorMapData.setDirty();
@@ -62,7 +62,7 @@ public class DisruptorCommand {
         ChunkPos eChunkPos = new ChunkPos(ePlayerPos);
         ServerLevel pLevel = source.getPlayer().serverLevel();
         DisruptorMapData disruptorMapData = DisruptorMapData.get(pLevel);
-        HashMap<String, Boolean> dataMap = disruptorMapData.getDataMap();
+        HashMap<String, Integer> dataMap = disruptorMapData.getDataMap();
 
         if (dataMap.containsKey(eChunkPos.toString())) {
             dataMap.remove(eChunkPos.toString());
@@ -80,7 +80,7 @@ public class DisruptorCommand {
     private int listDisruptChunks(CommandSourceStack source) throws CommandSyntaxException {
         ServerLevel pLevel = source.getPlayer().serverLevel();
         DisruptorMapData disruptorMapData = DisruptorMapData.get(pLevel);
-        HashMap<String, Boolean> dataMap = disruptorMapData.getDataMap();
+        HashMap<String, Integer> dataMap = disruptorMapData.getDataMap();
 
         source.sendSuccess(() -> Component.literal("---------------"), false);
         for (String key : dataMap.keySet()) {

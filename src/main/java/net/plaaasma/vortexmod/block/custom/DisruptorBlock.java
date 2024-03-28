@@ -100,11 +100,12 @@ public class DisruptorBlock extends FaceAttachedHorizontalDirectionalBlock {
     public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pMovedByPiston) {
         if (pLevel instanceof ServerLevel serverLevel) {
             DisruptorMapData disruptorMapData = DisruptorMapData.get(serverLevel);
-            HashMap<String, Boolean> dataMap = disruptorMapData.getDataMap();
+            HashMap<String, Integer> dataMap = disruptorMapData.getDataMap();
             ChunkPos chunkPos = new ChunkPos(pPos);
             String dataKey = chunkPos.toString();
             if (!dataMap.keySet().contains(dataKey)) {
-                dataMap.put(dataKey, false);
+                Player player = pLevel.getNearestPlayer(8, 8, 8, 8, false);
+                dataMap.put(dataKey, player.getScoreboardName().hashCode());
                 disruptorMapData.setDirty();
             }
         }
@@ -115,11 +116,11 @@ public class DisruptorBlock extends FaceAttachedHorizontalDirectionalBlock {
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
         if (pLevel instanceof ServerLevel serverLevel) {
             DisruptorMapData disruptorMapData = DisruptorMapData.get(serverLevel);
-            HashMap<String, Boolean> dataMap = disruptorMapData.getDataMap();
+            HashMap<String, Integer> dataMap = disruptorMapData.getDataMap();
             ChunkPos chunkPos = new ChunkPos(pPos);
             String dataKey = chunkPos.toString();
             if (dataMap.keySet().contains(dataKey)) {
-                if (!dataMap.get(dataKey)) {
+                if (dataMap.get(dataKey) != 0) {
                     dataMap.remove(dataKey);
                     disruptorMapData.setDirty();
                 }
@@ -130,16 +131,6 @@ public class DisruptorBlock extends FaceAttachedHorizontalDirectionalBlock {
     @Override
     public RenderShape getRenderShape(BlockState pState) {
         return RenderShape.MODEL;
-    }
-
-    @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        if (pLevel instanceof ServerLevel serverLevel) {
-            DisruptorMapData disruptorMapData = DisruptorMapData.get(serverLevel);
-            HashMap<String, Boolean> dataMap = disruptorMapData.getDataMap();
-            System.out.println(dataMap);
-        }
-        return InteractionResult.CONSUME;
     }
 
     @Override
