@@ -104,9 +104,11 @@ public class DisruptorBlock extends FaceAttachedHorizontalDirectionalBlock {
             ChunkPos chunkPos = new ChunkPos(pPos);
             String dataKey = chunkPos.toString();
             if (!dataMap.keySet().contains(dataKey)) {
-                Player player = pLevel.getNearestPlayer(8, 8, 8, 8, false);
-                dataMap.put(dataKey, player.getScoreboardName().hashCode());
-                disruptorMapData.setDirty();
+                Player player = pLevel.getNearestPlayer(pPos.getX(), pPos.getY(), pPos.getZ(), 16, false);
+                if (player != null) {
+                    dataMap.put(dataKey, player.getScoreboardName().hashCode());
+                    disruptorMapData.setDirty();
+                }
             }
         }
         super.onPlace(pState, pLevel, pPos, pOldState, pMovedByPiston);
