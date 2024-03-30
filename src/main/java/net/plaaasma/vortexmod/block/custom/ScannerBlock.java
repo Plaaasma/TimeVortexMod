@@ -7,6 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -27,8 +28,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.network.NetworkHooks;
 import net.plaaasma.vortexmod.block.ModBlocks;
-import net.plaaasma.vortexmod.block.entity.KeypadBlockEntity;
 import net.plaaasma.vortexmod.block.entity.ModBlockEntities;
 import net.plaaasma.vortexmod.block.entity.ScannerBlockEntity;
 import net.plaaasma.vortexmod.block.entity.VortexInterfaceBlockEntity;
@@ -132,11 +133,15 @@ public class ScannerBlock extends FaceAttachedHorizontalDirectionalBlockEntity {
 
             Random random = new Random();
 
-            Vec3 targetExit = new Vec3(0 , 0, 0);
-            BlockPos blockTargetExit = new BlockPos(0, 0, 0);
+            Vec3 targetExit = null;
+            BlockPos blockTargetExit = null;
+            BlockPos blockTargetBack = null;
             ServerLevel decidedDimension = overworldDimension;
+            TardisEntity tardisEntity = null;
 
             boolean setVars = false;
+
+            ScannerBlockEntity sblockEntity = (ScannerBlockEntity) pLevel.getBlockEntity(pPos);
 
             //Scanner Scan lol
             if (serverLevel.dimension() == tardisDimension.dimension()) {
@@ -155,7 +160,7 @@ public class ScannerBlock extends FaceAttachedHorizontalDirectionalBlockEntity {
                                 }
 
                                 BlockPos blockExitPos = new BlockPos(vortexInterfaceBlockEntity.data.get(6), vortexInterfaceBlockEntity.data.get(7), vortexInterfaceBlockEntity.data.get(8));
-                                TardisEntity tardisEntity = (TardisEntity) targetDimension.getEntity(vortexInterfaceBlockEntity.getExtUUID());
+                                tardisEntity = (TardisEntity) targetDimension.getEntity(vortexInterfaceBlockEntity.getExtUUID());
                                 if (tardisEntity != null) {
                                     if (!tardisEntity.isInFlight() && !tardisEntity.isRemat()) {
                                         int yaw = (int) tardisEntity.getYRot();
@@ -166,9 +171,12 @@ public class ScannerBlock extends FaceAttachedHorizontalDirectionalBlockEntity {
 
                                         double newX = blockExitPos.getX() + distance * Math.sin(yawRadians);
                                         double newZ = blockExitPos.getZ() - distance * Math.cos(yawRadians);
+                                        double newXBack = blockExitPos.getX() - distance * Math.sin(yawRadians);
+                                        double newZBack = blockExitPos.getZ() + distance * Math.cos(yawRadians);
 
                                         targetExit = new Vec3(newX, blockExitPos.getY(), newZ);
                                         blockTargetExit = new BlockPos((int) newX, blockExitPos.getY(), (int) newZ);
+                                        blockTargetBack = new BlockPos((int) newXBack, blockExitPos.getY(), (int) newZBack);
                                         decidedDimension = targetDimension;
                                     }
                                     else {
@@ -215,6 +223,20 @@ public class ScannerBlock extends FaceAttachedHorizontalDirectionalBlockEntity {
             else {
                 pPlayer.displayClientMessage(Component.literal("Scanner is not in the TARDIS dimension.").withStyle(ChatFormatting.RED), true);
             }
+
+            sblockEntity.data.set(1, blockTargetExit.getX());
+            sblockEntity.data.set(2, blockTargetExit.getY());
+            sblockEntity.data.set(3, blockTargetExit.getZ());
+
+            sblockEntity.data.set(4, blockTargetBack.getX());
+            sblockEntity.data.set(5, blockTargetBack.getY());
+            sblockEntity.data.set(6, blockTargetBack.getZ());
+
+            sblockEntity.data.set(7, decidedDimension.dimension().location().getPath().hashCode());
+            sblockEntity.data.set(8, 1);
+            System.out.println(sblockEntity.toString());
+
+            NetworkHooks.openScreen((ServerPlayer) pPlayer, sblockEntity, pPos);
         }
 
         return InteractionResult.SUCCESS;
