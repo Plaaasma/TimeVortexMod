@@ -28,7 +28,7 @@ public record ModNoiseGenerator(NoiseSettings noiseSettings, BlockState defaultB
     public static void bootstrap(BootstapContext<NoiseGeneratorSettings> pContext) {
         pContext.register(VORTEX_CAVES, dummy(pContext));
         pContext.register(VOID, void_dummy(pContext));
-        pContext.register(OVERWORLD, overworld(pContext, true, false));
+        pContext.register(OVERWORLD, overworld(pContext, false, false));
     }
 
     static final NoiseSettings OVERWORLD_NOISE_SETTINGS = create(-256, 1600, 1, 2);
@@ -218,10 +218,11 @@ public record ModNoiseGenerator(NoiseSettings noiseSettings, BlockState defaultB
     }
 
     public static NoiseGeneratorSettings overworld(BootstapContext<?> pContext, boolean pAmplified, boolean pLarge) {
-        return new NoiseGeneratorSettings(OVERWORLD_NOISE_SETTINGS, Blocks.BLACKSTONE.defaultBlockState(), Blocks.WATER.defaultBlockState(),
-                overworld(pContext.lookup(Registries.DENSITY_FUNCTION), pContext.lookup(Registries.NOISE),
-                        pLarge, pAmplified), ModSurfaceRules.makeRules(), (new OverworldBiomeBuilder()).spawnTarget(),
-                64, false, true, false, false);
+        return new NoiseGeneratorSettings(OVERWORLD_NOISE_SETTINGS, Blocks.BLACKSTONE.defaultBlockState(),
+                Blocks.WATER.defaultBlockState(), overworld(pContext.lookup(Registries.DENSITY_FUNCTION),
+                pContext.lookup(Registries.NOISE), pLarge, pAmplified), ModSurfaceRules.makeRules(),
+                (new OverworldBiomeBuilder()).spawnTarget(), 63, false,
+                true, true, false);
     }
 
     public static NoiseGeneratorSettings void_dummy(BootstapContext<?> pContext) {

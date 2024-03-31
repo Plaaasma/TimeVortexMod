@@ -41,8 +41,10 @@ public class DalekRenderer extends MobRenderer<DalekEntity, DalekModel<DalekEnti
     public void render(DalekEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack,
                        MultiBufferSource pBuffer, int pPackedLight) {
 
+        pMatrixStack.scale(0.7f,0.7f,0.7f);
+
         if(pEntity.isBaby()) {
-            pMatrixStack.scale(0.5f, 0.5f, 0.5f);
+            pMatrixStack.scale(0.3f, 0.3f, 0.3f);
         }
 
         super.render(pEntity, pEntityYaw, pPartialTicks, pMatrixStack, pBuffer, pPackedLight);

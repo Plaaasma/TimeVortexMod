@@ -40,6 +40,7 @@ public class ModEventBusEvents {
         event.put(ModEntities.RIFT.get(), RiftEntity.createAttributes().build());
     }
 
+    @SubscribeEvent
     public static void registerSpawnPlacement(SpawnPlacementRegisterEvent event) {
         event.register(
                 ModEntities.GOLD_DALEK.get(),

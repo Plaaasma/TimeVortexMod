@@ -134,7 +134,7 @@ public class ModBiomes {
         BiomeDefaultFeatures.addDefaultGrass(biomeGenerationSettings);
         BiomeDefaultFeatures.addDefaultMushrooms(biomeGenerationSettings);
         BiomeDefaultFeatures.addDefaultCarversAndLakes(biomeGenerationSettings);
-        BiomeDefaultFeatures.addDefaultExtraVegetation(biomeGenerationSettings);
+        BiomeDefaultFeatures.addDesertVegetation(biomeGenerationSettings);
         BiomeDefaultFeatures.addMountainForestTrees(biomeGenerationSettings);
         BiomeDefaultFeatures.addNetherDefaultOres(biomeGenerationSettings);
 
@@ -154,8 +154,8 @@ public class ModBiomes {
                 .generationSettings(biomeGenerationSettings.build())
                 .mobSpawnSettings(mobSpawnBuilder.build())
                 .specialEffects((new BiomeSpecialEffects.Builder())
-                        .waterColor(0x2d323d)
-                        .waterFogColor(0x333232)
+                        .waterColor(0xFF0F1114)
+                        .waterFogColor(0xFF0F1114)
                         .skyColor(0x292828)
                         .grassColorOverride(0x30332d)
                         .foliageColorOverride(0x293020)
@@ -194,8 +194,8 @@ public class ModBiomes {
                 .generationSettings(biomeGenerationSettings.build())
                 .mobSpawnSettings(mobSpawnBuilder.build())
                 .specialEffects((new BiomeSpecialEffects.Builder())
-                        .waterColor(0x2d323d)
-                        .waterFogColor(0x333232)
+                        .waterColor(0xFF0F1114)
+                        .waterFogColor(0xFF0F1114)
                         .skyColor(0x292828)
                         .grassColorOverride(0x30332d)
                         .foliageColorOverride(0x293020)
