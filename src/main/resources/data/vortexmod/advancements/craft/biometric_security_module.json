@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "vortexmod:biometric_module"
+    },
+    "title": "And stay out!",
+    "description": "Craft a Biometric Security Module",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "vortexmod:craft/monitor",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["vortexmod:biometric_module"]
+          }
+        ]
+      }
+    }
+  }
+}

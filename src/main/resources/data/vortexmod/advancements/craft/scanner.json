@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "vortexmod:scanner_block"
+    },
+    "title": "What is out there?",
+    "description": "Craft a Exterior Scanner",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "vortexmod:craft/monitor",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["vortexmod:scanner_block"]
+          }
+        ]
+      }
+    }
+  }
+}

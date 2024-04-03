@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "vortexmod:euclidean_upgrade"
+    },
+    "title": "Now this is a size upgrade",
+    "description": "Craft an 11D upgrade",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "vortexmod:craft/time_vortex_interface",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["vortexmod:euclidean_upgrade"]
+          }
+        ]
+      }
+    }
+  }
+}

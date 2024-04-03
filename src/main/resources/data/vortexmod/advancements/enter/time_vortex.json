@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "item": "vortexmod:vortex_core"
+    },
+    "title": "Into the vortex!",
+    "description": "Enter the time vortex using a euclidean tardis",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "vortexmod:craft/time_vortex_interface",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:changed_dimension",
+      "conditions": {
+        "to": "vortexmod:vortexdim"
+      }
+    }
+  }
+}

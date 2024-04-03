@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "vortexmod:monitor_block"
+    },
+    "title": "What is going on?",
+    "description": "Craft a monitor",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "vortexmod:craft/throttle",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["vortexmod:monitor_block"]
+          }
+        ]
+      }
+    }
+  }
+}
