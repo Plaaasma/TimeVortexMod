@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "vortexmod:keypad_block"
+    },
+    "title": "To the overworld and beyond!",
+    "description": "Craft a Coordinate Keypad Module",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "vortexmod:craft/coordinate_designator_module",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["vortexmod:keypad_block"]
+          }
+        ]
+      }
+    }
+  }
+}

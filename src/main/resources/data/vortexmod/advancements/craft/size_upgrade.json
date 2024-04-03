@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "vortexmod:size_upgrade"
+    },
+    "title": "That's more like it",
+    "description": "Craft an size upgrade",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "vortexmod:craft/vortex_entry_size_manipulator",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["vortexmod:size_upgrade"]
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "vortexmod:size_manipulator_block"
+    },
+    "title": "I need more space!",
+    "description": "Craft a Entry Size Manipulator Module",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "vortexmod:craft/time_vortex_interface",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["vortexmod:size_manipulator_block"]
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "item": "vortexmod:euclidean_upgrade"
+    },
+    "title": "It's smaller on the outside!",
+    "description": "Enter a non-euclidean tardis",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "vortexmod:craft/euclidean_upgrade",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:changed_dimension",
+      "conditions": {
+        "to": "vortexmod:tardisdim"
+      }
+    }
+  }
+}

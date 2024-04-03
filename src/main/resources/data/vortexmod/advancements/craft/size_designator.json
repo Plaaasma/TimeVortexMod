@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "vortexmod:size_designator"
+    },
+    "title": "Can i get a medium TARDIS?",
+    "description": "Craft a Precision Size Designator",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "vortexmod:craft/vortex_entry_size_manipulator",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["vortexmod:size_designator"]
+          }
+        ]
+      }
+    }
+  }
+}

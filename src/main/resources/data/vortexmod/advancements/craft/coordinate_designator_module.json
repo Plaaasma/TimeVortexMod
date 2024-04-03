@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "vortexmod:coordinate_block"
+    },
+    "title": "Where are we going?",
+    "description": "Craft a Coordinate Designator Module",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "vortexmod:craft/monitor",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["vortexmod:coordinate_block"]
+          }
+        ]
+      }
+    }
+  }
+}
